@@ -44,6 +44,14 @@ class ASTNode:
         yield self.name
         yield from self.children
 
+class ASTModule(ASTNode):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @property
+    def num_stmts(self):
+        return len(self.children)
+
 class ASTLeaf(ASTNode):
 
     def __init__(self, name: str, value: str):
@@ -54,17 +62,26 @@ class ASTLeaf(ASTNode):
         yield self.name
         yield self.value
 
-# class ASTConstantValue(ASTLeaf):
+class ASTConstantValue(ASTLeaf):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class ASTIdentifier(ASTLeaf):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 @v_args(inline=True)
 class T(Transformer):
-
+    # TODO: might be cleaner to have a raw, vanilla Parse transformer,
+    # them take that and feed it through a different visitor class that
+    # yields the AST nodes.
     def program(self, *children):
-        return ASTNode ('program', *children,)
+        return ASTModule ('program', *children,)
 
-    @v_args(inline=True, meta=True)
-    def s_expr(self, meta, *children):
-        return ASTNode ("s-expr", *children,)
+    # @v_args(inline=True, meta=True)
+    # def s_expr(self, meta, *children):
+    #     return ASTNode ("s-expr", *children,)
 
     @v_args(inline=True, meta=True)
     def list(self, meta, *children):
@@ -72,7 +89,7 @@ class T(Transformer):
 
     @v_args(inline=True, meta=True)
     def number(self, meta, token):
-        return ASTLeaf ("int", token.value)
+        return ASTConstantValue ("int", token.value)
 
     # @v_args(inline=True, meta=True)
     # def atom(self, meta, token):
@@ -81,11 +98,11 @@ class T(Transformer):
     @v_args(inline=True, meta=True)
     def string(self, meta, token):
         # Includes `""` in the string
-        return ASTLeaf ("string-lit", token.value)
+        return ASTConstantValue ("string-lit", token.value)
 
     @v_args(inline=True, meta=True)
     def ident(self, meta, token):
-        return ASTLeaf ("identifier", token.value)
+        return ASTIdentifier ("identifier", token.value)
 
 @v_args(inline=True)
 class I(Interpreter):
