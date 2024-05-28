@@ -93,10 +93,11 @@ class ASTUnOp(ASTNode):
 
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
+            self.name = self.map(self.name.name)
 
         @staticmethod
         def map(op: str):
-            if op == "neg": return ASTUnOp.UnOps.NEG
+            if op == "sub": return ASTUnOp.UnOps.NEG
 
         @property
         def expr(self):
@@ -115,10 +116,11 @@ class ASTBinOp(ASTNode):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.name = self.map(self.name.name)
 
     @staticmethod
     def map(op: str):
-        if op == "str": return ASTBinOp.BinOps.ADD
+        if op == "add": return ASTBinOp.BinOps.ADD
 
     @property
     def LExpr(self):
