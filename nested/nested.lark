@@ -12,7 +12,7 @@ ident: /[^\W\d-][\w-]*/
 number: NUMBER
 string: ESCAPED_STRING
 
-atom: ident
+?atom: ident
     | number
     | string
 

@@ -37,26 +37,25 @@ def parse():
 from rich import pretty
 class ASTNode:
 
-    def __init__(self, type: str, *children):
-        self.type = type
+    def __init__(self, name: str, *children):
+        self.name = name
         self.children = children
     def __rich_repr__(self):
-        yield self.type
+        yield self.name
         yield from self.children
-
-    # def __repr__(self):
-    #     return str(pretty.Pretty(self.children))
 
 class ASTLeaf(ASTNode):
 
-    def __init__(self, type: str, value: str):
-        super().__init__(type, None)
+    def __init__(self, name: str, value: str):
+        super().__init__(name, None)
         self.value = value
+
     def __rich_repr__(self):
-        yield self.type
+        yield self.name
         yield self.value
-    # def __repr__(self):
-    #     return str(pretty.Pretty(self))
+
+# class ASTConstantValue(ASTLeaf):
+
 @v_args(inline=True)
 class T(Transformer):
 
@@ -75,9 +74,9 @@ class T(Transformer):
     def number(self, meta, token):
         return ASTLeaf ("int", token.value)
 
-    @v_args(inline=True, meta=True)
-    def atom(self, meta, token):
-        return ASTNode ("atom", token)
+    # @v_args(inline=True, meta=True)
+    # def atom(self, meta, token):
+    #     return ASTNode ("atom", token)
 
     @v_args(inline=True, meta=True)
     def string(self, meta, token):
