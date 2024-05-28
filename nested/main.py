@@ -3,4 +3,6 @@ from compiler import Compiler
 from parser import parse
 
 from rich import print
-print(parse().children)
+p = parse().children[0]
+p.visit()
+print(p)

@@ -44,6 +44,19 @@ class ASTNode:
         yield self.name
         yield from self.children
 
+    def visit(self):
+        print(f"Visiting {self.name}")
+        self.children = [child.visit() for child in self.children]
+
+        if isinstance(self.children[0], ASTOp):
+            op = self.children[0]
+            if len(self.children) == 2:
+                return ASTUnOp(op, self.children[1])
+            elif len(self.children) == 3:
+                return ASTBinOp(op, self.children[1], self.children[2])
+
+        return self
+
 class ASTModule(ASTNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -51,6 +64,10 @@ class ASTModule(ASTNode):
     @property
     def num_stmts(self):
         return len(self.children)
+
+    def visit(self):
+        self.children = [child.visit() for child in self.children]
+        return self
 
 class ASTLeaf(ASTNode):
 
@@ -61,6 +78,9 @@ class ASTLeaf(ASTNode):
     def __rich_repr__(self):
         yield self.name
         yield self.value
+
+    def visit(self):
+        return self
 
 class ASTConstantValue(ASTLeaf):
     def __init__(self, *args, **kwargs):
@@ -86,7 +106,6 @@ class ASTOp(ASTNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-
 class ASTBinOp(ASTNode):
 
     class BinOps(Enum):
@@ -110,8 +129,17 @@ class ASTBinOp(ASTNode):
         return self.children[1]
 
 class ASTIdentifier(ASTLeaf):
+    builtins = {
+        "print", "add", "sub"
+    }
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def visit(self):
+        if self.value in ASTIdentifier.builtins:
+            return ASTOp(self.value)
+        return self
 
 @v_args(inline=True)
 class T(Transformer):
