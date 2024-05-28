@@ -1,7 +1,7 @@
 from lark import Lark, Visitor, v_args # type: ignore
 from lark import Tree, Transformer
 from lark.visitors import Interpreter
-
+from enum import Enum, auto
 from pathlib import Path
 
 cwd = Path(__file__).parent
@@ -66,6 +66,48 @@ class ASTConstantValue(ASTLeaf):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+class ASTUnOp(ASTNode):
+
+        class UnOps(Enum):
+            NEG = auto()
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+        @staticmethod
+        def map(op: str):
+            if op == "neg": return ASTUnOp.UnOps.NEG
+
+        @property
+        def expr(self):
+            return self.children[0]
+
+class ASTOp(ASTNode):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class ASTBinOp(ASTNode):
+
+    class BinOps(Enum):
+        ADD = auto()
+        SUB = auto()
+        MUL = auto()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @staticmethod
+    def map(op: str):
+        if op == "str": return ASTBinOp.BinOps.ADD
+
+    @property
+    def LExpr(self):
+        return self.children[0]
+
+    @property
+    def RExpr(self):
+        return self.children[1]
 
 class ASTIdentifier(ASTLeaf):
     def __init__(self, *args, **kwargs):
@@ -82,6 +124,15 @@ class T(Transformer):
     # @v_args(inline=True, meta=True)
     # def s_expr(self, meta, *children):
     #     return ASTNode ("s-expr", *children,)
+
+    # @v_args(inline=True, meta=True)
+    # def op(self, meta, *children):
+    #     return ASTIdentifier("op", *children)
+
+
+        # if len(children) == 1:
+        #     return ASTUnOp(children[0])
+        # return ASTBinOp ("foo", *children)
 
     @v_args(inline=True, meta=True)
     def list(self, meta, *children):
