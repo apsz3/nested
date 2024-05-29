@@ -10,14 +10,12 @@ with open(cwd / 'nested.Lark', 'r') as file:
 parser = Lark(grammar_contents)
 from rich import print
 
-def parse():
+def parse(text):
     # with open('C:/nested/nested/test.nest', 'r') as file:
-    with open(cwd / 'test.nest', 'r') as file:
 
-        input_contents = file.read()
 
     # result = parser.parse(input_contents)
-    res: Tree= T().transform(parser.parse(input_contents))
+    res: Tree= T().transform(parser.parse(text))
     # print(res.children)
     return res
 
@@ -88,24 +86,28 @@ class ASTConstantValue(ASTLeaf):
 
 class ASTUnOp(ASTNode):
 
-        class UnOps(Enum):
-            NEG = auto()
+    class UnOps(Enum):
+        NEG = auto()
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.name = self.map(self.name.name)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = self.map(self.name.name)
 
-        @staticmethod
-        def map(op: str):
-            if op == "sub": return ASTUnOp.UnOps.NEG
+    @staticmethod
+    def map(op: str):
+        if op == "sub": return ASTUnOp.UnOps.NEG
 
-        @property
-        def expr(self):
-            return self.children[0]
+    @property
+    def expr(self):
+        return self.children[0]
 
 class ASTOp(ASTNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def visit(self):
+        return self
+    #     if self.value in ASTIdentifier.builtins:
 
 class ASTBinOp(ASTNode):
 
@@ -130,13 +132,37 @@ class ASTBinOp(ASTNode):
     def RExpr(self):
         return self.children[1]
 
+class ASTProc(ASTNode):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.proc = self.name # TODO: cheeky, fix
+
+    def visit(self):
+        self.proc = self.proc.visit()
+        self.children = [child.visit() for child in self.children]
+        # RETURN WHETYHER WE DO A PRIMITIVE OP, OR A PROC, FROM HERE
+        return self
+
+class ASTList(ASTNode):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def visit(self):
+        return self
+        # if self.name not in ASTIdentifier.builtins:
+        #     return ASTProc(self.name, self.children) # TODO: when do we visit this???
+
+        # self.children = [c.visit() for c in self.children]
+        # self.name = "foo"
+        # return self
+
 class ASTIdentifier(ASTLeaf):
     builtins = {
-        "print", "add", "sub"
+        "add", "sub"
     }
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__("identifier", *args, **kwargs)
 
     def visit(self):
         if self.value in ASTIdentifier.builtins:
@@ -164,9 +190,9 @@ class T(Transformer):
         #     return ASTUnOp(children[0])
         # return ASTBinOp ("foo", *children)
 
-    @v_args(inline=True, meta=True)
-    def list(self, meta, *children):
-        return ASTNode ("list", *children,)
+    @v_args(inline=True)
+    def list(self, *children):
+        return ASTList ("list", *children)
 
     @v_args(inline=True, meta=True)
     def number(self, meta, token):
@@ -183,7 +209,7 @@ class T(Transformer):
 
     @v_args(inline=True, meta=True)
     def ident(self, meta, token):
-        return ASTIdentifier ("identifier", token.value)
+        return ASTIdentifier (token.value)
 
 @v_args(inline=True)
 class I(Interpreter):

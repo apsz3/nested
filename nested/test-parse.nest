@@ -1,6 +1,8 @@
+1
 (add 1 2)
 (sub 1)
 1
+2
 (1 2)
 (make-cls sword
     str
