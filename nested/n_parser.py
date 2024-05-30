@@ -148,7 +148,7 @@ class ASTList(ASTNode):
         super().__init__(*args, **kwargs)
 
     def visit(self):
-
+        breakpoint()
         if self.name not in ASTIdentifier.builtins:
             n = ASTProc(*self.children) # TODO: when do we visit this???
             n.visit()
@@ -194,7 +194,7 @@ class T(Transformer):
 
     @v_args(inline=True)
     def list(self, *children):
-        return ASTList ("list", *children)
+        return ASTList (*children)
 
     @v_args(inline=True, meta=True)
     def number(self, meta, token):
