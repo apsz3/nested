@@ -1,14 +1,6 @@
 from nested.n_opcode import OpCode
 from rich import print
-
-class VMIR:
-
-# Keep these functions separate as only in interpreter mode do we want to
-# cast things for example
-
-    @staticmethod
-    def add(s):
-        s.append(int(s.pop()) + int(s.pop()))
+from nested.n_vm_ir import VMIR
 
 class VM:
     def __init__(self, code):
@@ -36,6 +28,8 @@ class VM:
                 #         case _: raise ValueError(f"Unknown opcode: {proc}")
                 case OpCode.ADD:
                     self.ir.add(self.stack)
+                case OpCode.PRINT:
+                    self.ir.print(self.stack)
                 case OpCode.LOAD_INT:
                     self.stack.append(*args)
                 case OpCode.LOAD_STR:
@@ -46,4 +40,4 @@ class VM:
                     pass
                 case _:
                     raise ValueError(f"Unknown opcode: {op}")
-        return self.stack.pop()
+        return self.stack

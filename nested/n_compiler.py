@@ -45,6 +45,9 @@ class Compiler:
         if node.name == ASTUnOp.UnOps.NEG:
             self.compile_node(node.expr)
             self.emit(Op(OpCode.NEG))
+        elif node.name == ASTUnOp.UnOps.PRINT:
+            self.compile_node(node.expr)
+            self.emit(Op(OpCode.PRINT))
         else:
             raise ValueError(f"Unknown unop: {node.name}")
 

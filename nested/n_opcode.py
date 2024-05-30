@@ -16,6 +16,8 @@ class OpCode(Enum):
     PUSH = auto()
     POP = auto()
 
+    PRINT = auto()
+
     CALL = auto()
 
     BEGIN_MODULE = auto()

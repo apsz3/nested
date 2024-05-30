@@ -1,6 +1,6 @@
 from nested.n_compiler import Compiler
 from nested.n_parser import parse as Parse
-from nested.vm import VM
+from nested.n_vm import VM
 from rich import print
 import click
 

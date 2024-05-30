@@ -88,14 +88,16 @@ class ASTUnOp(ASTNode):
 
     class UnOps(Enum):
         NEG = auto()
+        PRINT = auto()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.name = self.map(self.name.name)
+        self.name = self.map(self.name.value)
 
     @staticmethod
     def map(op: str):
         if op == "sub": return ASTUnOp.UnOps.NEG
+        elif op == "print": return ASTUnOp.UnOps.PRINT
 
     @property
     def expr(self):
@@ -165,7 +167,7 @@ class ASTList(ASTNode):
 
 class ASTIdentifier(ASTLeaf):
     builtins = {
-        "add", "sub"
+        "add", "sub", "print"
     }
 
     @staticmethod
