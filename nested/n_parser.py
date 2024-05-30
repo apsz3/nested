@@ -46,12 +46,12 @@ class ASTNode:
         print(f"Visiting {self.name}")
         self.children = [child.visit() for child in self.children]
 
-        if isinstance(self.children[0], ASTOp):
-            op = self.children[0]
-            if len(self.children) == 2:
-                return ASTUnOp(op, self.children[1])
-            elif len(self.children) == 3:
-                return ASTBinOp(op, self.children[1], self.children[2])
+        # if isinstance(self.children[0], ASTOp):
+        #     op = self.children[0]
+        #     if len(self.children) == 2:
+        #         return ASTUnOp(op, self.children[1])
+        #     elif len(self.children) == 3:
+        #         return ASTBinOp(op, self.children[1], self.children[2])
 
         return self
 
@@ -106,8 +106,11 @@ class ASTOp(ASTNode):
         super().__init__(*args, **kwargs)
 
     def visit(self):
-        return self
-    #     if self.value in ASTIdentifier.builtins:
+        if len(self.children) == 1:
+            return ASTUnOp(self.name, *self.children)
+        elif len(self.children) == 2:
+            return ASTBinOp(self.name, *self.children)    #     if self.value in ASTIdentifier.builtins:
+        raise ValueError("non-op")
 
 class ASTBinOp(ASTNode):
 
@@ -118,7 +121,7 @@ class ASTBinOp(ASTNode):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.name = self.map(self.name.name)
+        self.name = self.map(self.name.value)
 
     @staticmethod
     def map(op: str):
@@ -148,12 +151,13 @@ class ASTList(ASTNode):
         super().__init__(*args, **kwargs)
 
     def visit(self):
-        breakpoint()
-        if self.name not in ASTIdentifier.builtins:
-            n = ASTProc(*self.children) # TODO: when do we visit this???
+        if ASTIdentifier.is_builtin(self.name):
+            n = ASTProc(self.name, *self.children) # TODO: when do we visit this???
             n.visit()
             return n
-        return ASTOp(self)
+        n = ASTOp(self.name, *self.children)
+        n = n.visit()
+        return n
         # self.children = [c.visit() for c in self.children]
         # self.name = "foo"
         # return self
@@ -162,6 +166,10 @@ class ASTIdentifier(ASTLeaf):
     builtins = {
         "add", "sub"
     }
+
+    @staticmethod
+    def is_builtin(node: "ASTIdentifier"):
+        return node.name in ASTIdentifier.builtins
 
     def __init__(self, *args, **kwargs):
         super().__init__("identifier", *args, **kwargs)
