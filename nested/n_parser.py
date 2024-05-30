@@ -106,6 +106,7 @@ class ASTOp(ASTNode):
         super().__init__(*args, **kwargs)
 
     def visit(self):
+        self.children = [child.visit() for child in self.children]
         if len(self.children) == 1:
             return ASTUnOp(self.name, *self.children)
         elif len(self.children) == 2:
