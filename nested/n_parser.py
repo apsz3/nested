@@ -138,7 +138,7 @@ class ASTProc(ASTNode):
         self.proc = self.name # TODO: cheeky, fix
 
     def visit(self):
-        # self.proc = self.proc.visit()
+        # self.proc = ASTIdentifier(self.name)
         self.children = [child.visit() for child in self.children]
         # RETURN WHETYHER WE DO A PRIMITIVE OP, OR A PROC, FROM HERE
         return self
@@ -150,7 +150,7 @@ class ASTList(ASTNode):
     def visit(self):
 
         if self.name not in ASTIdentifier.builtins:
-            n = ASTProc(self.name, *self.children) # TODO: when do we visit this???
+            n = ASTProc(*self.children) # TODO: when do we visit this???
             n.visit()
             return n
         return ASTOp(self)
