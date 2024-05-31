@@ -7,6 +7,9 @@ class CodeObj:
     def __init__(self, code: List[OpCode]):
         self.code = code
 
+    def __len__(self):
+        return len(self.code)
+
     def __rich_repr__(self):
         yield "CodeObj"
         yield from self.code

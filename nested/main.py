@@ -26,8 +26,8 @@ def main(parse, compile, debug, file_path):
     print("-- IR")
     print(c.buffer)
 
-    v = VM(c.buffer)
-    print(v.exec())
+    v = VM()
+    print(v.run(c.buffer))
 
 if __name__ == '__main__':
     main()

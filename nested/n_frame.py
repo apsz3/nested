@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Optional
 
+from nested.n_codeobj import CodeObj
+
 class SymTable:
     def __init__(self):
         self.symbols = {}
@@ -25,25 +27,36 @@ class SymTable:
         new.symbols.update(other.symbols)
         return new
 
-# Globals are special, passed by copy into each frame for quick reference...
-# Otherwise we wouldnt need a globals table, we'd just have a parent frame,
-# and search up the chain; but that is very inefficient
+    def copy(self):
+        new = SymTable()
+        new.symbols.update(self.symbols)
+        return new
 
+# We allow lexical scoping so overriding globals, hence the need to always
+# traverse up the chain of frames for lookups
 class Frame:
-    def __init__(self, globals: SymTable, locals: SymTable, parent: Optional[Frame]):
-        self.globals = globals
+    def __init__(self, code: CodeObj, locals: SymTable, parent: Optional[Frame]):
+        self.code = code
         self.locals = locals
         self.parent = parent
+        self.ip = 0
 
-    def get(self, name):
+    @property
+    def instr(self):
+        if self.ip >= len(self.code):
+            return None
+        return self.code[self.ip]
+
+    def __next__(self):
+        self.ip += 1
+
+    def getsym(self, name):
         if (res := self.locals.get(name)):
-            return res
-        if (res := self.globals.get(name)):
             return res
         if self.parent:
             return self.parent.lookup(name)
         else:
-            raise ValueError(f"Symbol {name} not found in any frame")
+            raise ValueError(f"Symbol {name} not found in any scope")
 
     def __rich_repr__(self):
         yield "Frame"
