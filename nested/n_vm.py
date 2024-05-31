@@ -3,7 +3,7 @@ from nested.n_codeobj import CodeObj
 from nested.n_frame import Frame, SymTable
 from nested.n_opcode import OpCode
 from rich import print
-from nested.n_vm_ir import VMIR
+from nested.n_ir_byte import VMIR
 
 class VM:
     def __init__(self, ir = VMIR()):
