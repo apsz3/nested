@@ -16,24 +16,23 @@ class VMIR:
     # cast things for example
     def run(self, code: CodeObj):
         frame = Frame(code, SymTable(), None)
+        self.frame = frame
+
         self.stack = []
-        self.call_stack: List[Frame] = [frame]
-        self.exec(frame)
+        self.call_stack: List[Frame] = [self.frame]
 
-    @property
-    def ctx(self):
-        return self.call_stack[-1]
+        self.exec()
 
-    def exec(self, frame: Frame):
+    def exec(self):
         while self.call_stack:
-            frame = self.call_stack.pop()
+            self.frame = self.call_stack.pop()
 
-            while frame.instr:
-                op = frame.instr.opcode
-                args = frame.instr.args
+            while self.frame.instr:
+                op = self.frame.instr.opcode
+                args = self.frame.instr.args
                 # print(self.stack)
-                print(f"{frame.ip:2} {op:2} {args}")
-                next(frame)
+                print(f"{self.frame.ip:2} {op:2} {args}")
+                next(self.frame)
                 match op:
                     case OpCode.ADD:
                         self.add(*args)
@@ -70,10 +69,10 @@ class VMIR:
             case OpCode.LOAD_STR:
                 self.stack.append(v)
             case _:
-                err(f"Unknown type: {t}")
+                err(f"Unknown type: {op}")
 
     def load(self, v: str):
-        return self.ctx.getsym(v)
+        return self.frame.getsym(v)
 
     def print(self, n: int):
         try:
