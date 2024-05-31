@@ -40,35 +40,37 @@ class Op:
         yield from self.args
 
     @staticmethod
-    def from_id(i: ASTIdentifier):
+    def from_id(i: ASTIdentifier, *args):
+        opcode = None
         match i.value:
             case "add":
-                return Op(OpCode.ADD)
+                opcode = OpCode.ADD
             case "neg":
-                return Op(OpCode.NEG)
+                opcode = OpCode.NEG
             case "list":
-                return Op(OpCode.LIST)
+                opcode = OpCode.LIST
             case "load":
-                return Op(OpCode.LOAD)
+                opcode = OpCode.LOAD
             case "load_int":
-                return Op(OpCode.LOAD_INT)
+                opcode = OpCode.LOAD_INT
             case "load_str":
-                return Op(OpCode.LOAD_STR)
+                opcode = OpCode.LOAD_STR
             case "argpush":
-                return Op(OpCode.ARGPUSH)
+                opcode = OpCode.ARGPUSH
             case "argpop":
-                return Op(OpCode.ARGPOP)
+                opcode = OpCode.ARGPOP
             case "push":
-                return Op(OpCode.PUSH)
+                opcode = OpCode.PUSH
             case "pop":
-                return Op(OpCode.POP)
+                opcode = OpCode.POP
             case "print":
-                return Op(OpCode.PRINT)
+                opcode = OpCode.PRINT
             case "call":
-                return Op(OpCode.CALL)
+                opcode = OpCode.CALL
             case "begin_module":
-                return Op(OpCode.BEGIN_MODULE)
+                opcode = OpCode.BEGIN_MODULE
             case "end_module":
-                return Op(OpCode.END_MODULE)
+                opcode = OpCode.END_MODULE
             case _:
                 raise ValueError(f"Unknown opcode: {i.value}")
+        return Op(opcode, *args)

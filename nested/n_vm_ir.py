@@ -5,12 +5,20 @@ class VMIR:
 # cast things for example
 
     @staticmethod
-    def add(s):
-        s.append(int(s.pop()) + int(s.pop()))
+    def add(s, n:int):
+        if n < 2:
+            print("? (Possible nonsense) Add needs 2 or more arguments!")
+            return
+        s.append(sum([int(s.pop()) for _ in range(n)]))
 
     @staticmethod
-    def print(s):
-        print(f"> {s.pop()}")
+    def print(s, n: int):
+        try:
+            args = [str(s.pop()) for _ in range(n)]
+            print(f"> {' '.join(args)}")
+
+        except IndexError:
+            print("! Need more arguments")
 
     @staticmethod
     def list(s, n: int):

@@ -37,9 +37,9 @@ class VM:
                     #             self.stack.append(-self.stack.pop())
                     #         case _: raise ValueError(f"Unknown opcode: {proc}")
                     case OpCode.ADD:
-                        self.ir.add(self.stack)
+                        self.ir.add(self.stack, *args)
                     case OpCode.PRINT:
-                        self.ir.print(self.stack)
+                        self.ir.print(self.stack, *args)
                     case OpCode.LIST:
                         self.ir.list(self.stack, *args)
                     case OpCode.LOAD_INT:

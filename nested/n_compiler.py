@@ -89,7 +89,7 @@ class Compiler:
             self.compile_node(child)
             # self.emit(OpCode.ARGPUSH)
         if isinstance(node.value, ASTOp): # builtin, just call its opcode
-            self.emit(Op.from_id(node.value))
+            self.emit(Op.from_id(node.value, len(node.children)))
         elif isinstance(node.value, ASTIdentifier):
             resolved_value = node.value # TODO: adjust
             self.emit(Op(OpCode.CALL, resolved_value, len(node.children)))
