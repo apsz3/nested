@@ -40,10 +40,14 @@ class VM:
                         self.ir.add(self.stack)
                     case OpCode.PRINT:
                         self.ir.print(self.stack)
+                    case OpCode.LIST:
+                        self.ir.list(self.stack, *args)
                     case OpCode.LOAD_INT:
                         self.stack.append(*args)
                     case OpCode.LOAD_STR:
                         self.stack.append(*args)
+                    case OpCode.LOAD:
+                        self.stack.append("TODO - LOAD")
                     case OpCode.BEGIN_MODULE:
                         pass
                     case OpCode.END_MODULE:

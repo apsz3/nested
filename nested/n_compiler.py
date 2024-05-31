@@ -76,6 +76,11 @@ class Compiler:
 
     # def compile_expr_define(self, node: ASTProcDefn):
     #     ...
+    # def compile_list(self, node: ASTList):
+    #     for child in node.children:
+    #         self.compile_node(child)
+    #     self.compile_node(node.value) # TODO: What is this doing?
+    #     self.emit(OpCode.LIST, len(node.children)) # Retrieve the last K values
 
     def compile_expr(self, node: ASTProc):
         # TODO: Check arity here for builtins etc .. ?
@@ -104,8 +109,8 @@ class Compiler:
             self.compile_identifier(node)
         elif isinstance(node, ASTExpr):
             self.compile_expr(node)
-        elif isinstance(node, ASTList):
-            self.compile(node.children)
+        # elif isinstance(node, ASTList):
+        #     self.compile_list(node)
         # elif isinstance(node, ASTOp):
         #     breakpoint()
         else:

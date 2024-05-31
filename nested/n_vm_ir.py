@@ -11,3 +11,7 @@ class VMIR:
     @staticmethod
     def print(s):
         print(f"> {s.pop()}")
+
+    @staticmethod
+    def list(s, n: int):
+        s.append([s.pop() for _ in range(n)])

@@ -12,6 +12,8 @@ class OpCode(Enum):
     LOAD_INT = auto()
     LOAD_STR = auto()
 
+    LIST = auto()
+
     ARGPUSH = auto()
     ARGPOP = auto()
 
@@ -44,6 +46,8 @@ class Op:
                 return Op(OpCode.ADD)
             case "neg":
                 return Op(OpCode.NEG)
+            case "list":
+                return Op(OpCode.LIST)
             case "load":
                 return Op(OpCode.LOAD)
             case "load_int":

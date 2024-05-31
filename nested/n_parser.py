@@ -116,15 +116,19 @@ class ASTList(ASTNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    # def visit(self):
+    #     if isinstance(self.value, ASTIdentifier):
+    #         n = ASTExpr(self.value, *self.children)
+    #         return n.visit()
+    #     else:
+    #         # It's a list / epxr
+    #         self.children = [child.visit() for child in self.children]
+    #         self.value = self.value.visit()
+    #         return self
+
     def visit(self):
-        if isinstance(self.value, ASTIdentifier):
-            n = ASTExpr(self.value, *self.children)
-            return n.visit()
-        else:
-            # It's a list / epxr
-            self.children = [child.visit() for child in self.children]
-            self.value = self.value.visit()
-            return self
+        n = ASTExpr(self.value, *self.children)
+        return n.visit()
 
 class ASTOp(ASTLeaf):
     # ASTOp is a leaf, but it's a special leaf that represents a builtin
@@ -136,7 +140,7 @@ class ASTOp(ASTLeaf):
 
 class ASTIdentifier(ASTLeaf):
     builtins = {
-        "add", "sub", "print"
+        "add", "sub", "print", "list"
     }
 
     @property
