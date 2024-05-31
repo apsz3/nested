@@ -52,6 +52,8 @@ class VM:
                         pass
                     case OpCode.END_MODULE:
                         pass
+                    case OpCode.CALL:
+                        pass
                     case _:
                         raise ValueError(f"Unknown opcode: {op}")
             return self.stack
