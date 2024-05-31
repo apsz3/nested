@@ -36,30 +36,31 @@ class Compiler:
     # is so that we don't have to use generic Call
     # instructions to execute builtins
     def compile_binop(self, node: ASTBinOp):
-        if node.id == ASTBinOp.BinOps.ADD:
+        if node.op == ASTBinOp.BinOps.ADD:
             self.compile_node(node.LExpr)
             self.compile_node(node.RExpr)
             self.emit(Op(OpCode.ADD))
         else:
-            raise ValueError(f"Unknown binop: {node.id}")
+            raise ValueError(f"Unknown binop: {node.op}")
 
     def compile_unop(self, node: ASTUnOp):
-        if node.id == ASTUnOp.UnOps.NEG:
+        if node.op == ASTUnOp.UnOps.NEG:
             self.compile_node(node.expr)
             self.emit(Op(OpCode.NEG))
-        elif node.id == ASTUnOp.UnOps.PRINT:
+        elif node.op == ASTUnOp.UnOps.PRINT:
             self.compile_node(node.expr)
             self.emit(Op(OpCode.PRINT))
         else:
-            raise ValueError(f"Unknown unop: {node.id}")
+            breakpoint()
+            raise ValueError(f"Unknown unop: {node.op}")
 
     def compile_const(self, node: ASTConstantValue):
-        if node.id == "int":
+        if node.type == "int":
             self.emit(Op(OpCode.LOAD_INT, node.value))
-        elif node.id == "string-lit":
+        elif node.type == "string-lit":
             self.emit(Op(OpCode.LOAD_STR, node.value))
         else:
-            raise ValueError(f"Unknown const: {node.id}")
+            raise ValueError(f"Unknown const: {node.type}")
 
     # def compile_proc_define(self, node: ASTProcDefn):
     #     ...

@@ -91,12 +91,16 @@ class ASTUnOp(ASTNode):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.op = self.map(self.value)
+
+    @property
+    def op(self):
+        return self.map(self.value)
 
     @staticmethod
     def map(op: str):
         if op == "sub": return ASTUnOp.UnOps.NEG
         elif op == "print": return ASTUnOp.UnOps.PRINT
+        else: raise ValueError(f"Unknown unop {op}")
 
     @property
     def expr(self):
@@ -177,15 +181,14 @@ class ASTIdentifier(ASTLeaf):
         "add", "sub", "print"
     }
 
-    @staticmethod
-    def is_builtin(node: "ASTIdentifier"):
-        return node.value in ASTIdentifier.builtins
+    def is_builtin(self):
+        return self.value in ASTIdentifier.builtins
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def visit(self):
-        if self.value in ASTIdentifier.builtins:
+        if self.is_builtin():
             return ASTOp(self.value)
         return self
 
