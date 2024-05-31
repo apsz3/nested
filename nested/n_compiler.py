@@ -1,12 +1,16 @@
 from lark import Tree
 from enum import Enum, auto
 from rich import print
-from nested.n_parser import ASTUnOpExpr, ASTNode, ASTModule, ASTBinOpExpr, ASTConstantValue, ASTIdentifier, ASTProc
+from nested.n_parser import ASTUnOpExpr, ASTNode, ASTModule, ASTBinOpExpr, ASTConstantValue, ASTIdentifier, ASTProc, ASTVaryOpExpr
 from nested.n_opcode import Op, OpCode
 
 # Continuation -- add before / after / during, where during gets
 # the parent class fn as an arg.
-
+opmap = {
+    ASTUnOpExpr.UnOps.NEG: OpCode.NEG,
+    ASTVaryOpExpr.VaryOps.PRINT: OpCode.PRINT,
+    ASTBinOpExpr.BinOps.ADD: OpCode.ADD
+}
 class Compiler:
 
     def __init__(self, tree: Tree):
@@ -36,12 +40,20 @@ class Compiler:
     # is so that we don't have to use generic Call
     # instructions to execute builtins
     def compile_binop(self, node: ASTBinOpExpr):
-        if node.op == ASTBinOpExpr.BinOps.ADD:
+        if (op := opmap.get(node.op)):
             self.compile_node(node.LExpr)
             self.compile_node(node.RExpr)
-            self.emit(Op(OpCode.ADD))
+            self.emit(Op(op)) # TODO: make these constant objects?
         else:
             raise ValueError(f"Unknown binop: {node.op}")
+
+    def compile_varyop(self, node: ASTVaryOpExpr):
+        if (op := opmap.get(node.op)) is None:
+            raise ValueError(f"Unknown varyop: {node.op}")
+
+        for child in node.children:
+            self.compile_node(child)
+        self.emit(Op(op))
 
     def compile_unop(self, node: ASTUnOpExpr):
         if node.op == ASTUnOpExpr.UnOps.NEG:

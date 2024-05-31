@@ -86,16 +86,8 @@ class ASTConstantValue(ASTLeaf):
         yield self.value
 
 class ASTVaryOpExpr(ASTNode):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
-    def visit(self):
-
-        return self
-class ASTUnOpExpr(ASTNode):
-
-    class UnOps(Enum):
-        NEG = auto()
+    class VaryOps(Enum):
         PRINT = auto()
 
     def __init__(self, *args, **kwargs):
@@ -107,8 +99,27 @@ class ASTUnOpExpr(ASTNode):
 
     @staticmethod
     def map(op: str):
+        if op == "print": return ASTVaryOpExpr.VaryOps.PRINT
+        else: raise ValueError(f"Unknown unop {op}")
+
+
+    def visit(self):
+        return self
+class ASTUnOpExpr(ASTNode):
+
+    class UnOps(Enum):
+        NEG = auto()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @property
+    def op(self):
+        return self.map(self.value)
+
+    @staticmethod
+    def map(op: str):
         if op == "sub": return ASTUnOpExpr.UnOps.NEG
-        elif op == "print": return ASTUnOpExpr.UnOps.PRINT
         else: raise ValueError(f"Unknown unop {op}")
 
     @property

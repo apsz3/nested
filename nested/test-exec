@@ -1,5 +1,4 @@
-(print
-    foo
-    (foo)
-    ((add 2 3)
-    (add 1 (add 3 4)) (add 1 1)))
+1
+a
+(add 1 2)
+(print 1)
