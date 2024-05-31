@@ -1,7 +1,7 @@
 
 from enum import Enum, auto
-import rich
 
+# TODO: Instr, vs Opcode -- instr has args, opcode doesnt.
 class OpCode(Enum):
     ADD = auto()
     NEG = auto()

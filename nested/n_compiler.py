@@ -7,7 +7,6 @@ from nested.n_opcode import Op, OpCode
 # Continuation -- add before / after / during, where during gets
 # the parent class fn as an arg.
 
-
 class Compiler:
 
     def __init__(self, tree: Tree):

@@ -1,15 +1,18 @@
+from nested.n_codeobj import CodeObj
+from nested.n_frame import Frame, SymTable
 from nested.n_opcode import OpCode
 from rich import print
 from nested.n_vm_ir import VMIR
 
 class VM:
-    def __init__(self, code):
-        self.code = code
-        self.stack = []
-        self.ip = 0
-        self.ir = VMIR()
+    def __init__(self, ir = VMIR()):
+        self.ir = ir
+        self.global_frame = Frame(SymTable(), SymTable(), None) # Would be where you load STDLIBs
 
-    def exec(self):
+    def run(self, code: CodeObj):
+        self.exec(code, self.global_frame)
+
+    def exec(self, code: CodeObj, frame: Frame):
         while self.ip < len(self.code):
             instr = self.code[self.ip]
             op = instr.opcode
