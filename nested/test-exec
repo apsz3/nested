@@ -9,3 +9,4 @@
 ; (let x 1)
 (let x 1)
 (print x)
+(print (add x 2))
