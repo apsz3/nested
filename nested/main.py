@@ -27,7 +27,8 @@ def main(parse, compile, debug, file_path):
     print(c.buffer)
 
     v = VM()
-    print(v.run(c.buffer))
+    v.run(c.buffer)
+    # print(f"> {v.run(c.buffer)}")
 
 if __name__ == '__main__':
     main()

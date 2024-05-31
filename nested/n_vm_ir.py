@@ -10,4 +10,4 @@ class VMIR:
 
     @staticmethod
     def print(s):
-        print(s.pop())
+        print(f"> {s.pop()}")

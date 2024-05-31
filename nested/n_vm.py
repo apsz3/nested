@@ -22,7 +22,7 @@ class VM:
             while frame.instr:
                 op = frame.instr.opcode
                 args = frame.instr.args
-                print(self.stack)
+                # print(self.stack)
                 print(f"{frame.ip:2} {op:2} {args}")
 
                 next(frame)
