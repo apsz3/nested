@@ -72,6 +72,9 @@ class ASTLeaf(ASTNode):
     def visit(self):
         return self
 
+    def __rich_repr__(self):
+        yield self.value
+
 class ASTConstantValue(ASTLeaf):
     def __init__(self, type: str, value: str):
         super().__init__(value)
@@ -79,8 +82,7 @@ class ASTConstantValue(ASTLeaf):
 
     def __rich_repr__(self):
         yield self.type
-        return super().__rich_repr__()
-
+        yield self.value
 class ASTUnOp(ASTNode):
 
     class UnOps(Enum):
@@ -110,7 +112,6 @@ class ASTOp(ASTNode):
             return ASTUnOp(self.value, *self.children)
         elif len(self.children) == 2:
             return ASTBinOp(self.value, *self.children)    #     if self.value in ASTIdentifier.builtins:
-        breakpoint()
         raise ValueError("non-op")
 
 class ASTBinOp(ASTNode):
