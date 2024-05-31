@@ -50,14 +50,6 @@ class ASTNode:
 
     def visit(self):
         self.children = [child.visit() for child in self.children]
-
-        # if isinstance(self.children[0], ASTOp):
-        #     op = self.children[0]
-        #     if len(self.children) == 2:
-        #         return ASTUnOp(op, self.children[1])
-        #     elif len(self.children) == 3:
-        #         return ASTBinOp(op, self.children[1], self.children[2])
-
         return self
 
 class ASTModule(ASTNode):
@@ -130,7 +122,10 @@ class ASTBinOp(ASTNode):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.op = self.map(self.value)
+
+    @property
+    def op(self):
+        return self.value
 
     @staticmethod
     def map(op: str):
@@ -147,7 +142,10 @@ class ASTBinOp(ASTNode):
 class ASTProc(ASTNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.proc = self.id # TODO: cheeky, fix
+
+    @property
+    def proc(self):
+        return self.value #
 
     def visit(self):
         # self.proc = ASTIdentifier(self.name)
@@ -160,9 +158,9 @@ class ASTList(ASTNode):
         super().__init__(*args, **kwargs)
 
     def visit(self):
-        if isinstance(self.id, ASTIdentifier):
+        if isinstance(self.value, ASTIdentifier):
             # Not a list
-            if ASTIdentifier.is_builtin(self.id.value): # ID = "identifier"", VALUE = THE THING WE WANT e.g. "add"
+            if ASTIdentifier.is_builtin(self.value): # ID = "identifier"", VALUE = THE THING WE WANT e.g. "add"
                 n = ASTOp(self.value, *self.children) # TODO: when do we visit this???
             else:
                 n = ASTProc(self.value, *self.children)
@@ -192,7 +190,7 @@ class T(Transformer):
     # them take that and feed it through a different visitor class that
     # yields the AST nodes.
     def program(self, *children):
-        return ASTModule (*children,)
+        return ASTModule ("filename.nst", *children,)
 
     # @v_args(inline=True, meta=True)
     # def s_expr(self, meta, *children):
