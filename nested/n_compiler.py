@@ -1,16 +1,16 @@
 from lark import Tree
 from enum import Enum, auto
 from rich import print
-from nested.n_parser import ASTUnOpExpr, ASTNode, ASTModule, ASTBinOpExpr, ASTConstantValue, ASTIdentifier, ASTProc, ASTVaryOpExpr
+from nested.n_parser import ASTExpr, ASTList, ASTNode, ASTModule, ASTConstantValue, ASTIdentifier, ASTOp, ASTProc
 from nested.n_opcode import Op, OpCode
 
 # Continuation -- add before / after / during, where during gets
 # the parent class fn as an arg.
-opmap = {
-    ASTUnOpExpr.UnOps.NEG: OpCode.NEG,
-    ASTVaryOpExpr.VaryOps.PRINT: OpCode.PRINT,
-    ASTBinOpExpr.BinOps.ADD: OpCode.ADD
-}
+# opmap = {
+#     ASTUnOpExpr.UnOps.NEG: OpCode.NEG,
+#     ASTVaryOpExpr.VaryOps.PRINT: OpCode.PRINT,
+#     ASTBinOpExpr.BinOps.ADD: OpCode.ADD
+# }
 class Compiler:
 
     def __init__(self, tree: Tree):
@@ -21,10 +21,10 @@ class Compiler:
         self.buffer.append(arg)
 
     def compile_program(self):
-        self.emit(Op(OpCode.BEGIN_MODULE, self))
+        self.emit(Op(OpCode.BEGIN_MODULE, "META"))
         # Get metadata from self.tree here (not children)
         self.compile(self.tree.children)
-        self.emit(Op(OpCode.END_MODULE, self))
+        self.emit(Op(OpCode.END_MODULE, "META"))
 
     def compile(self, nodes):
         for node in nodes:
@@ -39,32 +39,32 @@ class Compiler:
     # Note: The main purpose of unop and binop
     # is so that we don't have to use generic Call
     # instructions to execute builtins
-    def compile_binop(self, node: ASTBinOpExpr):
-        if (op := opmap.get(node.op)):
-            self.compile_node(node.LExpr)
-            self.compile_node(node.RExpr)
-            self.emit(Op(op)) # TODO: make these constant objects?
-        else:
-            raise ValueError(f"Unknown binop: {node.op}")
+    # def compile_binop(self, node: ASTBinOpExpr):
+    #     if (op := opmap.get(node.op)):
+    #         self.compile_node(node.LExpr)
+    #         self.compile_node(node.RExpr)
+    #         self.emit(Op(op)) # TODO: make these constant objects?
+    #     else:
+    #         raise ValueError(f"Unknown binop: {node.op}")
 
-    def compile_varyop(self, node: ASTVaryOpExpr):
-        if (op := opmap.get(node.op)) is None:
-            raise ValueError(f"Unknown varyop: {node.op}")
+    # def compile_varyop(self, node: ASTVaryOpExpr):
+    #     if (op := opmap.get(node.op)) is None:
+    #         raise ValueError(f"Unknown varyop: {node.op}")
 
-        for child in node.children:
-            self.compile_node(child)
-        self.emit(Op(op))
+    #     for child in node.children:
+    #         self.compile_node(child)
+    #     self.emit(Op(op))
 
-    def compile_unop(self, node: ASTUnOpExpr):
-        if node.op == ASTUnOpExpr.UnOps.NEG:
-            self.compile_node(node.expr)
-            self.emit(Op(OpCode.NEG))
-        elif node.op == ASTUnOpExpr.UnOps.PRINT:
-            self.compile_node(node.expr)
-            self.emit(Op(OpCode.PRINT))
-        else:
-            breakpoint()
-            raise ValueError(f"Unknown unop: {node.op}")
+    # def compile_unop(self, node: ASTUnOpExpr):
+    #     if node.op == ASTUnOpExpr.UnOps.NEG:
+    #         self.compile_node(node.expr)
+    #         self.emit(Op(OpCode.NEG))
+    #     elif node.op == ASTUnOpExpr.UnOps.PRINT:
+    #         self.compile_node(node.expr)
+    #         self.emit(Op(OpCode.PRINT))
+    #     else:
+    #         breakpoint()
+    #         raise ValueError(f"Unknown unop: {node.op}")
 
     def compile_const(self, node: ASTConstantValue):
         if node.type == "int":
@@ -74,14 +74,21 @@ class Compiler:
         else:
             raise ValueError(f"Unknown const: {node.type}")
 
-    # def compile_proc_define(self, node: ASTProcDefn):
+    # def compile_expr_define(self, node: ASTProcDefn):
     #     ...
 
-    def compile_proc(self, node: ASTProc):
+    def compile_expr(self, node: ASTProc):
+        # TODO: Check arity here for builtins etc .. ?
+
         for child in node.children:
             self.compile_node(child)
             # self.emit(OpCode.ARGPUSH)
-        self.emit(Op(OpCode.CALL, node.proc)) # ARGPUSH puts things on the arg stack, so we dont have to manage it.
+        if isinstance(node.value, ASTOp): # builtin, just call its opcode
+            self.emit(Op.from_id(node.value))
+        else:
+            val = node.value # TODO: need to resolve the symbol
+            # here in the frame, dont emit an AST node identifier here....
+            self.emit(Op(OpCode.CALL, node.value, len(node.children)))
 
     def compile_identifier(self, node: ASTIdentifier):
         self.emit(Op(OpCode.LOAD, node.value))
@@ -89,16 +96,16 @@ class Compiler:
     def compile_node(self, node: ASTNode):
         if isinstance(node, ASTModule):
             self.compile_program(node.children)
-        elif isinstance(node, ASTBinOpExpr):
-            self.compile_binop(node)
+        elif isinstance(node, ASTExpr):
+            self.compile_expr(node)
         elif isinstance(node, ASTConstantValue):
             self.compile_const(node)
         elif isinstance(node, ASTIdentifier):
             self.compile_identifier(node)
-        elif isinstance(node, ASTUnOpExpr):
-            self.compile_unop(node)
-        elif isinstance(node, ASTProc):
-            self.compile_proc(node)
+        elif isinstance(node, ASTExpr):
+            self.compile_expr(node)
+        elif isinstance(node, ASTList):
+            self.compile(node.children)
         # elif isinstance(node, ASTOp):
         #     breakpoint()
         else:

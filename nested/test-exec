@@ -1,4 +1,6 @@
 1
 a
+(foo 1)
 (add 1 2)
+((add 1) 2)
 (print 1)

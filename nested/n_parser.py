@@ -50,6 +50,7 @@ class ASTNode:
         yield from self.children
 
     def visit(self):
+        self.value = self.value.visit()
         self.children = [child.visit() for child in self.children]
         return self
 
@@ -85,86 +86,6 @@ class ASTConstantValue(ASTLeaf):
         yield self.type
         yield self.value
 
-class ASTVaryOpExpr(ASTNode):
-
-    class VaryOps(Enum):
-        PRINT = auto()
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    @property
-    def op(self):
-        return self.map(self.value)
-
-    @staticmethod
-    def map(op: str):
-        if op == "print": return ASTVaryOpExpr.VaryOps.PRINT
-        else: raise ValueError(f"Unknown unop {op}")
-
-
-    def visit(self):
-        return self
-class ASTUnOpExpr(ASTNode):
-
-    class UnOps(Enum):
-        NEG = auto()
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    @property
-    def op(self):
-        return self.map(self.value)
-
-    @staticmethod
-    def map(op: str):
-        if op == "sub": return ASTUnOpExpr.UnOps.NEG
-        else: raise ValueError(f"Unknown unop {op}")
-
-    @property
-    def expr(self):
-        return self.children[0]
-
-class ASTOp(ASTNode):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def visit(self):
-        self.value = self.value.visit() # U gotta do this bc you just need to, not sure i understand tbqhywf
-        self.children = [child.visit() for child in self.children]
-        if len(self.children) == 1:
-            return ASTUnOpExpr(self.value, *self.children)
-        elif len(self.children) == 2:
-            return ASTBinOpExpr(self.value, *self.children)
-        return ASTVaryOpExpr(self.value, *self.children)
-
-class ASTBinOpExpr(ASTNode):
-
-    class BinOps(Enum):
-        ADD = auto()
-        SUB = auto()
-        MUL = auto()
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    @property
-    def op(self):
-        return self.value
-
-    @staticmethod
-    def map(op: str):
-        if op == "add": return ASTBinOpExpr.BinOps.ADD
-
-    @property
-    def LExpr(self):
-        return self.children[0]
-
-    @property
-    def RExpr(self):
-        return self.children[1]
-
 class ASTProc(ASTNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -179,17 +100,25 @@ class ASTProc(ASTNode):
         # RETURN WHETYHER WE DO A PRIMITIVE OP, OR A PROC, FROM HERE
         return self
 
+class ASTExpr(ASTNode):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def visit(self):
+        self.value = self.value.visit() # Visit the identifier to make it a Proc (builtin) or still just an ID (needs to be looked up in the symbol table)
+        self.children = [child.visit() for child in self.children]
+        # if isinstance(self.value, ASTIdentifier):
+        #     # TODO: may not be necessary, just use ASTExpr still
+        #     return ASTProc(self.value, *self.children)
+        return self
+
 class ASTList(ASTNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def visit(self):
         if isinstance(self.value, ASTIdentifier):
-            # Not a list
-            if ASTIdentifier.is_builtin(self.value): # ID = "identifier"", VALUE = THE THING WE WANT e.g. "add"
-                n = ASTOp(self.value, *self.children) # TODO: when do we visit this???
-            else:
-                n = ASTProc(self.value, *self.children)
+            n = ASTExpr(self.value, *self.children)
             return n.visit()
         else:
             # It's a list / epxr
@@ -197,11 +126,20 @@ class ASTList(ASTNode):
             self.value = self.value.visit()
             return self
 
+class ASTOp(ASTLeaf):
+    # ASTOp is a leaf, but it's a special leaf that represents a builtin
+    # operation, which means we don't need to do any sort of symbol lookup
+    # on the identifier and load code or values to call -- we just
+    # go straight to the VM instructions for it.
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
 class ASTIdentifier(ASTLeaf):
     builtins = {
         "add", "sub", "print"
     }
 
+    @property
     def is_builtin(self):
         return self.value in ASTIdentifier.builtins
 
@@ -209,7 +147,7 @@ class ASTIdentifier(ASTLeaf):
         super().__init__(*args, **kwargs)
 
     def visit(self):
-        if self.is_builtin():
+        if self.is_builtin:
             return ASTOp(self.value)
         return self
 
