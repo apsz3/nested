@@ -95,6 +95,12 @@ class VMIR:
         except IndexError:
             err("! Need more arguments")
 
+    def call(self, n: int):
+        sym: str = self.stack.pop() # First load the code object
+        co: CodeObj = self.frame.getsym(sym)
+        new = Frame(co, SymTable(), self.frame)
+        self.call_stack.append(new)
+
     def list(self, n: int):
         self.stack.append([self.stack.pop() for _ in range(n)])
 

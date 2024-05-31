@@ -141,7 +141,7 @@ class ASTOp(ASTLeaf):
 class ASTIdentifier(ASTLeaf):
     builtins = {
         "add", "sub", "print", "list",
-        "let"
+        "let", "lambda"
     }
 
     @property

@@ -92,7 +92,6 @@ class Compiler:
         # We cannot thus compile the children ahead of inspecting that,
         # as for the symbol we are defining, we would issue a Load
         # which would fail on execution
-        print(node)
         if isinstance(node.value, ASTOp): # builtin, just call its opcode
             op = Op.from_id(node.value)
             opcode = op.opcode
@@ -109,8 +108,9 @@ class Compiler:
         if isinstance(node.value, ASTOp): # builtin, just call its opcode
             self.emit(Op.from_id(node.value, len(node.children)))
         elif isinstance(node.value, ASTIdentifier):
-            resolved_value = node.value # TODO: adjust
-            self.emit(Op(OpCode.CALL, resolved_value, len(node.children)))
+            #resolved_value = node.value # TODO: adjust
+            self.compile_identifier(node.value)
+            self.emit(Op(OpCode.CALL, len(node.children)))
         elif isinstance(node.value, ASTExpr):
             # Need this for things like ((eval 'add) 1 2)); need to eval procs too
             self.compile_expr(node.value)

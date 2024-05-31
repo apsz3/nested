@@ -10,3 +10,5 @@
 (let x 1)
 (print x)
 (print (add x 2))
+(let rizz 23)
+(rizz 2 3)
