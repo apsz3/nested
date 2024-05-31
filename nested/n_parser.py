@@ -35,15 +35,15 @@ def parse(text):
 from rich import pretty
 class ASTNode:
 
-    def __init__(self, name: str, *children):
-        self.name = name
+    def __init__(self, id: str, *children):
+        self.id = id
         self.children = children
     def __rich_repr__(self):
-        yield self.name
+        yield self.id
         yield from self.children
 
     def visit(self):
-        print(f"Visiting {self.name}")
+        print(f"Visiting {self.id}")
         self.children = [child.visit() for child in self.children]
 
         # if isinstance(self.children[0], ASTOp):
@@ -69,12 +69,12 @@ class ASTModule(ASTNode):
 
 class ASTLeaf(ASTNode):
 
-    def __init__(self, name: str, value: str):
-        super().__init__(name, None)
+    def __init__(self, id: str, value: str):
+        super().__init__(id, None)
         self.value = value
 
     def __rich_repr__(self):
-        yield self.name
+        yield self.id
         yield self.value
 
     def visit(self):
@@ -92,7 +92,7 @@ class ASTUnOp(ASTNode):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.name = self.map(self.name.value)
+        self.id = self.map(self.id.value)
 
     @staticmethod
     def map(op: str):
@@ -110,9 +110,9 @@ class ASTOp(ASTNode):
     def visit(self):
         self.children = [child.visit() for child in self.children]
         if len(self.children) == 1:
-            return ASTUnOp(self.name, *self.children)
+            return ASTUnOp(self.id, *self.children)
         elif len(self.children) == 2:
-            return ASTBinOp(self.name, *self.children)    #     if self.value in ASTIdentifier.builtins:
+            return ASTBinOp(self.id, *self.children)    #     if self.value in ASTIdentifier.builtins:
         raise ValueError("non-op")
 
 class ASTBinOp(ASTNode):
@@ -124,7 +124,7 @@ class ASTBinOp(ASTNode):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.name = self.map(self.name.value)
+        self.id = self.map(self.id.value)
 
     @staticmethod
     def map(op: str):
@@ -141,7 +141,7 @@ class ASTBinOp(ASTNode):
 class ASTProc(ASTNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.proc = self.name # TODO: cheeky, fix
+        self.proc = self.id # TODO: cheeky, fix
 
     def visit(self):
         # self.proc = ASTIdentifier(self.name)
@@ -154,11 +154,11 @@ class ASTList(ASTNode):
         super().__init__(*args, **kwargs)
 
     def visit(self):
-        if ASTIdentifier.is_builtin(self.name):
-            n = ASTProc(self.name, *self.children) # TODO: when do we visit this???
+        if ASTIdentifier.is_builtin(self.id):
+            n = ASTProc(self.id, *self.children) # TODO: when do we visit this???
             n.visit()
             return n
-        n = ASTOp(self.name, *self.children)
+        n = ASTOp(self.id, *self.children)
         n = n.visit()
         return n
         # self.children = [c.visit() for c in self.children]
@@ -172,7 +172,7 @@ class ASTIdentifier(ASTLeaf):
 
     @staticmethod
     def is_builtin(node: "ASTIdentifier"):
-        return node.name in ASTIdentifier.builtins
+        return node.id in ASTIdentifier.builtins
 
     def __init__(self, *args, **kwargs):
         super().__init__("identifier", *args, **kwargs)

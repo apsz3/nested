@@ -27,36 +27,39 @@ class Compiler:
             self.compile_node(node)
 
     # def compile_op(self, node: ASTOp):
-    #     if node.name == "add":
+    #     if node.id == "add":
     #         self.emit(OpCode.ADD)
     #     else:
-    #         raise ValueError(f"Unknown op: {node.name}")
+    #         raise ValueError(f"Unknown op: {node.id}")
 
+    # Note: The main purpose of unop and binop
+    # is so that we don't have to use generic Call
+    # instructions to execute builtins
     def compile_binop(self, node: ASTBinOp):
-        if node.name == ASTBinOp.BinOps.ADD:
+        if node.id == ASTBinOp.BinOps.ADD:
             self.compile_node(node.LExpr)
             self.compile_node(node.RExpr)
             self.emit(Op(OpCode.ADD))
         else:
-            raise ValueError(f"Unknown binop: {node.name}")
+            raise ValueError(f"Unknown binop: {node.id}")
 
     def compile_unop(self, node: ASTUnOp):
-        if node.name == ASTUnOp.UnOps.NEG:
+        if node.id == ASTUnOp.UnOps.NEG:
             self.compile_node(node.expr)
             self.emit(Op(OpCode.NEG))
-        elif node.name == ASTUnOp.UnOps.PRINT:
+        elif node.id == ASTUnOp.UnOps.PRINT:
             self.compile_node(node.expr)
             self.emit(Op(OpCode.PRINT))
         else:
-            raise ValueError(f"Unknown unop: {node.name}")
+            raise ValueError(f"Unknown unop: {node.id}")
 
     def compile_const(self, node: ASTConstantValue):
-        if node.name == "int":
+        if node.id == "int":
             self.emit(Op(OpCode.LOAD_INT, node.value))
-        elif node.name == "string-lit":
+        elif node.id == "string-lit":
             self.emit(Op(OpCode.LOAD_STR, node.value))
         else:
-            raise ValueError(f"Unknown const: {node.name}")
+            raise ValueError(f"Unknown const: {node.id}")
 
     # def compile_proc_define(self, node: ASTProcDefn):
     #     ...
