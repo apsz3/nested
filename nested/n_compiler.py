@@ -90,10 +90,14 @@ class Compiler:
             # self.emit(OpCode.ARGPUSH)
         if isinstance(node.value, ASTOp): # builtin, just call its opcode
             self.emit(Op.from_id(node.value))
+        elif isinstance(node.value, ASTIdentifier):
+            resolved_value = node.value # TODO: adjust
+            self.emit(Op(OpCode.CALL, resolved_value, len(node.children)))
+        elif isinstance(node.value, ASTExpr):
+            # Need this for things like ((eval 'add) 1 2)); need to eval procs too
+            self.compile_expr(node.value)
         else:
-            val = node.value # TODO: need to resolve the symbol
-            # here in the frame, dont emit an AST node identifier here....
-            self.emit(Op(OpCode.CALL, node.value, len(node.children)))
+            raise ValueError(f"Unknown expr: {node.value}")
 
     def compile_identifier(self, node: ASTIdentifier):
         self.emit(Op(OpCode.LOAD, node.value))
