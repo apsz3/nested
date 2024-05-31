@@ -35,15 +35,20 @@ def parse(text):
 from rich import pretty
 class ASTNode:
 
-    def __init__(self, id: str, *children):
-        self.id = id
+    def __init__(self, value, *children):
+        self.value = value
         self.children = children
+
+    @property
+    # ALWAYS JUST FOR DEBUG / PRINT, NEVER SWITCH ON IT
+    def _id(self) -> str:
+        return self.__class__.__name__
+
     def __rich_repr__(self):
-        yield self.id
+        yield self.value
         yield from self.children
 
     def visit(self):
-        print(f"Visiting {self.id}")
         self.children = [child.visit() for child in self.children]
 
         # if isinstance(self.children[0], ASTOp):
@@ -69,20 +74,20 @@ class ASTModule(ASTNode):
 
 class ASTLeaf(ASTNode):
 
-    def __init__(self, id: str, value: str):
-        super().__init__(id, None)
-        self.value = value
-
-    def __rich_repr__(self):
-        yield self.id
-        yield self.value
+    def __init__(self, value):
+        super().__init__(value, None)
 
     def visit(self):
         return self
 
 class ASTConstantValue(ASTLeaf):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, type: str, value: str):
+        super().__init__(value)
+        self.type = type
+
+    def __rich_repr__(self):
+        yield self.type
+        return super().__rich_repr__()
 
 class ASTUnOp(ASTNode):
 
@@ -92,7 +97,7 @@ class ASTUnOp(ASTNode):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.id = self.map(self.id.value)
+        self.op = self.map(self.value)
 
     @staticmethod
     def map(op: str):
@@ -110,9 +115,10 @@ class ASTOp(ASTNode):
     def visit(self):
         self.children = [child.visit() for child in self.children]
         if len(self.children) == 1:
-            return ASTUnOp(self.id, *self.children)
+            return ASTUnOp(self.value, *self.children)
         elif len(self.children) == 2:
-            return ASTBinOp(self.id, *self.children)    #     if self.value in ASTIdentifier.builtins:
+            return ASTBinOp(self.value, *self.children)    #     if self.value in ASTIdentifier.builtins:
+        breakpoint()
         raise ValueError("non-op")
 
 class ASTBinOp(ASTNode):
@@ -124,7 +130,7 @@ class ASTBinOp(ASTNode):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.id = self.map(self.id.value)
+        self.op = self.map(self.value)
 
     @staticmethod
     def map(op: str):
@@ -154,16 +160,14 @@ class ASTList(ASTNode):
         super().__init__(*args, **kwargs)
 
     def visit(self):
-        if ASTIdentifier.is_builtin(self.id):
-            n = ASTProc(self.id, *self.children) # TODO: when do we visit this???
-            n.visit()
-            return n
-        n = ASTOp(self.id, *self.children)
-        n = n.visit()
-        return n
-        # self.children = [c.visit() for c in self.children]
-        # self.name = "foo"
-        # return self
+        if isinstance(self.id, ASTIdentifier):
+            # Not a list
+            if ASTIdentifier.is_builtin(self.id.value): # ID = "identifier"", VALUE = THE THING WE WANT e.g. "add"
+                n = ASTOp(self.value, *self.children) # TODO: when do we visit this???
+            else:
+                n = ASTProc(self.value, *self.children)
+            return n.visit()
+        breakpoint()
 
 class ASTIdentifier(ASTLeaf):
     builtins = {
@@ -172,10 +176,10 @@ class ASTIdentifier(ASTLeaf):
 
     @staticmethod
     def is_builtin(node: "ASTIdentifier"):
-        return node.id in ASTIdentifier.builtins
+        return node.value in ASTIdentifier.builtins
 
     def __init__(self, *args, **kwargs):
-        super().__init__("identifier", *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def visit(self):
         if self.value in ASTIdentifier.builtins:
@@ -188,7 +192,7 @@ class T(Transformer):
     # them take that and feed it through a different visitor class that
     # yields the AST nodes.
     def program(self, *children):
-        return ASTModule ('program', *children,)
+        return ASTModule (*children,)
 
     # @v_args(inline=True, meta=True)
     # def s_expr(self, meta, *children):
@@ -223,41 +227,3 @@ class T(Transformer):
     @v_args(inline=True, meta=True)
     def ident(self, meta, token):
         return ASTIdentifier (token.value)
-
-@v_args(inline=True)
-class I(Interpreter):
-    # To have this work on the transformer parse tree,
-    # need to make each rule in the Transformer return a Tree() object
-    def program(self, *children):
-        return ('program', *children)
-
-    # @v_args(inline=True, meta=True)
-    # def s_expr(self, meta, *children):
-    #     return ("s-expr", *children,)
-
-    # @v_args(inline=True, meta=True)
-    # def list(self, meta, *children):
-    #     return ("list", *children,)
-
-    # @v_args(inline=True, meta=True)
-    # def number(self, meta, token):
-    #     return ("int", token.value)
-
-    # @v_args(inline=True, meta=True)
-    # def atom(self, meta, token):
-    #     return ("atom", token)
-
-    # @v_args(inline=True, meta=True)
-    # def string(self, meta, token):
-    #     # Includes `""` in the string
-    #     return ("string-lit", token.value)
-
-    # @v_args(inline=True, meta=True)
-    # def ident(self, meta, token):
-    #     return ("identifier", token.value)
-
-
-
-
-# print(I().interpret(res))
-
