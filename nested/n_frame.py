@@ -50,6 +50,9 @@ class Frame:
     def __next__(self):
         self.ip += 1
 
+    def setsym(self, name: str, value: str):
+        self.locals.set(name, value)
+
     def getsym(self, name):
         if (res := self.locals.get(name)):
             return res

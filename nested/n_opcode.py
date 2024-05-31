@@ -10,6 +10,8 @@ class OpCode(Enum):
     PRINT = auto()
 
     LOAD = auto()
+
+    LOAD_REF = auto()
     LOAD_INT = auto()
     LOAD_STR = auto()
 
@@ -61,6 +63,9 @@ class Op:
             # Symbol operations
             case "let":
                 opcode = OpCode.STORE
+
+            case "load_ref":
+                opcode = OpCode.LOAD_REF
             case "load":
                 opcode = OpCode.LOAD
             # Function calls

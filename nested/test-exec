@@ -1,9 +1,11 @@
-1
-(print (add 2 3))
-a
-(foo 1)
-(add 11 22)
-(print (add 1) 2)
-(print 1555)
+; 1
+; (print (add 2 3))
+; (let a 1)
+; (foo 1)
+; (add 11 22)
+; (print (add 1) 2)
+; (print 1555)
 
 ; (let x 1)
+(let x 1)
+(print x)

@@ -81,9 +81,28 @@ class Compiler:
     #         self.compile_node(child)
     #     self.compile_node(node.value) # TODO: What is this doing?
     #     self.emit(OpCode.LIST, len(node.children)) # Retrieve the last K values
+    def compile_ref(self, node: ASTIdentifier):
+        self.emit(Op(OpCode.LOAD_REF, node.value))
 
     def compile_expr(self, node: ASTExpr):
         # TODO: Check arity here for builtins etc .. ?
+
+        # Special case: for definition, we must push a Ref,
+        # not the value itself, for the symbol to be resolved.
+        # We cannot thus compile the children ahead of inspecting that,
+        # as for the symbol we are defining, we would issue a Load
+        # which would fail on execution
+        print(node)
+        if isinstance(node.value, ASTOp): # builtin, just call its opcode
+            op = Op.from_id(node.value)
+            opcode = op.opcode
+            if opcode == OpCode.STORE:
+                sym = node.children[0]
+                self.compile_ref(sym)
+                for child in node.children[1:]:
+                    self.compile_node(child)
+                self.emit(op)
+                return
 
         for child in node.children:
             self.compile_node(child)

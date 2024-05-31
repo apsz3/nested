@@ -46,6 +46,10 @@ class VMIR:
                         self.load_type(OpCode.LOAD_STR, *args)
                     case OpCode.LOAD:
                         self.load(*args)
+                    case OpCode.LOAD_REF:
+                        self.load_ref(*args)
+                    case OpCode.STORE:
+                        self.store(*args)
                     case OpCode.BEGIN_MODULE:
                         pass
                     case OpCode.END_MODULE:
@@ -62,6 +66,9 @@ class VMIR:
         except ValueError as e:
             err(str(e))
 
+    def load_ref(self, v: str):
+        self.stack.append(v)
+
     def load_type(self, op: OpCode, v: str):
         match op:
             case OpCode.LOAD_INT:
@@ -73,6 +80,13 @@ class VMIR:
 
     def load(self, v: str):
         return self.frame.getsym(v)
+
+    def store(self):
+        # Can't just shove the symbol in with this Instr because
+        # the symbol could be evaluated on the stack by compiling
+        # and we need to execute to get the proper value... maybe TODO
+        val, sym = self.stack.pop(), self.stack.pop()
+        self.frame.setsym(sym, val)
 
     def print(self, n: int):
         try:
