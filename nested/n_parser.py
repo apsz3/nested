@@ -165,7 +165,11 @@ class ASTList(ASTNode):
             else:
                 n = ASTProc(self.value, *self.children)
             return n.visit()
-        breakpoint()
+        else:
+            # It's a list / epxr
+            self.children = [child.visit() for child in self.children]
+            self.value = self.value.visit()
+            return self
 
 class ASTIdentifier(ASTLeaf):
     builtins = {
