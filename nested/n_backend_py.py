@@ -79,7 +79,7 @@ class VMIR:
                 err(f"Unknown type: {op}")
 
     def load(self, v: str):
-        return self.frame.getsym(v)
+        self.stack.append(self.frame.getsym(v))
 
     def store(self):
         # Can't just shove the symbol in with this Instr because
