@@ -21,6 +21,7 @@ def parse(text):
 
 
 
+
 # class ASTNode(Tree):
 #     def __init__(self, name, children):
 #         self.data = name
@@ -83,7 +84,15 @@ class ASTConstantValue(ASTLeaf):
     def __rich_repr__(self):
         yield self.type
         yield self.value
-class ASTUnOp(ASTNode):
+
+class ASTVaryOpExpr(ASTNode):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def visit(self):
+
+        return self
+class ASTUnOpExpr(ASTNode):
 
     class UnOps(Enum):
         NEG = auto()
@@ -98,8 +107,8 @@ class ASTUnOp(ASTNode):
 
     @staticmethod
     def map(op: str):
-        if op == "sub": return ASTUnOp.UnOps.NEG
-        elif op == "print": return ASTUnOp.UnOps.PRINT
+        if op == "sub": return ASTUnOpExpr.UnOps.NEG
+        elif op == "print": return ASTUnOpExpr.UnOps.PRINT
         else: raise ValueError(f"Unknown unop {op}")
 
     @property
@@ -111,14 +120,15 @@ class ASTOp(ASTNode):
         super().__init__(*args, **kwargs)
 
     def visit(self):
+        self.value = self.value.visit() # U gotta do this bc you just need to, not sure i understand tbqhywf
         self.children = [child.visit() for child in self.children]
         if len(self.children) == 1:
-            return ASTUnOp(self.value, *self.children)
+            return ASTUnOpExpr(self.value, *self.children)
         elif len(self.children) == 2:
-            return ASTBinOp(self.value, *self.children)    #     if self.value in ASTIdentifier.builtins:
-        raise ValueError("non-op")
+            return ASTBinOpExpr(self.value, *self.children)
+        return ASTVaryOpExpr(self.value, *self.children)
 
-class ASTBinOp(ASTNode):
+class ASTBinOpExpr(ASTNode):
 
     class BinOps(Enum):
         ADD = auto()
@@ -134,7 +144,7 @@ class ASTBinOp(ASTNode):
 
     @staticmethod
     def map(op: str):
-        if op == "add": return ASTBinOp.BinOps.ADD
+        if op == "add": return ASTBinOpExpr.BinOps.ADD
 
     @property
     def LExpr(self):
@@ -210,8 +220,8 @@ class T(Transformer):
 
 
         # if len(children) == 1:
-        #     return ASTUnOp(children[0])
-        # return ASTBinOp ("foo", *children)
+        #     return ASTUnOpExpr(children[0])
+        # return ASTBinOpExpr ("foo", *children)
 
     @v_args(inline=True)
     def list(self, *children):

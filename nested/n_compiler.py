@@ -1,7 +1,7 @@
 from lark import Tree
 from enum import Enum, auto
 from rich import print
-from nested.n_parser import ASTUnOp, ASTNode, ASTModule, ASTBinOp, ASTConstantValue, ASTIdentifier, ASTProc
+from nested.n_parser import ASTUnOpExpr, ASTNode, ASTModule, ASTBinOpExpr, ASTConstantValue, ASTIdentifier, ASTProc
 from nested.n_opcode import Op, OpCode
 
 # Continuation -- add before / after / during, where during gets
@@ -35,19 +35,19 @@ class Compiler:
     # Note: The main purpose of unop and binop
     # is so that we don't have to use generic Call
     # instructions to execute builtins
-    def compile_binop(self, node: ASTBinOp):
-        if node.op == ASTBinOp.BinOps.ADD:
+    def compile_binop(self, node: ASTBinOpExpr):
+        if node.op == ASTBinOpExpr.BinOps.ADD:
             self.compile_node(node.LExpr)
             self.compile_node(node.RExpr)
             self.emit(Op(OpCode.ADD))
         else:
             raise ValueError(f"Unknown binop: {node.op}")
 
-    def compile_unop(self, node: ASTUnOp):
-        if node.op == ASTUnOp.UnOps.NEG:
+    def compile_unop(self, node: ASTUnOpExpr):
+        if node.op == ASTUnOpExpr.UnOps.NEG:
             self.compile_node(node.expr)
             self.emit(Op(OpCode.NEG))
-        elif node.op == ASTUnOp.UnOps.PRINT:
+        elif node.op == ASTUnOpExpr.UnOps.PRINT:
             self.compile_node(node.expr)
             self.emit(Op(OpCode.PRINT))
         else:
@@ -77,13 +77,13 @@ class Compiler:
     def compile_node(self, node: ASTNode):
         if isinstance(node, ASTModule):
             self.compile_program(node.children)
-        elif isinstance(node, ASTBinOp):
+        elif isinstance(node, ASTBinOpExpr):
             self.compile_binop(node)
         elif isinstance(node, ASTConstantValue):
             self.compile_const(node)
         elif isinstance(node, ASTIdentifier):
             self.compile_identifier(node)
-        elif isinstance(node, ASTUnOp):
+        elif isinstance(node, ASTUnOpExpr):
             self.compile_unop(node)
         elif isinstance(node, ASTProc):
             self.compile_proc(node)
