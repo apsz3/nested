@@ -7,22 +7,22 @@ from nested.n_parser import ASTIdentifier
 class OpCode(Enum):
     ADD = auto()
     NEG = auto()
+    PRINT = auto()
 
     LOAD = auto()
     LOAD_INT = auto()
     LOAD_STR = auto()
 
+    STORE = auto()
+
     LIST = auto()
 
     ARGPUSH = auto()
     ARGPOP = auto()
+    CALL = auto()
 
     PUSH = auto()
     POP = auto()
-
-    PRINT = auto()
-
-    CALL = auto()
 
     BEGIN_MODULE = auto()
     END_MODULE = auto()
@@ -43,30 +43,39 @@ class Op:
     def from_id(i: ASTIdentifier, *args):
         opcode = None
         match i.value:
+            # Builtin primitives
             case "add":
                 opcode = OpCode.ADD
             case "neg":
                 opcode = OpCode.NEG
+            case "print":
+                opcode = OpCode.PRINT
             case "list":
                 opcode = OpCode.LIST
-            case "load":
-                opcode = OpCode.LOAD
+            # Value operations
+
             case "load_int":
                 opcode = OpCode.LOAD_INT
             case "load_str":
                 opcode = OpCode.LOAD_STR
+            # Symbol operations
+            case "let":
+                opcode = OpCode.STORE
+            case "load":
+                opcode = OpCode.LOAD
+            # Function calls
             case "argpush":
                 opcode = OpCode.ARGPUSH
             case "argpop":
                 opcode = OpCode.ARGPOP
+            case "call":
+                opcode = OpCode.CALL
+            # Stack manipulation
             case "push":
                 opcode = OpCode.PUSH
             case "pop":
                 opcode = OpCode.POP
-            case "print":
-                opcode = OpCode.PRINT
-            case "call":
-                opcode = OpCode.CALL
+
             case "begin_module":
                 opcode = OpCode.BEGIN_MODULE
             case "end_module":

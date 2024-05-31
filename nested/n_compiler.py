@@ -1,7 +1,7 @@
 from lark import Tree
 from enum import Enum, auto
 from rich import print
-from nested.n_parser import ASTExpr, ASTList, ASTNode, ASTModule, ASTConstantValue, ASTIdentifier, ASTOp, ASTProc
+from nested.n_parser import ASTExpr, ASTList, ASTNode, ASTModule, ASTConstantValue, ASTIdentifier, ASTOp
 from nested.n_opcode import Op, OpCode
 
 # Continuation -- add before / after / during, where during gets
@@ -82,12 +82,11 @@ class Compiler:
     #     self.compile_node(node.value) # TODO: What is this doing?
     #     self.emit(OpCode.LIST, len(node.children)) # Retrieve the last K values
 
-    def compile_expr(self, node: ASTProc):
+    def compile_expr(self, node: ASTExpr):
         # TODO: Check arity here for builtins etc .. ?
 
         for child in node.children:
             self.compile_node(child)
-            # self.emit(OpCode.ARGPUSH)
         if isinstance(node.value, ASTOp): # builtin, just call its opcode
             self.emit(Op.from_id(node.value, len(node.children)))
         elif isinstance(node.value, ASTIdentifier):
@@ -113,9 +112,5 @@ class Compiler:
             self.compile_identifier(node)
         elif isinstance(node, ASTExpr):
             self.compile_expr(node)
-        # elif isinstance(node, ASTList):
-        #     self.compile_list(node)
-        # elif isinstance(node, ASTOp):
-        #     breakpoint()
         else:
             raise ValueError(f"Unknown node type: {node}")

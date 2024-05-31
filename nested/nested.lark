@@ -16,9 +16,15 @@ string: ESCAPED_STRING
     | number
     | string
 
+
+
+COMMENT: /;.*/
+
 %import common.LETTER
 %import common.DIGIT
 %import common.NUMBER
 %import common.ESCAPED_STRING
 %import common.WS
+
+%ignore COMMENT
 %ignore WS

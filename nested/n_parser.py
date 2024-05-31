@@ -86,19 +86,19 @@ class ASTConstantValue(ASTLeaf):
         yield self.type
         yield self.value
 
-class ASTProc(ASTNode):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+# class ASTProc(ASTNode):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
 
-    @property
-    def proc(self):
-        return self.value #
+#     @property
+#     def proc(self):
+#         return self.value #
 
-    def visit(self):
-        # self.proc = ASTIdentifier(self.name)
-        self.children = [child.visit() for child in self.children]
-        # RETURN WHETYHER WE DO A PRIMITIVE OP, OR A PROC, FROM HERE
-        return self
+#     def visit(self):
+#         # self.proc = ASTIdentifier(self.name)
+#         self.children = [child.visit() for child in self.children]
+#         # RETURN WHETYHER WE DO A PRIMITIVE OP, OR A PROC, FROM HERE
+#         return self
 
 class ASTExpr(ASTNode):
     def __init__(self, *args, **kwargs):
@@ -140,7 +140,8 @@ class ASTOp(ASTLeaf):
 
 class ASTIdentifier(ASTLeaf):
     builtins = {
-        "add", "sub", "print", "list"
+        "add", "sub", "print", "list",
+        "let"
     }
 
     @property
@@ -161,6 +162,7 @@ class T(Transformer):
     # them take that and feed it through a different visitor class that
     # yields the AST nodes.
     def program(self, *children):
+        # breakpoint()
         return ASTModule ("filename.nst", *children,)
 
     # @v_args(inline=True, meta=True)
