@@ -46,8 +46,8 @@ class VMIR:
                         self.load_type(OpCode.LOAD_STR, *args)
                     case OpCode.LOAD:
                         self.load(*args)
-                    case OpCode.LOAD_REF:
-                        self.load_ref(*args)
+                    case OpCode.PUSH_REF:
+                        self.push_ref(*args)
                     case OpCode.STORE:
                         self.store(*args)
                     case OpCode.BEGIN_MODULE:
@@ -55,6 +55,7 @@ class VMIR:
                     case OpCode.END_MODULE:
                         pass
                     case OpCode.CALL:
+                        self.call(*args)
                         pass
                     case _:
                         raise ValueError(f"Unknown opcode: {op}")
@@ -66,7 +67,7 @@ class VMIR:
         except ValueError as e:
             err(str(e))
 
-    def load_ref(self, v: str):
+    def push_ref(self, v: str):
         self.stack.append(v)
 
     def load_type(self, op: OpCode, v: str):
@@ -96,9 +97,14 @@ class VMIR:
             err("! Need more arguments")
 
     def call(self, n: int):
-        sym: str = self.stack.pop() # First load the code object
+        sym: str = self.stack.pop() # First load the code object by name
         co: CodeObj = self.frame.getsym(sym)
-        new = Frame(co, SymTable(), self.frame)
+
+        # Collect args from the stack and assign to locals
+        args = [self.stack.pop() for _ in range(n)]
+        args.reverse()
+
+        new = Frame(co,  self.frame)
         self.call_stack.append(new)
 
     def list(self, n: int):

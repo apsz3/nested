@@ -11,7 +11,7 @@ class OpCode(Enum):
 
     LOAD = auto()
 
-    LOAD_REF = auto()
+    PUSH_REF = auto()
     LOAD_INT = auto()
     LOAD_STR = auto()
 
@@ -19,8 +19,11 @@ class OpCode(Enum):
 
     LIST = auto()
 
-    ARGPUSH = auto()
-    ARGPOP = auto()
+    PUSH_LAMBDA = auto()
+    POP_LAMBDA = auto()
+
+    PUSH_ARGS = auto()
+    POP_ARGS = auto()
     CALL = auto()
 
     PUSH = auto()
@@ -55,7 +58,8 @@ class Op:
             case "list":
                 opcode = OpCode.LIST
             # Value operations
-
+            case "lambda":
+                opcode = OpCode.PUSH_LAMBDA
             case "load_int":
                 opcode = OpCode.LOAD_INT
             case "load_str":
@@ -64,15 +68,11 @@ class Op:
             case "let":
                 opcode = OpCode.STORE
 
-            case "load_ref":
-                opcode = OpCode.LOAD_REF
+            case "push_ref":
+                opcode = OpCode.PUSH_REF
             case "load":
                 opcode = OpCode.LOAD
             # Function calls
-            case "argpush":
-                opcode = OpCode.ARGPUSH
-            case "argpop":
-                opcode = OpCode.ARGPOP
             case "call":
                 opcode = OpCode.CALL
             # Stack manipulation

@@ -11,4 +11,6 @@
 (print x)
 (print (add x 2))
 (let rizz 23)
-(rizz 2 3)
+;(rizz 2 3)
+
+(lambda (x) (add x 2))

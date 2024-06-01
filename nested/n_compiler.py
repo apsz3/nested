@@ -16,9 +16,10 @@ class Compiler:
     def __init__(self, tree: Tree):
         self.tree = tree
         self.buffer = []
-
+        self.ip = 0
     def emit(self, arg):
         self.buffer.append(arg)
+        self.ip += 1
 
     def compile_program(self):
         self.emit(Op(OpCode.BEGIN_MODULE, "META"))
@@ -82,7 +83,7 @@ class Compiler:
     #     self.compile_node(node.value) # TODO: What is this doing?
     #     self.emit(OpCode.LIST, len(node.children)) # Retrieve the last K values
     def compile_ref(self, node: ASTIdentifier):
-        self.emit(Op(OpCode.LOAD_REF, node.value))
+        self.emit(Op(OpCode.PUSH_REF, node.value))
 
     def compile_expr(self, node: ASTExpr):
         # TODO: Check arity here for builtins etc .. ?
@@ -95,6 +96,7 @@ class Compiler:
         if isinstance(node.value, ASTOp): # builtin, just call its opcode
             op = Op.from_id(node.value)
             opcode = op.opcode
+
             if opcode == OpCode.STORE:
                 sym = node.children[0]
                 self.compile_ref(sym)
@@ -103,19 +105,42 @@ class Compiler:
                 self.emit(op)
                 return
 
+            elif opcode == OpCode.PUSH_LAMBDA:
+                self.compile_lambda(node)
+                return
+
         for child in node.children:
             self.compile_node(child)
+
         if isinstance(node.value, ASTOp): # builtin, just call its opcode
             self.emit(Op.from_id(node.value, len(node.children)))
+
         elif isinstance(node.value, ASTIdentifier):
-            #resolved_value = node.value # TODO: adjust
             self.compile_identifier(node.value)
             self.emit(Op(OpCode.CALL, len(node.children)))
+
         elif isinstance(node.value, ASTExpr):
             # Need this for things like ((eval 'add) 1 2)); need to eval procs too
             self.compile_expr(node.value)
         else:
             raise ValueError(f"Unknown expr: {node.value}")
+
+    def compile_lambda(self, node: ASTOp):
+        self.emit(OpCode.PUSH_LAMBDA)
+        args = node.children[0]
+        self.emit(OpCode.PUSH_ARGS)
+
+        # TODO When setting up call frame, have to push the args in reverse order
+        # to make it easier to pop them off in order when calling the lambda
+        # .. or something
+        for arg in args.children:
+            arg = self.compile_node(arg)
+            self.emit(Op(OpCode.PUSH_REF, arg.value))
+            self.emit(Op(OpCode.STORE, 1)) # Store will pop the ref and the value off, incrementally, at runtiem
+        self.emit(OpCode.POP_ARGS)
+        body = node.children[1]
+        self.compile_node(body)
+        self.emit(OpCode.POP_LAMBDA)
 
     def compile_identifier(self, node: ASTIdentifier):
         self.emit(Op(OpCode.LOAD, node.value))
