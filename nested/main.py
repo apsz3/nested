@@ -30,7 +30,11 @@ def main(parse, compile, debug, file_path):
     v = VM(VMIR())
     v.run(c.buffer)
 
-    print(v.debug())
+    stack, call_stack, frame = v.debug()
+    print("-- VM")
+    print("stack", stack)
+    print("call stack", call_stack)
+    print(frame)
     # print(f"> {v.run(c.buffer)}")
 
 if __name__ == '__main__':

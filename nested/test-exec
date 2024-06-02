@@ -13,5 +13,7 @@
 (let rizz 23)
 ;(rizz 2 3)
 
-(let rizz (lambda (x) 1))
-(let edge (lambda (x y) (add x 2)))
+ (lambda (x y) (add x y))
+(let edge (lambda (x y) (add x y)))
+(let rizz (lambda (x) (edge x)))
+(print (rizz 1))

@@ -66,6 +66,5 @@ class Frame:
             raise ValueError(f"Symbol {name} not found in any scope")
 
     def __rich_repr__(self):
-        yield "Frame"
         yield self.locals
         yield self.parent

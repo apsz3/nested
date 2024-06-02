@@ -60,8 +60,8 @@ class VMIR:
         #         err(f"Unknown opcode in args: {a.opcode}")
         co = CodeObj(body)
         fn = FunObj(co, params)
-        print(params, fn.params)
-        self.stack.append(fn) # Append the function object, the ref should pop it when needed
+        self.stack.append(fn) # Append the function object, since this could be inline;
+        # a Let / definition will be popping it when needed
 
     def debug(self):
         return (self.stack, self.call_stack, self.frame)
@@ -147,14 +147,22 @@ class VMIR:
             err("! Need more arguments")
 
     def call(self, n: int):
-        sym: str = self.stack.pop() # First load the code object by name
-        co: CodeObj = self.frame.getsym(sym)
-
+        # Before we get to issue Call, we will have issued Load.
+        # Load will have put the value already on the stack.
+        # In our case, the value is a function object.
+        # We could handle calls differently, but dont at the moment.
+        co: CodeObj = self.stack.pop()
         # Collect args from the stack and assign to locals
         args = [self.stack.pop() for _ in range(n)]
         args.reverse()
 
-        new = Frame(co,  self.frame)
+        bind = SymTable()
+        for param_idx, arg_val in enumerate(args):
+            bind.set(co.params[param_idx].name, arg_val)
+
+        # No need to make a copy of the parent's locals --
+        # we will traverse up when needed.
+        new = Frame(co, bind, self.frame)
         self.call_stack.append(new)
 
     def list(self, n: int):
