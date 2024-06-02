@@ -2,7 +2,7 @@ from typing import List
 from rich import print
 
 from nested.n_codeobj import CodeObj
-from nested.n_frame import Frame, SymTable
+from nested.n_backend_py_frame import Frame, SymTable
 from nested.n_opcode import OpCode
 
 def err(msg):
@@ -22,6 +22,11 @@ class VMIR:
         self.call_stack: List[Frame] = [self.frame]
 
         self.exec()
+    def exec_defn_lambda(self, instrs):
+        # Iterate over the list, handling three sections:
+        # Begin Args, End Args, and End Lambda:
+        # TODO: optimize
+        pass
 
     def exec(self):
         while self.call_stack:
@@ -50,6 +55,12 @@ class VMIR:
                         self.push_ref(*args)
                     case OpCode.STORE:
                         self.store(*args)
+                    case OpCode.PUSH_LAMBDA:
+                        ops = []
+                        while (op := self.frame.instr.opcode) != OpCode.POP_LAMBDA:
+                            ops.append(self.frame.instr)
+                            next(self.frame)
+                        self.exec_defn_lambda(ops)
                     case OpCode.BEGIN_MODULE:
                         pass
                     case OpCode.END_MODULE:

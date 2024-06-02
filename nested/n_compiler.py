@@ -126,9 +126,9 @@ class Compiler:
             raise ValueError(f"Unknown expr: {node.value}")
 
     def compile_lambda(self, node: ASTOp):
-        self.emit(OpCode.PUSH_LAMBDA)
+        self.emit(Op(OpCode.PUSH_LAMBDA))
         args = node.children[0]
-        self.emit(OpCode.PUSH_ARGS)
+        self.emit(Op(OpCode.PUSH_ARGS))
 
         # TODO When setting up call frame, have to push the args in reverse order
         # to make it easier to pop them off in order when calling the lambda
@@ -137,10 +137,10 @@ class Compiler:
             arg = self.compile_node(arg)
             self.emit(Op(OpCode.PUSH_REF, arg.value))
             self.emit(Op(OpCode.STORE, 1)) # Store will pop the ref and the value off, incrementally, at runtiem
-        self.emit(OpCode.POP_ARGS)
+        self.emit(Op(OpCode.POP_ARGS))
         body = node.children[1]
         self.compile_node(body)
-        self.emit(OpCode.POP_LAMBDA)
+        self.emit(Op(OpCode.POP_LAMBDA))
 
     def compile_identifier(self, node: ASTIdentifier):
         self.emit(Op(OpCode.LOAD, node.value))
