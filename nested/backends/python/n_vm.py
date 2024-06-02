@@ -69,7 +69,7 @@ class VMIR:
     def exec(self):
         while self.call_stack:
             self.frame = self.call_stack.pop()
-
+            print(">>", self.frame)
             while self.frame.instr:
                 op = self.frame.instr.opcode
                 args = self.frame.instr.args
@@ -99,17 +99,19 @@ class VMIR:
                             next(self.frame)
                         stop = self.frame.ip # POP_LAMBDA
                         self.exec_defn_lambda(start, stop)
-                        next(self.frame)
+                        next(self.frame) # Skip the POP_LAMBDA
                     case OpCode.BEGIN_MODULE:
                         pass
                     case OpCode.END_MODULE:
                         pass
                     case OpCode.CALL:
                         self.call(*args)
-                        pass
+                        # NOTICE THE BREAK -- we must force
+                        #break
+
                     case _:
                         raise ValueError(f"Unknown opcode: {op}")
-            return self.stack
+        return self.stack
 
     def add(self, n:int):
         try:

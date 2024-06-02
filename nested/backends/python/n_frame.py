@@ -18,7 +18,6 @@ class SymTable:
         return self.symbols[name]
 
     def __rich_repr__(self):
-        yield "SymTable"
         for sym in self.symbols:
             yield sym, self.symbols.get(sym, "...")
 
@@ -66,5 +65,6 @@ class Frame:
             raise ValueError(f"Symbol {name} not found in any scope")
 
     def __rich_repr__(self):
+        yield "ip", self.ip
         yield self.locals
-        yield self.parent
+        yield "->", self.parent
