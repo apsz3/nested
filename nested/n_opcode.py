@@ -8,7 +8,6 @@ class OpCode(Enum):
     ADD = auto()
     NEG = auto()
 
-    PRINT = auto()
 
     IF = auto()
 
@@ -44,6 +43,8 @@ class OpCode(Enum):
 
     CALL = auto()
 
+    PRINT = auto()
+
     PUSH = auto()
     POP = auto()
 
@@ -67,13 +68,16 @@ class Op:
         opcode = None
         match i.value:
             # Builtin primitives
-            case "add":
+            case "add" | "+":
                 opcode = OpCode.ADD
             case "neg":
                 opcode = OpCode.NEG
             case "print":
                 opcode = OpCode.PRINT
-
+            case "=":
+                opcode = OpCode.EQ
+            case "!=":
+                opcode = OpCode.NEQ
             # List
             case "list":
                 opcode = OpCode.PUSH_LIST

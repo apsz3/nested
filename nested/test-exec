@@ -38,4 +38,6 @@
 (let x (add (hd ls) (hd (tl ls))))
 (print x)
 
-(if (= x 2))
+; (if (= x 2))
+
+(print (= 1 1))

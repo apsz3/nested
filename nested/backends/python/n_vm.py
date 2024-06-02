@@ -18,6 +18,10 @@ class Symbol:
     def __eq__(self, value: object) -> bool:
         self.name = value.name
 
+    @staticmethod
+    def from_bool(b: bool):
+        return Symbol("true") if b else Symbol("false")
+
 def err(msg):
     raise ValueError(f"[red]Error: {msg}[/red]")
 
@@ -103,6 +107,10 @@ class VMIR:
                         self.load_type(OpCode.LOAD_STR, *args)
                     case OpCode.LOAD_SYM:
                         self.load_type(OpCode.LOAD_SYM, *args)
+                    case OpCode.EQ:
+                        self.eq()
+                    case OpCode.NEQ:
+                        self.neq()
                     case OpCode.HD:
                         self.hd()
                     case OpCode.TL:
@@ -134,6 +142,14 @@ class VMIR:
                     case _:
                         raise ValueError(f"Unknown opcode: {op}")
         return self.stack
+
+    def eq(self):
+        a, b = self.stack.pop(), self.stack.pop()
+        self.stack.append(Symbol.from_bool(a == b))
+
+    def neq(self):
+        a, b = self.stack.pop(), self.stack.pop()
+        self.stack.append(Symbol.from_bool(a != b))
 
     def hd(self):
         ls = self.stack.pop()
