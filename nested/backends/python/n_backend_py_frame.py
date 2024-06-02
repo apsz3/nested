@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from nested.n_codeobj import CodeObj
+from nested.backends.python.n_codeobj import CodeObj
 
 class SymTable:
     def __init__(self):

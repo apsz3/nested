@@ -1,4 +1,4 @@
-from nested.n_backend_py import VMIR
+from nested.backends.python.n_backend_py import VMIR
 from nested.n_compiler import Compiler
 from nested.n_parser import parse as Parse
 from nested.n_vm import VM

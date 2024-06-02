@@ -1,9 +1,9 @@
 from typing import List
-from nested.n_codeobj import CodeObj
-from nested.n_backend_py_frame import Frame, SymTable
+from nested.backends.python.n_codeobj import CodeObj
+from nested.backends.python.n_backend_py_frame import Frame, SymTable
 from nested.n_opcode import OpCode
 from rich import print
-from nested.n_backend_py import VMIR
+from nested.backends.python.n_backend_py import VMIR
 
 class VMJit:
     """
