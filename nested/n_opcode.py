@@ -41,7 +41,7 @@ class Op:
         self.args = args
 
     def __rich_repr__(self):
-        yield self.opcode.name
+        yield self.opcode
         yield from self.args
 
     @staticmethod

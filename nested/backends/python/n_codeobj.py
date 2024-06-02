@@ -1,10 +1,10 @@
 from typing import List
 
-from nested.n_opcode import OpCode
+from nested.n_opcode import Op
 
 
 class CodeObj:
-    def __init__(self, code: List[OpCode]):
+    def __init__(self, code: List[Op]):
         self.code = code
 
     def __len__(self):
@@ -23,7 +23,7 @@ class ParamObj:
         yield self.type
 
 class FunObj:
-    def __init__(self, code: List[OpCode], params: List[ParamObj]):
+    def __init__(self, code: CodeObj, params: List[ParamObj]):
         self.code = code
         self.params = params
 

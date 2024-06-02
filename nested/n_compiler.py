@@ -17,6 +17,12 @@ class Compiler:
         self.tree = tree
         self.buffer = []
         self.ip = 0
+
+    def display_buffer(self):
+        for i, instr in enumerate(self.buffer):
+
+            print(f"{i:<4}: {instr.opcode:<25} {' '.join(map(str, instr.args)):<15}")
+
     def emit(self, arg):
         self.buffer.append(arg)
         self.ip += 1
@@ -136,7 +142,7 @@ class Compiler:
         for arg in args.children:
             arg = self.compile_node(arg)
             self.emit(Op(OpCode.PUSH_REF, arg.value))
-            self.emit(Op(OpCode.STORE, 1)) # Store will pop the ref and the value off, incrementally, at runtiem
+            # self.emit(Op(OpCode.STORE, 1)) # Store will pop the ref and the value off, incrementally, at runtiem
         self.emit(Op(OpCode.POP_ARGS))
         body = node.children[1]
         self.compile_node(body)

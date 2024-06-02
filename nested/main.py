@@ -1,4 +1,4 @@
-from nested.backends.python.n_backend_py import VMIR
+from nested.backends.python.n_vm import VMIR
 from nested.n_compiler import Compiler
 from nested.n_parser import parse as Parse
 from nested.n_vm import VM
@@ -25,8 +25,8 @@ def main(parse, compile, debug, file_path):
     c = Compiler(tree)
     c.compile_program()
     print("-- IR")
-    print(c.buffer)
-
+    # Align the operands and arguments for the items in the buffer:
+    c.display_buffer()
     v = VM(VMIR())
     v.run(c.buffer)
     # print(f"> {v.run(c.buffer)}")
