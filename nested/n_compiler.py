@@ -42,6 +42,8 @@ class Compiler:
             self.emit(Op(OpCode.LOAD_INT, node.value))
         elif node.type == "string-lit":
             self.emit(Op(OpCode.LOAD_STR, node.value))
+        elif node.type == "symbol":
+            self.emit(Op(OpCode.LOAD_SYM, node.value))
         else:
             raise ValueError(f"Unknown const: {node.type}")
 

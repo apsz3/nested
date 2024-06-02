@@ -5,6 +5,19 @@ from nested.backends.python.n_codeobj import CodeObj, FunObj, ParamObj
 from nested.backends.python.n_frame import Frame, SymTable
 from nested.n_opcode import Op, OpCode
 
+class Symbol:
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
+    def __eq__(self, value: object) -> bool:
+        self.name = value.name
+
 def err(msg):
     raise ValueError(f"[red]Error: {msg}[/red]")
 
@@ -88,6 +101,8 @@ class VMIR:
                         self.load_type(OpCode.LOAD_INT, *args)
                     case OpCode.LOAD_STR:
                         self.load_type(OpCode.LOAD_STR, *args)
+                    case OpCode.LOAD_SYM:
+                        self.load_type(OpCode.LOAD_SYM, *args)
                     case OpCode.HD:
                         self.hd()
                     case OpCode.TL:
@@ -148,6 +163,8 @@ class VMIR:
                 self.stack.append(int(v))
             case OpCode.LOAD_STR:
                 self.stack.append(v)
+            case OpCode.LOAD_SYM:
+                self.stack.append(Symbol(v))
             case _:
                 err(f"Unknown type: {op}")
 

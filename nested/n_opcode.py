@@ -7,16 +7,30 @@ from nested.n_parser import ASTIdentifier
 class OpCode(Enum):
     ADD = auto()
     NEG = auto()
+
     PRINT = auto()
+
+    IF = auto()
+
+    EQ = auto()
+    NEQ = auto()
+    LT = auto()
+    LTE = auto()
+    GT = auto()
+    GTE = auto()
+
+    TRUE = auto()
+    FALSE = auto()
 
     HD = auto()
     TL = auto()
 
     LOAD = auto()
-
     PUSH_REF = auto()
+
     LOAD_INT = auto()
     LOAD_STR = auto()
+    LOAD_SYM = auto()
 
     STORE = auto()
 
@@ -27,6 +41,7 @@ class OpCode(Enum):
 
     PUSH_ARGS = auto()
     POP_ARGS = auto()
+
     CALL = auto()
 
     PUSH = auto()
@@ -76,7 +91,8 @@ class Op:
             # Symbol operations
             case "let":
                 opcode = OpCode.STORE
-
+            case "if":
+                opcode = OpCode.IF
             case "push_ref":
                 opcode = OpCode.PUSH_REF
             case "load":

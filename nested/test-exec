@@ -1,3 +1,8 @@
+;(#true)-- make sure this errors!
+(add 1 2)
+
+#true
+
 ; 1
 ; (print (add 2 3))
 ; (let a 1)
@@ -33,4 +38,4 @@
 (let x (add (hd ls) (hd (tl ls))))
 (print x)
 
-(if (eq x 2))
+(if (= x 2))

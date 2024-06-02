@@ -86,20 +86,6 @@ class ASTConstantValue(ASTLeaf):
         yield self.type
         yield self.value
 
-# class ASTProc(ASTNode):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-
-#     @property
-#     def proc(self):
-#         return self.value #
-
-#     def visit(self):
-#         # self.proc = ASTIdentifier(self.name)
-#         self.children = [child.visit() for child in self.children]
-#         # RETURN WHETYHER WE DO A PRIMITIVE OP, OR A PROC, FROM HERE
-#         return self
-
 class ASTExpr(ASTNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -140,7 +126,7 @@ class ASTOp(ASTLeaf):
 
 class ASTIdentifier(ASTLeaf):
     builtins = {
-        "add", "sub",
+        "add", "+", "sub",
         "print",
         "hd", "tl",
         "list",
@@ -185,3 +171,7 @@ class T(Transformer):
     @v_args(inline=True, meta=True)
     def ident(self, meta, token):
         return ASTIdentifier (token.value)
+
+    @v_args(inline=True, meta=True)
+    def symbol(self, meta, token):
+        return ASTConstantValue ("symbol", token.value)
