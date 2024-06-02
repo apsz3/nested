@@ -19,7 +19,6 @@ string: ESCAPED_STRING
     | number
     | string
     | symbol
-    | op -> ident
 
 
 
