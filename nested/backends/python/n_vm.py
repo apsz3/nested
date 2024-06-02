@@ -81,8 +81,6 @@ class VMIR:
                         self.add(*args)
                     case OpCode.PRINT:
                         self.print(*args)
-                    case OpCode.LIST:
-                        self.list(*args)
                     case OpCode.LOAD_INT:
                         self.load_type(OpCode.LOAD_INT, *args)
                     case OpCode.LOAD_STR:
@@ -93,6 +91,8 @@ class VMIR:
                         self.push_ref(*args)
                     case OpCode.STORE:
                         self.store(*args)
+                    case OpCode.PUSH_LIST:
+                        self.push_list(*args)
                     case OpCode.PUSH_LAMBDA:
                         start = self.frame.ip # PUSH_LAMBDA
                         while (op := self.frame.instr.opcode) != OpCode.POP_LAMBDA:
@@ -112,6 +112,11 @@ class VMIR:
                     case _:
                         raise ValueError(f"Unknown opcode: {op}")
         return self.stack
+
+    def push_list(self, n: int):
+        ls = [self.stack.pop() for _ in range(n)]
+        ls.reverse()
+        self.stack.append(ls)
 
     def add(self, n:int):
         try:

@@ -37,42 +37,6 @@ class Compiler:
         for node in nodes:
             self.compile_node(node)
 
-    # def compile_op(self, node: ASTOp):
-    #     if node.id == "add":
-    #         self.emit(OpCode.ADD)
-    #     else:
-    #         raise ValueError(f"Unknown op: {node.id}")
-
-    # Note: The main purpose of unop and binop
-    # is so that we don't have to use generic Call
-    # instructions to execute builtins
-    # def compile_binop(self, node: ASTBinOpExpr):
-    #     if (op := opmap.get(node.op)):
-    #         self.compile_node(node.LExpr)
-    #         self.compile_node(node.RExpr)
-    #         self.emit(Op(op)) # TODO: make these constant objects?
-    #     else:
-    #         raise ValueError(f"Unknown binop: {node.op}")
-
-    # def compile_varyop(self, node: ASTVaryOpExpr):
-    #     if (op := opmap.get(node.op)) is None:
-    #         raise ValueError(f"Unknown varyop: {node.op}")
-
-    #     for child in node.children:
-    #         self.compile_node(child)
-    #     self.emit(Op(op))
-
-    # def compile_unop(self, node: ASTUnOpExpr):
-    #     if node.op == ASTUnOpExpr.UnOps.NEG:
-    #         self.compile_node(node.expr)
-    #         self.emit(Op(OpCode.NEG))
-    #     elif node.op == ASTUnOpExpr.UnOps.PRINT:
-    #         self.compile_node(node.expr)
-    #         self.emit(Op(OpCode.PRINT))
-    #     else:
-    #         breakpoint()
-    #         raise ValueError(f"Unknown unop: {node.op}")
-
     def compile_const(self, node: ASTConstantValue):
         if node.type == "int":
             self.emit(Op(OpCode.LOAD_INT, node.value))
@@ -81,13 +45,12 @@ class Compiler:
         else:
             raise ValueError(f"Unknown const: {node.type}")
 
-    # def compile_expr_define(self, node: ASTProcDefn):
-    #     ...
-    # def compile_list(self, node: ASTList):
-    #     for child in node.children:
-    #         self.compile_node(child)
-    #     self.compile_node(node.value) # TODO: What is this doing?
-    #     self.emit(OpCode.LIST, len(node.children)) # Retrieve the last K values
+    def compile_list(self, node: ASTList):
+        # self.emit(Op(OpCode.PUSH_LIST)
+        for child in node.children:
+            self.compile_node(child)
+        self.emit(Op(OpCode.PUSH_LIST), len(node.children))
+
     def compile_ref(self, node: ASTIdentifier):
         self.emit(Op(OpCode.PUSH_REF, node.value))
 
@@ -132,7 +95,8 @@ class Compiler:
             raise ValueError(f"Unknown expr: {node.value}")
 
     def compile_lambda(self, node: ASTOp):
-        self.emit(Op(OpCode.PUSH_LAMBDA))
+        self.emit(Op(OpCode.PUSH_LAMBDA)) # TODO: this is probably not necessary,
+        # just check for PUSH_ARGS and take the K values up from there
         args = node.children[0]
         self.emit(Op(OpCode.PUSH_ARGS))
 

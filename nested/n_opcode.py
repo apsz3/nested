@@ -9,6 +9,9 @@ class OpCode(Enum):
     NEG = auto()
     PRINT = auto()
 
+    HD = auto()
+    TL = auto()
+
     LOAD = auto()
 
     PUSH_REF = auto()
@@ -17,7 +20,7 @@ class OpCode(Enum):
 
     STORE = auto()
 
-    LIST = auto()
+    PUSH_LIST = auto()
 
     PUSH_LAMBDA = auto()
     POP_LAMBDA = auto()
@@ -56,7 +59,7 @@ class Op:
             case "print":
                 opcode = OpCode.PRINT
             case "list":
-                opcode = OpCode.LIST
+                opcode = OpCode.PUSH_LIST
             # Value operations
             case "lambda":
                 opcode = OpCode.PUSH_LAMBDA
