@@ -61,7 +61,7 @@ class Frame:
         if (res := self.locals.get(name)):
             return res
         if self.parent:
-            return self.parent.lookup(name)
+            return self.parent.getsym(name)
         else:
             raise ValueError(f"Symbol {name} not found in any scope")
 

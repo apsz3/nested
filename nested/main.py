@@ -1,3 +1,4 @@
+from nested.backends.python.n_codeobj import CodeObj
 from nested.backends.python.n_vm import VMIR
 from nested.n_compiler import Compiler
 from nested.n_parser import parse as Parse
@@ -28,7 +29,8 @@ def main(parse, compile, debug, file_path):
     # Align the operands and arguments for the items in the buffer:
     c.display_buffer()
     v = VM(VMIR())
-    v.run(c.buffer)
+    code = CodeObj(c.buffer)
+    v.run(code)
 
     stack, call_stack, frame = v.debug()
     print("-- VM")

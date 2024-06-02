@@ -151,19 +151,23 @@ class VMIR:
         # Load will have put the value already on the stack.
         # In our case, the value is a function object.
         # We could handle calls differently, but dont at the moment.
-        co: CodeObj = self.stack.pop()
+        fn: FunObj = self.stack.pop()
         # Collect args from the stack and assign to locals
         args = [self.stack.pop() for _ in range(n)]
         args.reverse()
 
         bind = SymTable()
         for param_idx, arg_val in enumerate(args):
-            bind.set(co.params[param_idx].name, arg_val)
+            bind.set(fn.params[param_idx].name, arg_val)
 
         # No need to make a copy of the parent's locals --
         # we will traverse up when needed.
-        new = Frame(co, bind, self.frame)
-        self.call_stack.append(new)
+        # Don't push the Function object -- only push its code
+        new = Frame(fn.code, bind, self.frame)
+        # Save the old frame on the call stack, paradoxically
+        self.call_stack.append(self.frame)
+        # Set the current frame to the new one
+        self.frame = new
 
     def list(self, n: int):
         self.stack.append([self.stack.pop() for _ in range(n)])

@@ -13,6 +13,9 @@ class CodeObj:
     def __rich_repr__(self):
         yield self.code
 
+    def __getitem__(self, item):
+        return self.code[item]
+
 class ParamObj:
     def __init__(self, name: str, type: str):
         self.name = name
