@@ -140,8 +140,13 @@ class ASTOp(ASTLeaf):
 
 class ASTIdentifier(ASTLeaf):
     builtins = {
-        "add", "sub", "print", "list",
-        "let", "lambda"
+        "add", "sub",
+        "print",
+        "hd", "tl",
+        "list",
+        "if",
+        "let",
+        "lambda"
     }
 
     @property
@@ -162,21 +167,7 @@ class T(Transformer):
     # them take that and feed it through a different visitor class that
     # yields the AST nodes.
     def program(self, *children):
-        # breakpoint()
         return ASTModule ("filename.nst", *children,)
-
-    # @v_args(inline=True, meta=True)
-    # def s_expr(self, meta, *children):
-    #     return ASTNode ("s-expr", *children,)
-
-    # @v_args(inline=True, meta=True)
-    # def op(self, meta, *children):
-    #     return ASTIdentifier("op", *children)
-
-
-        # if len(children) == 1:
-        #     return ASTUnOpExpr(children[0])
-        # return ASTBinOpExpr ("foo", *children)
 
     @v_args(inline=True)
     def list(self, *children):
@@ -185,10 +176,6 @@ class T(Transformer):
     @v_args(inline=True, meta=True)
     def number(self, meta, token):
         return ASTConstantValue ("int", token.value)
-
-    # @v_args(inline=True, meta=True)
-    # def atom(self, meta, token):
-    #     return ASTNode ("atom", token)
 
     @v_args(inline=True, meta=True)
     def string(self, meta, token):

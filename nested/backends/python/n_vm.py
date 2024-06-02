@@ -14,8 +14,11 @@ def msg(msg):
 class VMIR:
     # Keep these functions separate as only in interpreter mode do we want to
     # cast things for example
-    def run(self, code: CodeObj):
-        frame = Frame(code, SymTable(), None)
+    def run(self, code: CodeObj, frame = None):
+        if frame is None:
+            frame = Frame(code, SymTable(), None)
+        else:
+            frame.code = code
         self.frame = frame
 
         self.stack = []
@@ -85,6 +88,10 @@ class VMIR:
                         self.load_type(OpCode.LOAD_INT, *args)
                     case OpCode.LOAD_STR:
                         self.load_type(OpCode.LOAD_STR, *args)
+                    case OpCode.HD:
+                        self.hd()
+                    case OpCode.TL:
+                        self.tl()
                     case OpCode.LOAD:
                         self.load(*args)
                     case OpCode.PUSH_REF:
@@ -112,6 +119,14 @@ class VMIR:
                     case _:
                         raise ValueError(f"Unknown opcode: {op}")
         return self.stack
+
+    def hd(self):
+        ls = self.stack.pop()
+        self.stack.append(ls[0])
+
+    def tl(self):
+        ls = self.stack.pop()
+        self.stack.append(ls[1:])
 
     def push_list(self, n: int):
         ls = [self.stack.pop() for _ in range(n)]

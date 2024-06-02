@@ -23,4 +23,14 @@
 (let rizz 2)
 (print rizz)
 
+; TODO: this works, bc we just push things on the stack ....
 (list 1 2 3)
+(print (hd ))
+
+(print (tl (list 2 2 4)))
+
+(let ls (list 11 0 33))
+(let x (add (hd ls) (hd (tl ls))))
+(print x)
+
+(if (eq x 2))

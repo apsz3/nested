@@ -1,4 +1,5 @@
 from nested.backends.python.n_codeobj import CodeObj
+from nested.backends.python.n_frame import Frame, SymTable
 from nested.backends.python.n_vm import VMIR
 from nested.n_compiler import Compiler
 from nested.n_parser import parse as Parse
@@ -6,13 +7,39 @@ from nested.n_vm import VM
 from rich import print
 import click
 
+def repl():
+    # TODO: make the symbol table perist...
+
+
+    v = VM(VMIR())
+    # frame = Frame(CodeObj([]), SymTable(), None)
+    while True:
+        try:
+            program = input(">>> ")
+            p = Parse(program)
+
+            tree = p.children[0]
+            tree.visit()
+            c = Compiler(tree)
+            c.compile_program()
+            code = CodeObj(c.buffer)
+            # TODO: get frame
+            v.run(code)
+            stack, call_stack, _ = v.debug()
+            print(*stack)
+        except Exception as e:
+            print(e)
 
 @click.command()
 @click.option('-p', '--parse', is_flag=True, help='Parse the file')
 @click.option('-c', '--compile', is_flag=True, help='Compile the file')
 @click.option('-d', '--debug', is_flag=True, help='Parse and compile and run')
+@click.option("-i", is_flag=True)
 @click.argument('file_path', type=click.Path(exists=True))
-def main(parse, compile, debug, file_path):
+def main(parse, compile, debug, i, file_path):
+    if i:
+        repl()
+        return
     with open(file_path, "r") as fp:
         program = fp.read()
     p = Parse(program)

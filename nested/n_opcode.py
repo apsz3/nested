@@ -58,8 +58,14 @@ class Op:
                 opcode = OpCode.NEG
             case "print":
                 opcode = OpCode.PRINT
+
+            # List
             case "list":
                 opcode = OpCode.PUSH_LIST
+            case "hd":
+                opcode = OpCode.HD
+            case "tl":
+                opcode = OpCode.TL
             # Value operations
             case "lambda":
                 opcode = OpCode.PUSH_LAMBDA
