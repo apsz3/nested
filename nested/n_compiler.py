@@ -139,10 +139,20 @@ class Compiler:
         # TODO When setting up call frame, have to push the args in reverse order
         # to make it easier to pop them off in order when calling the lambda
         # .. or something
-        for arg in args.children:
-            arg = self.compile_node(arg)
+
+        # TODO: Right now the arg identifier list is an ASTExpr because of our parsing;
+        # this is not good, because it confuses how we access the values.
+        # We should do a second AST pass that transforms
+        # Expr(Op(Lambda), Expr(x y z), Expr (body)) into Expr(Op(Lambda), List(x y z), Expr(body))
+
+        for arg in [args.value, *args.children]:
+            # TODO: this assumes we only allow actual identifiers
+            # in lambda arg definition, and not some fancy expressions or anything.
+            # If we DID, we would need to compile_noad / reduce the arg somehow,
+            # to an identifier...
             self.emit(Op(OpCode.PUSH_REF, arg.value))
             # self.emit(Op(OpCode.STORE, 1)) # Store will pop the ref and the value off, incrementally, at runtiem
+
         self.emit(Op(OpCode.POP_ARGS))
         body = node.children[1]
         self.compile_node(body)
