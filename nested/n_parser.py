@@ -126,7 +126,9 @@ class ASTOp(ASTLeaf):
 
 class ASTIdentifier(ASTLeaf):
     builtins = {
-        "add", "+", "sub",
+        "add", "+",
+        "sub", "-",
+        "=",
         "print",
         "hd", "tl",
         "list",
