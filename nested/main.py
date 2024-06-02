@@ -29,6 +29,8 @@ def main(parse, compile, debug, file_path):
     c.display_buffer()
     v = VM(VMIR())
     v.run(c.buffer)
+
+    print(v.debug())
     # print(f"> {v.run(c.buffer)}")
 
 if __name__ == '__main__':

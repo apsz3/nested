@@ -11,7 +11,7 @@ class CodeObj:
         return len(self.code)
 
     def __rich_repr__(self):
-        yield from self.code
+        yield self.code
 
 class ParamObj:
     def __init__(self, name: str, type: str):
@@ -36,4 +36,4 @@ class FunObj:
 
     def __rich_repr__(self):
         yield self.params
-        yield from self.code
+        yield self.code

@@ -29,21 +29,16 @@ class VMIR:
         # TODO: optimize
         ip = 0
 
-
-        _opcodes = list(map(lambda x: x.opcode, self.frame.code))
+         # Skip the PUSH_ARGS instr # TODO: fix this, not necessary probably
+        instrs = self.frame.code[start+1:stop]
 
         # ITerate over the frame, collecting arguments
         # until the POP_ARGS opcode is reached, then continue
         # collecting the body of the lambda until the POP_LAMBDA:
-        begin_args_ip = start + 1
-        end_args_ip = _opcodes.index(OpCode.POP_ARGS)
+        end_args_ip = list(map(lambda i: i.opcode, instrs)).index(OpCode.POP_ARGS)
         start_body_ip = end_args_ip + 1
-        end_body_ip = stop - 1
-
-        args = self.frame.code[begin_args_ip:end_args_ip]
-        body = self.frame.code[start_body_ip:end_body_ip]
-        body_arg_stack_prep = []
-        breakpoint()
+        args = instrs[0:end_args_ip]
+        body = instrs[start_body_ip:]
         params = []
         for a in args:
             if a.opcode == OpCode.PUSH_REF:
@@ -65,8 +60,11 @@ class VMIR:
         #         err(f"Unknown opcode in args: {a.opcode}")
         co = CodeObj(body)
         fn = FunObj(co, params)
+        print(params, fn.params)
         self.stack.append(fn) # Append the function object, the ref should pop it when needed
-        breakpoint()
+
+    def debug(self):
+        return (self.stack, self.call_stack, self.frame)
 
     def exec(self):
         while self.call_stack:

@@ -19,13 +19,17 @@ class SymTable:
 
     def __rich_repr__(self):
         yield "SymTable"
-        yield from self.symbols
+        for sym in self.symbols:
+            yield sym, self.symbols.get(sym, "...")
 
     def union(self, other):
         new = SymTable()
         new.symbols.update(self.symbols)
         new.symbols.update(other.symbols)
         return new
+
+    def dump(self):
+        return self.symbols
 
     def copy(self):
         new = SymTable()
@@ -63,5 +67,5 @@ class Frame:
 
     def __rich_repr__(self):
         yield "Frame"
-        yield from self.locals
+        yield self.locals
         yield self.parent

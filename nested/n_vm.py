@@ -15,3 +15,6 @@ class VM:
 
     def run(self, code: CodeObj):
         self.backend.run(code)
+
+    def debug(self):
+        return self.backend.debug()
