@@ -103,8 +103,8 @@ class VMIR:
                 match op:
                     case OpCode.ADD:
                         self.add(*args)
-                    case OpCode.SUB:
-                        self.sub(*args)
+                    case OpCode.NEG:
+                        self.neg()
                     case OpCode.PRINT:
                         self.print(*args)
                     case OpCode.LOAD_INT:
@@ -166,6 +166,8 @@ class VMIR:
                         raise ValueError(f"Unknown opcode: {op}")
         return self.stack
 
+    def neg(self):
+        self.stack.append(-self.stack.pop())
     def eq(self):
         a, b = self.stack.pop(), self.stack.pop()
         self.stack.append(a == b)

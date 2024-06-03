@@ -72,8 +72,10 @@ class Op:
         opcode = None
         match i.value:
             # Builtin primitives
-            case "add" | "+":
+            case "+":
                 opcode = OpCode.ADD
+            case "pos":
+                opcode = OpCode.POS
             case "neg":
                 opcode = OpCode.NEG
             case "print":
