@@ -1,0 +1,3 @@
+# Frontend
+- Parse lambdas with empty lists for either params or body
+- Auto-generate handlers for bytecode for Python backend (case stmts, function stubs, etc.)
