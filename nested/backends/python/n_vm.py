@@ -33,7 +33,7 @@ def msg(msg):
 class VMIR:
     # Keep these functions separate as only in interpreter mode do we want to
     # cast things for example
-    def run(self, code: CodeObj, frame = None):
+    def run(self, code: CodeObj, frame = None, debug=False):
         if frame is None:
             frame = Frame(code, SymTable(), None)
         else:
@@ -43,7 +43,7 @@ class VMIR:
         self.stack = []
         self.call_stack: List[Frame] = [self.frame]
 
-        self.exec()
+        self.exec(debug)
 
     def exec_defn_lambda(self, start, stop):
         # Iterate over the list, handling three sections:
@@ -88,15 +88,17 @@ class VMIR:
     def debug(self):
         return (self.stack, self.call_stack, self.frame)
 
-    def exec(self):
+    def exec(self, debug):
         while self.call_stack:
             self.frame = self.call_stack.pop()
-            print(">>", self.frame)
+            # if debug:
+                # print(">>", self.frame)
             while self.frame.instr:
                 op = self.frame.instr.opcode
                 args = self.frame.instr.args
                 # print(self.stack)
-                print(f"{self.frame.ip:2} {op:2} {args}")
+                if debug:
+                    print(f"{self.frame.ip:2} {op:2} {args}")
                 next(self.frame)
                 match op:
                     case OpCode.ADD:

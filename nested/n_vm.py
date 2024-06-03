@@ -13,8 +13,8 @@ class VM:
     def __init__(self, backend):
         self.backend = backend
 
-    def run(self, code: CodeObj):
-        self.backend.run(code)
+    def run(self, code: CodeObj, debug=False):
+        self.backend.run(code, debug=debug)
 
     def debug(self):
         return self.backend.debug()

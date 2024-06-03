@@ -57,7 +57,7 @@ def main(parse, compile, debug, i, file_path):
     c.display_buffer()
     v = VM(VMIR())
     code = CodeObj(c.buffer)
-    v.run(code)
+    v.run(code, debug=debug)
 
     stack, call_stack, frame = v.debug()
     print("-- VM")
