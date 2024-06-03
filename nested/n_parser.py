@@ -131,7 +131,7 @@ class ASTIdentifier(ASTLeaf):
         "list", "hd", "tl",
         "if",
         "let",
-        "lambda"
+        "lambda",
         "print",
     }
 

@@ -144,5 +144,7 @@ class Compiler:
             self.compile_const(node)
         elif isinstance(node, ASTIdentifier):
             self.compile_identifier(node)
+        elif isinstance(node, ASTExpr):
+            self.compile_expr(node)
         else:
             raise ValueError(f"Unknown node type: {node}")
