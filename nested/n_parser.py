@@ -164,20 +164,21 @@ class T(Transformer):
     def list(self, *children):
         return ASTList (*children)
 
-    @v_args(inline=True, meta=True)
+    @v_args(meta=True, inline=True)
+    def op(self, meta, token, *args):
+        return ASTExpr(ASTOp(token.value), *[a.value for a in args])
+    @v_args(meta=True, inline=True)
     def un_op(self, meta, op, token):
-
-        # match op:
-        #     case "+":
-        #         # TODO: how do other langs handle this
-        #         return ASTExpr(ASTOp("pos"), self.number(meta, token))
-        #     case "-":
-        #         return ASTExpr (ASTOp ("neg"), self.number(meta, token))
-        #     case "!":
-        #         return ASTExpr (ASTOp ("not"), self.number(meta, token))
-        #     case _:
-        #         raise ValueError(f"Unknown unary op: {op}")
-        return ASTExpr (ASTOp (op), token)
+        match op:
+            case "+":
+                return ASTExpr(ASTOp("pos"), self.number(meta, token))
+            case "-":
+                return ASTExpr (ASTOp ("neg"), self.number(meta, token))
+            case "!":
+                return ASTExpr (ASTOp ("not"), self.number(meta, token))
+            case _:
+                raise ValueError(f"Unknown unary op: {op}")
+        # # return ASTExpr (ASTOp (op), token)
 
     @v_args(inline=True, meta=True)
     def number(self, meta, token):

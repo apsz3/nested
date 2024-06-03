@@ -2,30 +2,28 @@ start: program
 
 program: s_expr*
 
-?s_expr: atom
+?s_expr: UN_OP atom -> un_op
+| OP s_expr s_expr+ -> op
 | list
+| atom
 
 list: "(" s_expr* ")"
 
 // https://github.com/lark-parser/lark/blob/master/lark/grammars/common.lark
 
-un_op: "+" -> pos
- | "-" -> neg
+// !un_op: ("+" | "-") NUMBER // keep the terminals with !
 
+ident: LETTER (LETTER | DIGIT | "_" | "-")*
 symbol: "#" ident
 
-
-?atom:  un_op NUMBER -> un_op
-    | NUMBER -> number
-    // UN_OP SIGNED_NUMBER -> un_op
-    | ESCAPED_STRING -> string
-    | symbol
+?atom: NUMBER
+    | ESCAPED_STRING
     | ident
+    | symbol
 
-ident: /[^\W\d-][\w\d-]*/ | OP
-// conflict is with + - in OP here as well
-OP: "+" | "-" | "*" | "/" | "%" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||" | "=" | "++" | "--" | "+=" | "-=" | "*=" | "/=" | "%=" | ">>" | "<<" | "&" | "|" | "^"  ">>>" | "<<<" | ">>=" | "<<=" | ">>>=" | "&&=" | "||=" | "&=" | "|=" | "^=" | "~=" | ">>=" | "<<=" | ">>>=" | "<<<=" | "=>" | "->" | "::" | ":" | "?" | "??"
+UN_OP : "+" | "-"
 
+OP : "+" | "-"
 
 COMMENT: /;.*/
 
