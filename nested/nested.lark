@@ -2,8 +2,8 @@ start: program
 
 program: s_expr*
 
-?s_expr: UN_OP atom -> un_op
-| OP s_expr s_expr+ -> op
+?s_expr: UN_OP atom -> un_op // We do NOT want unary operators applied to non-atoms!
+| OP s_expr s_expr+ -> v_op
 | list
 | atom
 
@@ -22,7 +22,6 @@ symbol: "#" ident
     | symbol
 
 UN_OP : "+" | "-"
-
 OP : "+" | "-"
 
 COMMENT: /;.*/
