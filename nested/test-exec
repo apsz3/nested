@@ -42,3 +42,6 @@
 
 (print #t)
 (print (= 1 1))
+
+(let foo (lambda (x) (if (= x 1) "Done" (foo (+ x -1)))))
+(foo)

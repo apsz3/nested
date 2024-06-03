@@ -176,4 +176,5 @@ class Compiler:
         elif isinstance(node, ASTExpr):
             self.compile_expr(node)
         else:
-            raise ValueError(f"Unknown node type: {node}")
+            msg = " ".join([_ for _ in node.__rich_repr__()])
+            raise ValueError(f"Unknown node type '{msg}'")
