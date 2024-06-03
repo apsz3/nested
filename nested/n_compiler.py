@@ -76,25 +76,33 @@ class Compiler:
             op = Op.from_id(node.value)
             opcode = op.opcode
 
-            if opcode == OpCode.STORE:
-                sym = node.children[0]
-                self.compile_ref(sym)
-                for child in node.children[1:]:
-                    self.compile_node(child)
-                self.emit(op)
-                return
+            match opcode:
+                case OpCode.STORE:
+                    sym = node.children[0]
+                    self.compile_ref(sym)
+                    for child in node.children[1:]:
+                        self.compile_node(child)
+                    self.emit(op)
+                    return
 
-            elif opcode == OpCode.PUSH_LAMBDA:
-                self.compile_lambda(node)
-                return
+                case OpCode.PUSH_LAMBDA:
+                    self.compile_lambda(node)
+                    return
 
+                case OpCode.IF:
+                    self.compile_if(node)
+                    return
+
+                case _:
+                    for child in node.children:
+                        self.compile_node(child)
+
+                    self.emit(Op.from_id(node.value, len(node.children)))
+                    return
         for child in node.children:
             self.compile_node(child)
 
-        if isinstance(node.value, ASTOp): # builtin, just call its opcode
-            self.emit(Op.from_id(node.value, len(node.children)))
-
-        elif isinstance(node.value, ASTIdentifier):
+        if isinstance(node.value, ASTIdentifier):
             self.compile_identifier(node.value)
             self.emit(Op(OpCode.CALL, len(node.children)))
 
