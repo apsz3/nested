@@ -43,7 +43,15 @@ class Compiler:
         elif node.type == "string-lit":
             self.emit(Op(OpCode.LOAD_STR, node.value))
         elif node.type == "symbol":
-            self.emit(Op(OpCode.LOAD_SYM, node.value))
+            match node.value:
+                # TODO: LOAD_BOOL with flag for true/false,
+                # or just use LOAD_TRUE/LOAD_FALSE?
+                case "t":
+                    self.emit(Op(OpCode.LOAD_TRUE))
+                case "f":
+                    self.emit(Op(OpCode.LOAD_FALSE))
+                case _:
+                    self.emit(Op(OpCode.LOAD_SYM, node.value))
         else:
             raise ValueError(f"Unknown const: {node.type}")
 
@@ -136,7 +144,5 @@ class Compiler:
             self.compile_const(node)
         elif isinstance(node, ASTIdentifier):
             self.compile_identifier(node)
-        elif isinstance(node, ASTExpr):
-            self.compile_expr(node)
         else:
             raise ValueError(f"Unknown node type: {node}")

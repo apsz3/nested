@@ -20,7 +20,9 @@ class Symbol:
 
     @staticmethod
     def from_bool(b: bool):
-        return Symbol("true") if b else Symbol("false")
+        # TODO: how much of this is an implementation detail?
+        # Should probably handle it specially in compilation
+        return Symbol("t") if b else Symbol("f")
 
 def err(msg):
     raise ValueError(f"[red]Error: {msg}[/red]")
@@ -121,6 +123,10 @@ class VMIR:
                         self.push_ref(*args)
                     case OpCode.STORE:
                         self.store(*args)
+                    case OpCode.LOAD_TRUE:
+                        self.stack.append(True)
+                    case OpCode.LOAD_FALSE:
+                        self.stack.append(False)
                     case OpCode.PUSH_LIST:
                         self.push_list(*args)
                     case OpCode.PUSH_LAMBDA:

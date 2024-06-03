@@ -18,8 +18,6 @@ class OpCode(Enum):
     GT = auto()
     GTE = auto()
 
-    TRUE = auto()
-    FALSE = auto()
 
     HD = auto()
     TL = auto()
@@ -29,6 +27,8 @@ class OpCode(Enum):
 
     LOAD_INT = auto()
     LOAD_STR = auto()
+    LOAD_TRUE = auto()
+    LOAD_FALSE = auto()
     LOAD_SYM = auto()
 
     STORE = auto()

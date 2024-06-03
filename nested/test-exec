@@ -1,25 +1,25 @@
 ;(#true)-- make sure this errors!
-(add 1 2)
+(+ 1 2)
 
 #true
 
 ; 1
-; (print (add 2 3))
+; (print (+ 2 3))
 ; (let a 1)
 ; (foo 1)
-; (add 11 22)
-; (print (add 1) 2)
+; (+ 11 22)
+; (print (+ 1) 2)
 ; (print 1555)
 
 ; (let x 1)
 (let x 1)
 (print x)
-(print (add x 2))
+(print (+ x 2))
 (let rizz 23)
 ;(rizz 2 3)
 
- (lambda (x y) (add x y))
-(let edge (lambda (x y) (add x y)))
+ (lambda (x y) (+ x y))
+(let edge (lambda (x y) (+ x y)))
 (let rizz (lambda (x) (edge x 2)))
 (print (edge 1 2222))
 
@@ -35,9 +35,10 @@
 (print (tl (list 2 2 4)))
 
 (let ls (list 11 0 33))
-(let x (add (hd ls) (hd (tl ls))))
+(let x (+ (hd ls) (hd (tl ls))))
 (print x)
 
 ; (if (= x 2))
 
+(print #t)
 (print (= 1 1))

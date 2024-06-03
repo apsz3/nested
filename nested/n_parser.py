@@ -126,15 +126,13 @@ class ASTOp(ASTLeaf):
 
 class ASTIdentifier(ASTLeaf):
     builtins = {
-        "add", "+",
-        "sub", "-",
-        "=",
-        "print",
-        "hd", "tl",
-        "list",
+        "+", "-", "*", "/", "//", "%",
+        "=", "!=", "<", ">", "<=", ">=",
+        "list", "hd", "tl",
         "if",
         "let",
         "lambda"
+        "print",
     }
 
     @property
