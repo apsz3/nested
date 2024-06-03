@@ -59,11 +59,13 @@ def main(parse, compile, debug, i, file_path):
     code = CodeObj(c.buffer)
     v.run(code, debug=debug)
 
-    stack, call_stack, frame = v.debug()
-    print("-- VM")
-    print("stack", stack)
-    print("call stack", call_stack)
-    print(frame)
+    if debug:
+        stack, call_stack, frame = v.debug()
+
+        print("-- VM")
+        print("stack", stack)
+        print("call stack", call_stack)
+        print(frame)
     # print(f"> {v.run(c.buffer)}")
 
 if __name__ == '__main__':
