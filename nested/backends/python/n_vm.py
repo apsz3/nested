@@ -103,6 +103,8 @@ class VMIR:
                 match op:
                     case OpCode.ADD:
                         self.add(*args)
+                    case OpCode.SUB:
+                        self.sub(*args)
                     case OpCode.PRINT:
                         self.print(*args)
                     case OpCode.LOAD_INT:
@@ -166,8 +168,13 @@ class VMIR:
 
     def eq(self):
         a, b = self.stack.pop(), self.stack.pop()
-        self.stack.append(Symbol.from_bool(a == b))
+        self.stack.append(a == b)
 
+    def sub(self, n:int):
+        try:
+            self.stack.append(self.stack.pop() - sum([self.stack.pop() for _ in range(n-1)]))
+        except ValueError as e:
+            err(str(e))
     def neq(self):
         a, b = self.stack.pop(), self.stack.pop()
         self.stack.append(Symbol.from_bool(a != b))

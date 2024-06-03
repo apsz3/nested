@@ -133,6 +133,8 @@ class ASTIdentifier(ASTLeaf):
         "let",
         "lambda",
         "print",
+
+        "pos", "not", "neg", # unary ops, can be invoked with token shortcut, or as actual op.
     }
 
     @property
@@ -149,6 +151,9 @@ class ASTIdentifier(ASTLeaf):
 
 @v_args(inline=True)
 class T(Transformer):
+#    The question-mark prefixing value (”?value”) tells the tree-builder to inline this branch if it has only one member. In this case, value will always have only one member, and will always be inlined.
+
+
     # TODO: might be cleaner to have a raw, vanilla Parse transformer,
     # them take that and feed it through a different visitor class that
     # yields the AST nodes.
@@ -158,6 +163,20 @@ class T(Transformer):
     @v_args(inline=True)
     def list(self, *children):
         return ASTList (*children)
+
+    @v_args(inline=True, meta=True)
+    def un_op(self, meta, op, token):
+        match op:
+            case "+":
+                # TODO: how do other langs handle this
+                return ASTExpr(ASTOp("pos"), self.number(meta, token))
+            case "-":
+                return ASTExpr (ASTOp ("neg"), self.number(meta, token))
+            case "!":
+                return ASTExpr (ASTOp ("not"), self.number(meta, token))
+            case _:
+                raise ValueError(f"Unknown unary op: {op}")
+        return ASTExpr (ASTOp (op), token)
 
     @v_args(inline=True, meta=True)
     def number(self, meta, token):

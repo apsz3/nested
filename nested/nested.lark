@@ -7,16 +7,22 @@ program: s_expr*
 
 list: "(" s_expr* ")"
 
-OP: "+" | "-" | "*" | "/" | "%" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||" | "!" | "=" | "++" | "--" | "+=" | "-=" | "*=" | "/=" | "%=" | ">>" | "<<" | "&" | "|" | "^" | "~" | ">>>" | "<<<" | ">>=" | "<<=" | ">>>=" | "&&=" | "||=" | "&=" | "|=" | "^=" | "~=" | ">>=" | "<<=" | ">>>=" | "<<<=" | "=>" | "->" | "::" | ":" | "?" | "??"
 
-ident: /[^\W\d-][\w\d-]*/ | OP
+UN_OP: "+" | "-" | "!" | "~"
+
 symbol: "#" ident
 
-?atom: ident
+
+?atom:  ident
     | SIGNED_NUMBER -> number
+    | UN_OP SIGNED_NUMBER -> un_op
+    // UN_OP SIGNED_NUMBER -> un_op
     | ESCAPED_STRING -> string
     | symbol
 
+ident: /[^\W\d-][\w\d-]*/ | OP
+// conflict is with + - in OP here as well
+OP: "+" | "-" | "*" | "/" | "%" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" | "||" | "=" | "++" | "--" | "+=" | "-=" | "*=" | "/=" | "%=" | ">>" | "<<" | "&" | "|" | "^"  ">>>" | "<<<" | ">>=" | "<<=" | ">>>=" | "&&=" | "||=" | "&=" | "|=" | "^=" | "~=" | ">>=" | "<<=" | ">>>=" | "<<<=" | "=>" | "->" | "::" | ":" | "?" | "??"
 
 
 COMMENT: /;.*/
@@ -24,8 +30,13 @@ COMMENT: /;.*/
 %import common.LETTER
 %import common.DIGIT
 %import common.SIGNED_NUMBER
+%import common.NUMBER
+
 %import common.ESCAPED_STRING
 %import common.WS
+
+%import common.NUMBER
+
 
 %ignore COMMENT
 %ignore WS

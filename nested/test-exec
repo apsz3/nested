@@ -1,3 +1,4 @@
+(+ -1 2)
 ;(#true)-- make sure this errors!
 (+ 1 2)
 
