@@ -173,14 +173,14 @@ class T(Transformer):
         return ASTExpr(ASTOp(op.value), *exprs)
 
     @v_args(meta=True, inline=True)
-    def un_op(self, meta, op, token):
+    def un_op(self, meta, op, atom):
         match op:
             case "+":
-                return ASTExpr(ASTOp("pos"), self.number(meta, token))
+                return ASTExpr(ASTOp("pos"), self.number(meta, atom))
             case "-":
-                return ASTExpr (ASTOp ("neg"), self.number(meta, token))
+                return ASTExpr (ASTOp ("neg"), self.number(meta, atom))
             case "!":
-                return ASTExpr (ASTOp ("not"), self.number(meta, token))
+                return ASTExpr (ASTOp ("not"), self.number(meta, atom))
             case _:
                 raise ValueError(f"Unknown unary op: {op}")
         # # return ASTExpr (ASTOp (op), token)

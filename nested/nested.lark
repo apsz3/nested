@@ -17,8 +17,8 @@ list: "(" s_expr* ")"
 ident: LETTER (LETTER | DIGIT | "_" | "-")*
 symbol: "#" ident
 
-?atom: NUMBER
-    | ESCAPED_STRING
+?atom: NUMBER -> number
+    | ESCAPED_STRING -> string
     | ident
     | symbol
 
