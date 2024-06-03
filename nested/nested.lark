@@ -12,12 +12,9 @@ OP: "+" | "-" | "*" | "/" | "%" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" |
 ident: /[^\W\d-][\w\d-]*/ | OP
 symbol: "#" ident
 
-number: SIGNED_NUMBER
-string: ESCAPED_STRING
-
 ?atom: ident
-    | number
-    | string
+    | SIGNED_NUMBER -> number
+    | ESCAPED_STRING -> string
     | symbol
 
 
