@@ -6,6 +6,8 @@ from nested.n_parser import ASTIdentifier
 # TODO: Instr, vs Opcode -- instr has args, opcode doesnt.
 class OpCode(Enum):
     ADD = auto()
+    SUB = auto()
+
     NEG = auto()
 
 
@@ -74,6 +76,8 @@ class Op:
             # Builtin primitives
             case "+":
                 opcode = OpCode.ADD
+            case "-":
+                opcode = OpCode.SUB
             case "pos":
                 opcode = OpCode.POS
             case "neg":

@@ -103,6 +103,8 @@ class VMIR:
                 match op:
                     case OpCode.ADD:
                         self.add(*args)
+                    case OpCode.SUB:
+                        self.sub(*args)
                     case OpCode.NEG:
                         self.neg()
                     case OpCode.PRINT:
@@ -166,17 +168,27 @@ class VMIR:
                         raise ValueError(f"Unknown opcode: {op}")
         return self.stack
 
+    def sub(self, n:int):
+        # (- a b) -> a - b
+        try:
+            args = [self.stack.pop() for _ in range(n)]
+        except IndexError:
+            err("! Need more arguments")
+        a = args[-1]
+        b = sum(args[:-1])
+        self.stack.append(a - b)
+
     def neg(self):
         self.stack.append(-self.stack.pop())
     def eq(self):
         a, b = self.stack.pop(), self.stack.pop()
         self.stack.append(a == b)
 
-    def sub(self, n:int):
-        try:
-            self.stack.append(self.stack.pop() - sum([self.stack.pop() for _ in range(n-1)]))
-        except ValueError as e:
-            err(str(e))
+    # def sub(self, n:int):
+    #     try:
+    #         self.stack.append(self.stack.pop() - sum([self.stack.pop() for _ in range(n-1)]))
+    #     except ValueError as e:
+    #         err(str(e))
     def neq(self):
         a, b = self.stack.pop(), self.stack.pop()
         self.stack.append(Symbol.from_bool(a != b))
