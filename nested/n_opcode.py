@@ -45,11 +45,12 @@ class OpCode(Enum):
 
     PRINT = auto()
 
-    PUSH = auto()
-    POP = auto()
 
+    # Internal
     BEGIN_MODULE = auto()
     END_MODULE = auto()
+    PUSH = auto()
+    POP = auto()
 
     def __rich_repr__(self):
         yield self.name
@@ -95,6 +96,7 @@ class Op:
             # Symbol operations
             case "let":
                 opcode = OpCode.STORE
+            # Conditionals and control flow
             case "if":
                 opcode = OpCode.IF
             case "push_ref":
@@ -109,7 +111,6 @@ class Op:
                 opcode = OpCode.PUSH
             case "pop":
                 opcode = OpCode.POP
-
             case "begin_module":
                 opcode = OpCode.BEGIN_MODULE
             case "end_module":

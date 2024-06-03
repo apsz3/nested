@@ -37,6 +37,17 @@ class Compiler:
         for node in nodes:
             self.compile_node(node)
 
+    def compile_if(self, node: ASTOp):
+        # if (cond) (then) (else)
+        cond, then, els = node.children
+        self.compile_node(cond)
+        ip = self.frame.ip
+        self.emit(Op(OpCode.JUMP_IF_FALSE))
+        self.compile_node(then)
+        self.emit(Op(OpCode.ELSE))
+        self.compile_node(els)
+        self.emit(Op(OpCode.END_IF))
+
     def compile_const(self, node: ASTConstantValue):
         if node.type == "int":
             self.emit(Op(OpCode.LOAD_INT, node.value))

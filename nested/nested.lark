@@ -12,7 +12,7 @@ OP: "+" | "-" | "*" | "/" | "%" | "==" | "!=" | "<" | ">" | "<=" | ">=" | "&&" |
 ident: /[^\W\d-][\w\d-]*/ | OP
 symbol: "#" ident
 
-number: NUMBER
+number: SIGNED_NUMBER
 string: ESCAPED_STRING
 
 ?atom: ident
@@ -26,7 +26,7 @@ COMMENT: /;.*/
 
 %import common.LETTER
 %import common.DIGIT
-%import common.NUMBER
+%import common.SIGNED_NUMBER
 %import common.ESCAPED_STRING
 %import common.WS
 
