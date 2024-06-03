@@ -2,6 +2,7 @@ start: program
 
 program: s_expr*
 
+// Fortunately, Schem does not support things like (+ +++++1 ---1), so we wont.
 ?s_expr: UN_OP atom -> un_op // We do NOT want unary operators applied to non-atoms!
 | OP s_expr s_expr+ -> v_op
 | list
