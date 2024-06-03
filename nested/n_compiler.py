@@ -27,6 +27,9 @@ class Compiler:
         self.buffer.append(arg)
         self.ip += 1
 
+    def patch(self, ip, arg):
+        self.buffer[ip] = arg
+
     def compile_program(self):
         self.emit(Op(OpCode.BEGIN_MODULE, "META"))
         # Get metadata from self.tree here (not children)
@@ -38,15 +41,22 @@ class Compiler:
             self.compile_node(node)
 
     def compile_if(self, node: ASTOp):
-        # if (cond) (then) (else)
         cond, then, els = node.children
         self.compile_node(cond)
-        ip = self.frame.ip
-        self.emit(Op(OpCode.JUMP_IF_FALSE))
+
+        backpatch_if_branch_take_jmp = self.ip
+        self.emit(Op(OpCode.NOP))
+
         self.compile_node(then)
-        self.emit(Op(OpCode.ELSE))
+        if_branch_finished_ip = self.ip # Capture the IP here because of 0-indexing when accessing the buffer instruction
+        self.emit(Op(OpCode.NOP))
+
+        self.patch(backpatch_if_branch_take_jmp, Op(OpCode.JUMP_IF_FALSE, if_branch_finished_ip + 1)) # Add 1 because the jump target is the instr
+        # after the isntr we are also patching
+
         self.compile_node(els)
-        self.emit(Op(OpCode.END_IF))
+        else_branch_finished_ip = self.ip
+        self.patch(if_branch_finished_ip, Op(OpCode.JUMP, else_branch_finished_ip))
 
     def compile_const(self, node: ASTConstantValue):
         if node.type == "int":

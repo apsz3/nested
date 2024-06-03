@@ -10,6 +10,8 @@ class OpCode(Enum):
 
 
     IF = auto()
+    JUMP_IF_FALSE = auto()
+    JUMP = auto()
 
     EQ = auto()
     NEQ = auto()
@@ -51,6 +53,7 @@ class OpCode(Enum):
     END_MODULE = auto()
     PUSH = auto()
     POP = auto()
+    NOP = auto()
 
     def __rich_repr__(self):
         yield self.name
