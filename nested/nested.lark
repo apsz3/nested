@@ -3,27 +3,23 @@ start: program
 program: s_expr*
 
 // Fortunately, Schem does not support things like (+ +++++1 ---1), so we wont.
-?s_expr: UN_OP atom -> un_op // We do NOT want unary operators applied to non-atoms!
-| OP s_expr s_expr+ -> v_op
+?s_expr: atom
 | list
-| atom
 
 list: "(" s_expr* ")"
 
 // https://github.com/lark-parser/lark/blob/master/lark/grammars/common.lark
 
-// !un_op: ("+" | "-") NUMBER // keep the terminals with !
-
-ident: LETTER (LETTER | DIGIT | "_" | "-")*
-symbol: "#" ident
+// REMEMBER TO CAPITALIZE TERMINAL RULES, OTHERWISE THEY PARSE AS TREES
+OP : "+" | "-"
+identifier: (LETTER (LETTER | DIGIT | "_" | "-")*)
+symbol: "#" identifier
 
 ?atom: NUMBER -> number
     | ESCAPED_STRING -> string
-    | ident
+    | identifier -> ident
+    | OP -> ident
     | symbol
-
-UN_OP : "+" | "-"
-OP : "+" | "-"
 
 COMMENT: /;.*/
 
