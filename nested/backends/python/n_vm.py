@@ -138,6 +138,19 @@ class VMIR:
                         stop = self.frame.ip # POP_LAMBDA
                         self.exec_defn_lambda(start, stop)
                         next(self.frame) # Skip the POP_LAMBDA
+                    case OpCode.JUMP_IF_FALSE:
+                        cond = self.stack.pop()
+                        if cond:
+                            # We've already advanced the IP
+                            # before stepping into the match statemenst,
+                            # so we don't need to do it again.
+                            # TODO: revisit this to make when we call next()
+                            # less confusing.
+                            continue
+                        else:
+                            self.frame.ip = args[0]
+                    case OpCode.JUMP:
+                        self.frame.ip = args[0]
                     case OpCode.BEGIN_MODULE:
                         pass
                     case OpCode.END_MODULE:
