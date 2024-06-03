@@ -166,16 +166,17 @@ class T(Transformer):
 
     @v_args(inline=True, meta=True)
     def un_op(self, meta, op, token):
-        match op:
-            case "+":
-                # TODO: how do other langs handle this
-                return ASTExpr(ASTOp("pos"), self.number(meta, token))
-            case "-":
-                return ASTExpr (ASTOp ("neg"), self.number(meta, token))
-            case "!":
-                return ASTExpr (ASTOp ("not"), self.number(meta, token))
-            case _:
-                raise ValueError(f"Unknown unary op: {op}")
+
+        # match op:
+        #     case "+":
+        #         # TODO: how do other langs handle this
+        #         return ASTExpr(ASTOp("pos"), self.number(meta, token))
+        #     case "-":
+        #         return ASTExpr (ASTOp ("neg"), self.number(meta, token))
+        #     case "!":
+        #         return ASTExpr (ASTOp ("not"), self.number(meta, token))
+        #     case _:
+        #         raise ValueError(f"Unknown unary op: {op}")
         return ASTExpr (ASTOp (op), token)
 
     @v_args(inline=True, meta=True)

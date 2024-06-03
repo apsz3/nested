@@ -7,18 +7,20 @@ program: s_expr*
 
 list: "(" s_expr* ")"
 
+// https://github.com/lark-parser/lark/blob/master/lark/grammars/common.lark
 
-UN_OP: "+" | "-" | "!" | "~"
+un_op: "+" -> pos
+ | "-" -> neg
 
 symbol: "#" ident
 
 
-?atom:  ident
-    | SIGNED_NUMBER -> number
-    | UN_OP SIGNED_NUMBER -> un_op
+?atom:  un_op NUMBER -> un_op
+    | NUMBER -> number
     // UN_OP SIGNED_NUMBER -> un_op
     | ESCAPED_STRING -> string
     | symbol
+    | ident
 
 ident: /[^\W\d-][\w\d-]*/ | OP
 // conflict is with + - in OP here as well
