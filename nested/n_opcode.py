@@ -37,6 +37,7 @@ class OpCode(Enum):
 
     STORE = auto()
 
+    BEGIN = auto()
     PUSH_LIST = auto()
 
     PUSH_LAMBDA = auto()

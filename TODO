@@ -1,3 +1,6 @@
 # Frontend
 - Parse lambdas with empty lists for either params or body
 - Auto-generate handlers for bytecode for Python backend (case stmts, function stubs, etc.)
+
+# Ideation
+- Compile error message metadata, e.g. what would be most helpful based on the situation of opcodes and likely errors? For example, shadowing a global ID with a function parameter, and trying to call it.

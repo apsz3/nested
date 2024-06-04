@@ -243,6 +243,7 @@ class VMIR:
         except IndexError:
             err("! Need more arguments")
 
+    def begin(self, *args)
     def call(self, n: int):
         # Before we get to issue Call, we will have issued Load.
         # Load will have put the value already on the stack.
