@@ -46,6 +46,8 @@ class Compiler:
         # As in, they compile against the IP of the whole program,
         # but when we execute the function, the IP is relative to the start
         # of ITS frame.
+        # Yes this is the case.
+        rel_ip = self.ip
         cond, then, els = node.children
         self.compile_node(cond)
 
@@ -56,12 +58,12 @@ class Compiler:
         if_branch_finished_ip = self.ip # Capture the IP here because of 0-indexing when accessing the buffer instruction
         self.emit(Op(OpCode.NOP))
 
-        self.patch(backpatch_if_branch_take_jmp, Op(OpCode.JUMP_IF_FALSE, if_branch_finished_ip + 1)) # Add 1 because the jump target is the instr
+        self.patch(backpatch_if_branch_take_jmp, Op(OpCode.JUMP_IF_FALSE, if_branch_finished_ip + 1 - rel_ip)) # Add 1 because the jump target is the instr
         # after the isntr we are also patching
 
         self.compile_node(els)
         else_branch_finished_ip = self.ip
-        self.patch(if_branch_finished_ip, Op(OpCode.JUMP, else_branch_finished_ip))
+        self.patch(if_branch_finished_ip, Op(OpCode.JUMP, else_branch_finished_ip - rel_ip))
 
     def compile_const(self, node: ASTConstantValue):
         if node.type == "int":

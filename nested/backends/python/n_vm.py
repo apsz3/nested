@@ -99,6 +99,7 @@ class VMIR:
                 if debug:
                     print(f"{self.frame.ip:2} {op:2} {args}")
                     print(f"{' ':4}{self.stack}")
+                    print(self.frame)
                 next(self.frame)
                 match op:
                     case OpCode.ADD:
