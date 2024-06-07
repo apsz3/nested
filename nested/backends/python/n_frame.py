@@ -59,7 +59,8 @@ class Frame:
     def getsym(self, name):
         # Don't get bitten in the ass by falsy values!!!
         # This is false for a var valued at 0 if we don't check for `is None!`
-        if (res := self.locals.get(name) is not None):
+        res = self.locals.get(name)
+        if res is not None:
             return res
         if self.parent:
             return self.parent.getsym(name)
