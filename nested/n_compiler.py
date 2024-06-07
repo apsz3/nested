@@ -46,7 +46,7 @@ class Compiler:
         # As in, they compile against the IP of the whole program,
         # but when we execute the function, the IP is relative to the start
         # of ITS frame.
-        # Yes this is the case.
+        # Yes this is the case; use REL JUMP.
         rel_ip = self.ip
         cond, then, els = node.children
         self.compile_node(cond)
