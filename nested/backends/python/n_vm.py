@@ -228,6 +228,7 @@ class VMIR:
                 err(f"Unknown type: {op}")
 
     def load(self, v: str):
+        breakpoint()
         self.stack.append(self.frame.getsym(v))
 
     def store(self):
@@ -267,6 +268,7 @@ class VMIR:
         self.call_stack.append(self.frame)
         # Set the current frame to the new one
         self.frame = new
+        breakpoint()
 
     def list(self, n: int):
         self.stack.append([self.stack.pop() for _ in range(n)])

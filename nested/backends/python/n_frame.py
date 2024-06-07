@@ -57,7 +57,9 @@ class Frame:
         self.locals.set(name, value)
 
     def getsym(self, name):
-        if (res := self.locals.get(name)):
+        # Don't get bitten in the ass by falsy values!!!
+        # This is false for a var valued at 0 if we don't check for `is None!`
+        if (res := self.locals.get(name) is not None):
             return res
         if self.parent:
             return self.parent.getsym(name)
@@ -67,4 +69,4 @@ class Frame:
     def __rich_repr__(self):
         yield "ip", self.ip
         yield self.locals
-        yield "->", self.parent
+        yield "parent:", self.parent
