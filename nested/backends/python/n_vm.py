@@ -82,6 +82,7 @@ class VMIR:
         #         err(f"Unknown opcode in args: {a.opcode}")
         co = CodeObj(body)
         fn = FunObj(co, params)
+        # breakpoint()
         self.stack.append(fn) # Append the function object, since this could be inline;
         # a Let / definition will be popping it when needed
 
@@ -91,14 +92,13 @@ class VMIR:
     def exec(self, debug):
         while self.call_stack:
             self.frame = self.call_stack.pop()
-            # if debug:
-                # print(">>", self.frame)
             while self.frame.instr:
                 op = self.frame.instr.opcode
                 args = self.frame.instr.args
-                # print(self.stack)
+
                 if debug:
                     print(f"{self.frame.ip:2} {op:2} {args}")
+                    print(f"{' ':4}{self.stack}")
                 next(self.frame)
                 match op:
                     case OpCode.ADD:
@@ -233,6 +233,7 @@ class VMIR:
         # Can't just shove the symbol in with this Instr because
         # the symbol could be evaluated on the stack by compiling
         # and we need to execute to get the proper value... maybe TODO
+        # breakpoint()
         val, sym = self.stack.pop(), self.stack.pop()
         self.frame.setsym(sym, val)
 

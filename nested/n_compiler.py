@@ -41,6 +41,11 @@ class Compiler:
             self.compile_node(node)
 
     def compile_if(self, node: ASTOp):
+        # TODO: is it possible that this fails in function calls
+        # because the IPs here are not RELATIVE ?
+        # As in, they compile against the IP of the whole program,
+        # but when we execute the function, the IP is relative to the start
+        # of ITS frame.
         cond, then, els = node.children
         self.compile_node(cond)
 
