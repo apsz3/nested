@@ -6,7 +6,7 @@
 (let foo (lambda (x) ...))
 (foo) ; compiles and runs
 ```
-- Something about the Else branch of conditionals not having values pushed on the stack...
+- Need way to terminate / jump out of nested ifs ... else values not pushed on stack?
 # Frontend
 - Parse lambdas with empty lists for either params or body
 - Auto-generate handlers for bytecode for Python backend (case stmts, function stubs, etc.)
