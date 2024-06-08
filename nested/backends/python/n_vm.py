@@ -153,9 +153,9 @@ class VMIR:
                             # less confusing.
                             continue
                         else:
-                            self.frame.ip = args[0]
+                            self.frame.ip = args[1]
                     case OpCode.JUMP:
-                        self.frame.ip = args[0]
+                        self.frame.ip = args[1]
                     case OpCode.BEGIN_MODULE:
                         pass
                     case OpCode.END_MODULE:

@@ -11,7 +11,10 @@
 ;;   (if (= n 1) 1 2))))
 ;; (print (fib 1))
 
-(let sum (lambda (n)
-  (if (= n 0) 0
-  (+ n (sum (- n 1))))))
-(print (sum 100))
+(if #f 1 (if #f 2 (+ 1 3)))
+;; (let sum (lambda (n)
+;;   (if (= n 0) 0
+;;   (if (!= n 0)
+;;   (+ n (sum (- n 1)))
+;;   0))))
+;; (print (sum 100))
