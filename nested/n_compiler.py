@@ -40,30 +40,49 @@ class Compiler:
         for node in nodes:
             self.compile_node(node)
 
+    # def compile_if(self, node: ASTOp):
+    #     # TODO: is it possible that this fails in function calls
+    #     # because the IPs here are not RELATIVE ?
+    #     # As in, they compile against the IP of the whole program,
+    #     # but when we execute the function, the IP is relative to the start
+    #     # of ITS frame.
+    #     # Yes this is the case; use REL JUMP.
+    #     rel_ip = self.ip
+    #     cond, then, els = node.children
+    #     self.compile_node(cond)
+
+    #     backpatch_if_branch_take_jmp = self.ip
+    #     self.emit(Op(OpCode.NOP))
+
+    #     self.compile_node(then)
+    #     if_branch_finished_ip = self.ip # Capture the IP here because of 0-indexing when accessing the buffer instruction
+    #     self.emit(Op(OpCode.NOP))
+
+    #     self.patch(backpatch_if_branch_take_jmp, Op(OpCode.JUMP_IF_FALSE, if_branch_finished_ip + 1 - rel_ip, if_branch_finished_ip + 1)) # Add 1 because the jump target is the instr
+    #     # after the isntr we are also patching
+
+    #     self.compile_node(els)
+    #     else_branch_finished_ip = self.ip
+    #     self.patch(if_branch_finished_ip, Op(OpCode.JUMP, else_branch_finished_ip - rel_ip, else_branch_finished_ip))
+
     def compile_if(self, node: ASTOp):
-        # TODO: is it possible that this fails in function calls
-        # because the IPs here are not RELATIVE ?
-        # As in, they compile against the IP of the whole program,
-        # but when we execute the function, the IP is relative to the start
-        # of ITS frame.
-        # Yes this is the case; use REL JUMP.
-        rel_ip = self.ip
         cond, then, els = node.children
         self.compile_node(cond)
 
-        backpatch_if_branch_take_jmp = self.ip
         self.emit(Op(OpCode.NOP))
+        ip_of_jump_if_false = self.ip
 
         self.compile_node(then)
-        if_branch_finished_ip = self.ip # Capture the IP here because of 0-indexing when accessing the buffer instruction
-        self.emit(Op(OpCode.NOP))
 
-        self.patch(backpatch_if_branch_take_jmp, Op(OpCode.JUMP_IF_FALSE, if_branch_finished_ip + 1 - rel_ip, if_branch_finished_ip + 1)) # Add 1 because the jump target is the instr
-        # after the isntr we are also patching
+        self.emit(Op(OpCode.NOP))
+        ip_of_jump_to_end = self.ip
+
+        # Decrement because of 0-indexing instr buffer
+        self.patch(ip_of_jump_if_false - 1, Op(OpCode.JUMP_IF_FALSE, ip_of_jump_to_end - ip_of_jump_if_false, ip_of_jump_to_end))
 
         self.compile_node(els)
-        else_branch_finished_ip = self.ip
-        self.patch(if_branch_finished_ip, Op(OpCode.JUMP, else_branch_finished_ip - rel_ip, else_branch_finished_ip))
+        self.patch(ip_of_jump_to_end - 1, Op(OpCode.JUMP, self.ip - ip_of_jump_to_end, self.ip))
+
 
     def compile_const(self, node: ASTConstantValue):
         if node.type == "int":
