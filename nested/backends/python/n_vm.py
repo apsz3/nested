@@ -1,3 +1,4 @@
+from functools import reduce
 from typing import List
 from rich import print
 
@@ -230,9 +231,17 @@ class VMIR:
         self.stack.append(ls[1:])
 
     def push_list(self, n: int):
-        ls = [self.stack.pop() for _ in range(n)]
-        ls.reverse()
-        self.stack.append(ls)
+        # Create Cons pairs where the empty list is the final element.
+        # https://old.reddit.com/r/Racket/comments/tnduc9/difference_between_cons_list/
+        args = [self.stack.pop() for _ in range(n)]
+        p = Pair(args[0], [])
+        for a in args[1:]:
+            print(a)
+            p = Pair(a, p)
+        self.stack.append(p)
+        # breakpoint()
+        # ls = reduce(lambda elem, ls: Pair(elem, ls), reversed([self.stack.pop() for _ in range(n)]), [])
+        # self.stack.append(ls)
 
     def add(self, n:int):
         try:

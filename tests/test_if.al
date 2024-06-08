@@ -1,56 +1,56 @@
-;; (if #f (+ 1 2) (+ 3 4))
-;; (let x (if (!= 1 2) "yee" "yah"))
-;; (print x)
-;; (let x 1)
-;; (let id (lambda (x) (if (= x 0) "Zero!" "one!")))
-;; (print (id 1))
+;; ;; (if #f (+ 1 2) (+ 3 4))
+;; ;; (let x (if (!= 1 2) "yee" "yah"))
+;; ;; (print x)
+;; ;; (let x 1)
+;; ;; (let id (lambda (x) (if (= x 0) "Zero!" "one!")))
+;; ;; (print (id 1))
 
-; Not working, TODO
+;; ; Not working, TODO
+;; ;; (let fib (lambda (n)
+;; ;;   (if (= n 0) 0
+;; ;;   (if (= n 1) 1 2))))
+;; ;; (print (fib 1))
+
+;; (if #f (if #t 1 2) (if #f 2 3))
+;; (let sum (lambda (n)
+;;   (if (= n 0) 0
+;;   (if (!= n 0)
+;;   (+ n (sum (- n 1)))
+;;   0))))
+;; (print (sum 100))
+;; (print (sum 100))
+;; (print (sum 100))
+
 ;; (let fib (lambda (n)
 ;;   (if (= n 0) 0
-;;   (if (= n 1) 1 2))))
-;; (print (fib 1))
+;;   (if (= n 1) 1
+;;   (+ (fib (- n 1)) (fib (- n 2)))))))
 
-(if #f (if #t 1 2) (if #f 2 3))
-(let sum (lambda (n)
-  (if (= n 0) 0
-  (if (!= n 0)
-  (+ n (sum (- n 1)))
-  0))))
-(print (sum 100))
-(print (sum 100))
-(print (sum 100))
+;; (print (fib 10))
 
-(let fib (lambda (n)
-  (if (= n 0) 0
-  (if (= n 1) 1
-  (+ (fib (- n 1)) (fib (- n 2)))))))
+;; (let map (lambda (f l)
+;;   (if (= l (list)) (list)
+;;   (list (f (hd l)) (map f (tl l))))))
 
-(print (fib 10))
+;; (let unpack (lambda (l)
+;;   (if (= l (list)) (list)
+;;   ((hd l) (unpack (tl l))))))
 
-(let map (lambda (f l)
-  (if (= l (list)) (list)
-  (list (f (hd l)) (map f (tl l))))))
+;; (print (unpack (map (lambda (x) (+ x 1)) (list 1 2 3 4 5))))
+;; (print)
 
-(let unpack (lambda (l)
-  (if (= l (list)) (list)
-  ((hd l) (unpack (tl l))))))
+;; ;; (let _range (lambda (n i)
+;; ;;   (if (= i n) (list)
+;; ;;   (cons i (_range (+ i 1))))))
 
-(print (unpack (map (lambda (x) (+ x 1)) (list 1 2 3 4 5))))
-(print)
-
-;; (let _range (lambda (n i)
-;;   (if (= i n) (list)
-;;   (cons i (_range (+ i 1))))))
+;; ;; (let range (lambda (n)
+;; ;;   (_range n 0)))
 
 ;; (let range (lambda (n)
-;;   (_range n 0)))
+;;     (if (= n 0) (list)
+;;         (cons (range (- n 1)) n))))
 
-(let range (lambda (n)
-    (if (= n 0) (list)
-        (cons (range (- n 1)) n))))
-
-(print (range 10))
+;; (print (range 10))
 
 ;; (let range (lambda (n)
 ;;   (let _range (lambda (n i)
@@ -67,6 +67,7 @@
 
 (let append (lambda (ls elem)
     (if (= ls (list)) (cons elem ls)
-    (cons (hd ls) (append (tl ls) elem)))))
+    (cons (fst ls) (append (rst ls) elem)))))
 (let x (append (list 1 2 3) 4))
+(print x)
 (print (list x))
