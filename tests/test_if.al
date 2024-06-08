@@ -31,4 +31,16 @@
 (let map (lambda (f l)
   (if (= l (list)) (list)
   (list (f (hd l)) (map f (tl l))))))
-(print (map (lambda (x) (+ x 1)) (list 1 2 3 4 5)))
+
+(let unpack (lambda (l)
+  (if (= l (list)) (list)
+  ((hd l) (unpack (tl l))))))
+
+(print (unpack (map (lambda (x) (+ x 1)) (list 1 2 3 4 5))))
+(print)
+
+(let range (lambda (n)
+  (if (= n 0) (list)
+  (cons n (range (- n 1))))))
+
+(range 10)

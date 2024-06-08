@@ -35,6 +35,7 @@ class OpCode(Enum):
     LOAD_FALSE = auto()
     LOAD_SYM = auto()
 
+    CONS = auto()
     STORE = auto()
 
     BEGIN = auto()
@@ -96,6 +97,8 @@ class Op:
                 opcode = OpCode.HD
             case "tl":
                 opcode = OpCode.TL
+            case "cons":
+                opcode = OpCode.CONS
             # Value operations
             case "lambda":
                 opcode = OpCode.PUSH_LAMBDA

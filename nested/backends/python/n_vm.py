@@ -106,6 +106,8 @@ class VMIR:
                         self.add(*args)
                     case OpCode.SUB:
                         self.sub(*args)
+                    case OpCode.CONS:
+                        self.cons(*args)
                     case OpCode.NEG:
                         self.neg()
                     case OpCode.PRINT:
@@ -168,6 +170,12 @@ class VMIR:
                         raise ValueError(f"Unknown opcode: {op}")
         return self.stack
 
+    def cons(self, *args):
+        # (a b) -> [a, b]
+        ls, elem = self.stack.pop(), self.stack.pop()
+        # Always a new list, no mutability here ;) TODO
+        new = [elem] + ls
+        self.stack.append(new)
     def sub(self, n:int):
         # (- a b) -> a - b
         try:
