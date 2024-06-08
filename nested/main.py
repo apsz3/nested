@@ -9,11 +9,11 @@ import click
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import FileHistory
 
-def repl():
+def repl(debug):
     history = FileHistory('.nst_history.txt')
     v = VM(VMIR())
     session = PromptSession(history=history)
-
+    frame = Frame(CodeObj([]), SymTable(), None)
     while True:
         try:
             program = session.prompt(">>> ")
@@ -25,7 +25,7 @@ def repl():
             c = Compiler(tree)
             c.compile_program()
             code = CodeObj(c.buffer)
-            v.run(code)
+            v.backend.run(code, frame, debug=debug)
             stack, call_stack, _ = v.debug()
             print(*stack)
         except Exception as e:
@@ -61,7 +61,7 @@ def repl():
 @click.argument('file_path', type=click.Path(exists=True))
 def main(parse, compile, debug, i, file_path):
     if i:
-        repl()
+        repl(debug)
         return
     with open(file_path, "r") as fp:
         program = fp.read()
