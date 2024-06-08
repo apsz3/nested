@@ -136,9 +136,15 @@ class VMIR:
                         self.eq()
                     case OpCode.NEQ:
                         self.neq()
-                    case OpCode.FST:
+                    case OpCode.HD:
                         self.hd()
+                    case OpCode.TL:
+                        self.tl()
+                    case OpCode.FST:
+                        self.stack.append(args[0].fst)
                     case OpCode.RST:
+                        self.stack.append(args[0].rst)
+                    case OpCode.TL:
                         self.tl()
                     case OpCode.LOAD:
                         self.load(*args)
@@ -215,13 +221,13 @@ class VMIR:
         a, b = self.stack.pop(), self.stack.pop()
         self.stack.append(Symbol.from_bool(a != b))
 
-    # def hd(self):
-    #     ls = self.stack.pop()
-    #     self.stack.append(ls[0])
+    def hd(self):
+        ls = self.stack.pop()
+        self.stack.append(ls[0])
 
-    # def tl(self):
-    #     ls = self.stack.pop()
-    #     self.stack.append(ls[1:])
+    def tl(self):
+        ls = self.stack.pop()
+        self.stack.append(ls[1:])
 
     def push_list(self, n: int):
         ls = [self.stack.pop() for _ in range(n)]

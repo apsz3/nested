@@ -10,6 +10,8 @@ class OpCode(Enum):
 
     NEG = auto()
 
+    HD = auto()
+    TL = auto()
 
     IF = auto()
     JUMP_IF_FALSE = auto()
@@ -22,8 +24,6 @@ class OpCode(Enum):
     GT = auto()
     GTE = auto()
 
-    FST = auto()
-    RST = auto()
 
     LOAD = auto()
     PUSH_REF = auto()
@@ -35,6 +35,9 @@ class OpCode(Enum):
     LOAD_SYM = auto()
 
     CONS = auto()
+    FST = auto()
+    RST = auto()
+
     STORE = auto()
 
     BEGIN = auto()
@@ -92,6 +95,10 @@ class Op:
             # List
             case "list":
                 opcode = OpCode.PUSH_LIST
+            case "hd":
+                opcode = OpCode.HD
+            case "tl":
+                opcode = OpCode.TL
             case "fst":
                 opcode = OpCode.FST
             case "rst":
