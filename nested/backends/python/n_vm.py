@@ -141,9 +141,9 @@ class VMIR:
                     case OpCode.TL:
                         self.tl()
                     case OpCode.FST:
-                        self.stack.append(args[0].fst)
+                        self.stack.append(self.stack.pop().fst)
                     case OpCode.RST:
-                        self.stack.append(args[0].rst)
+                        self.stack.append(self.stack.pop().rst)
                     case OpCode.TL:
                         self.tl()
                     case OpCode.LOAD:

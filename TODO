@@ -1,6 +1,7 @@
 # Impl
 - Use UserList and other classes to avoid leaning too much on Python builtins for the runtime.
--
+- Compile arguments in reverse order so they do as expected in variadics, e.g.:
+- (print a b) -> a b, not -> b a
 # Bugs
 
 - Symbols defined in global scope bind to function parameter names, e.g.

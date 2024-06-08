@@ -62,4 +62,10 @@
 (print "1")
 (print "2"))
 
-(print (cons 1 2))
+(let z (cons 1 2))
+(print (fst z) (rst z))
+
+(let append (lambda (ls elem)
+    (if (= ls (list)) (cons elem ls)
+    (cons (hd ls) (append (tl ls) elem)))))
+(print (append (list 1 2 3) 4))
