@@ -6,29 +6,52 @@ from nested.n_parser import parse as Parse
 from nested.n_vm import VM
 from rich import print
 import click
+from prompt_toolkit import PromptSession
+from prompt_toolkit.history import FileHistory
 
 def repl():
-    # TODO: make the symbol table perist...
-
-
+    history = FileHistory('.nst_history.txt')
     v = VM(VMIR())
-    # frame = Frame(CodeObj([]), SymTable(), None)
+    session = PromptSession(history=history)
+
     while True:
         try:
-            program = input(">>> ")
+            program = session.prompt(">>> ")
             p = Parse(program)
 
             tree = p.children[0]
             tree.visit()
+            print(tree)
             c = Compiler(tree)
             c.compile_program()
             code = CodeObj(c.buffer)
-            # TODO: get frame
             v.run(code)
             stack, call_stack, _ = v.debug()
             print(*stack)
         except Exception as e:
             print(e)
+
+#     # TODO: make the symbol table perist...
+
+
+#     v = VM(VMIR())
+#     # frame = Frame(CodeObj([]), SymTable(), None)
+#     while True:
+#         try:
+#             program = input(">>> ")
+#             p = Parse(program)
+
+#             tree = p.children[0]
+#             tree.visit()
+#             c = Compiler(tree)
+#             c.compile_program()
+#             code = CodeObj(c.buffer)
+#             # TODO: get frame
+#             v.run(code)
+#             stack, call_stack, _ = v.debug()
+#             print(*stack)
+#         except Exception as e:
+#             print(e)
 
 @click.command()
 @click.option('-p', '--parse', is_flag=True, help='Parse the file')
