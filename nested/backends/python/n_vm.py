@@ -24,6 +24,20 @@ class Symbol:
         # Should probably handle it specially in compilation
         return Symbol("t") if b else Symbol("f")
 
+class Pair:
+    def __init__(self, fst, rst):
+        self.fst = fst
+        self.rst = rst
+
+    def __str__(self):
+        return f"({self.fst} . {self.rst})"
+
+    def __repr__(self):
+        return f"({self.fst} . {self.rst})"
+
+    def __rich_repr__(self):
+        return f"({self.fst} . {self.rst})"
+
 def err(msg):
     raise ValueError(f"[red]Error: {msg}[/red]")
 
@@ -122,9 +136,9 @@ class VMIR:
                         self.eq()
                     case OpCode.NEQ:
                         self.neq()
-                    case OpCode.HD:
+                    case OpCode.FST:
                         self.hd()
-                    case OpCode.TL:
+                    case OpCode.RST:
                         self.tl()
                     case OpCode.LOAD:
                         self.load(*args)
@@ -172,10 +186,10 @@ class VMIR:
 
     def cons(self, *args):
         # (a b) -> [a, b]
-        ls, elem = self.stack.pop(), self.stack.pop()
+        snd, fst = self.stack.pop(), self.stack.pop()
         # Always a new list, no mutability here ;) TODO
-        new = [elem] + ls
-        self.stack.append(new)
+        self.stack.append(Pair(fst, snd))
+
     def sub(self, n:int):
         # (- a b) -> a - b
         try:
@@ -201,13 +215,13 @@ class VMIR:
         a, b = self.stack.pop(), self.stack.pop()
         self.stack.append(Symbol.from_bool(a != b))
 
-    def hd(self):
-        ls = self.stack.pop()
-        self.stack.append(ls[0])
+    # def hd(self):
+    #     ls = self.stack.pop()
+    #     self.stack.append(ls[0])
 
-    def tl(self):
-        ls = self.stack.pop()
-        self.stack.append(ls[1:])
+    # def tl(self):
+    #     ls = self.stack.pop()
+    #     self.stack.append(ls[1:])
 
     def push_list(self, n: int):
         ls = [self.stack.pop() for _ in range(n)]

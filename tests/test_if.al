@@ -48,7 +48,7 @@
 
 (let range (lambda (n)
     (if (= n 0) (list)
-        (cons n (range (- n 1))))))
+        (cons (range (- n 1)) n))))
 
 (print (range 10))
 
@@ -61,3 +61,5 @@
 (begin
 (print "1")
 (print "2"))
+
+(print (cons 1 2))

@@ -128,7 +128,7 @@ class ASTIdentifier(ASTLeaf):
     builtins = {
         "+", "-", "*", "/", "//", "%",
         "=", "!=", "<", ">", "<=", ">=",
-        "list", "hd", "tl", "cons",
+        "list", "fst", "rst", "cons",
         "if",
         "let",
         "begin",

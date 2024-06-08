@@ -22,8 +22,8 @@ class OpCode(Enum):
     GT = auto()
     GTE = auto()
 
-    HD = auto()
-    TL = auto()
+    FST = auto()
+    RST = auto()
 
     LOAD = auto()
     PUSH_REF = auto()
@@ -92,10 +92,10 @@ class Op:
             # List
             case "list":
                 opcode = OpCode.PUSH_LIST
-            case "hd":
-                opcode = OpCode.HD
-            case "tl":
-                opcode = OpCode.TL
+            case "fst":
+                opcode = OpCode.FST
+            case "rst":
+                opcode = OpCode.RST
             case "cons":
                 opcode = OpCode.CONS
             # Value operations
