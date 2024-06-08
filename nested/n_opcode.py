@@ -22,7 +22,6 @@ class OpCode(Enum):
     GT = auto()
     GTE = auto()
 
-
     HD = auto()
     TL = auto()
 
@@ -128,6 +127,8 @@ class Op:
                 opcode = OpCode.BEGIN_MODULE
             case "end_module":
                 opcode = OpCode.END_MODULE
+            case "begin":
+                opcode = OpCode.BEGIN
             case _:
                 raise ValueError(f"Unknown opcode: {i.value}")
         return Op(opcode, *args)

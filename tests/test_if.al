@@ -39,8 +39,25 @@
 (print (unpack (map (lambda (x) (+ x 1)) (list 1 2 3 4 5))))
 (print)
 
-(let range (lambda (n)
-  (if (= n 0) (list)
-  (cons n (range (- n 1))))))
+;; (let _range (lambda (n i)
+;;   (if (= i n) (list)
+;;   (cons i (_range (+ i 1))))))
 
-(range 10)
+;; (let range (lambda (n)
+;;   (_range n 0)))
+
+(let range (lambda (n)
+    (if (= n 0) (list)
+        (cons n (range (- n 1))))))
+
+(print (range 10))
+
+;; (let range (lambda (n)
+;;   (let _range (lambda (n i)
+;;     (if (= i n) (list)
+;;     (cons i (_range n (+ i 1))))))
+;;   (_range n 0)))
+
+(begin
+(print "1")
+(print "2"))

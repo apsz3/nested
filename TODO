@@ -1,3 +1,6 @@
+# Impl
+- Use UserList and other classes to avoid leaning too much on Python builtins for the runtime.
+-
 # Bugs
 
 - Symbols defined in global scope bind to function parameter names, e.g.
@@ -6,7 +9,6 @@
 (let foo (lambda (x) ...))
 (foo) ; compiles and runs
 ```
-- Need way to terminate / jump out of nested ifs ... else values not pushed on stack?
 # Frontend
 - Parse lambdas with empty lists for either params or body
 - Auto-generate handlers for bytecode for Python backend (case stmts, function stubs, etc.)

@@ -140,6 +140,12 @@ class Compiler:
                     self.compile_if(node)
                     return
 
+                case OpCode.BEGIN:
+                    # Only compile the children, not the value
+                    for child in node.children:
+                        self.compile_node(child)
+                    return
+
                 case _:
                     for child in node.children:
                         self.compile_node(child)
