@@ -20,3 +20,10 @@
 (print (sum 100))
 (print (sum 100))
 (print (sum 100))
+
+(let fib (lambda (n)
+  (if (= n 0) 0
+  (if (= n 1) 1
+  (+ (fib (- n 1)) (fib (- n 2)))))))
+
+(print (fib 10))
