@@ -151,9 +151,9 @@ class VMIR:
                             # so we don't need to do it again.
                             continue
                         else:
-                            self.frame.ip = args[1]
+                            self.frame.ip += args[0]
                     case OpCode.JUMP:
-                        self.frame.ip = args[1]
+                        self.frame.ip += args[0]
                     # case OpCode.JUMP_IF_FALSE:
                     #     cond = self.stack.pop()
                     #     if cond:
