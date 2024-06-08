@@ -68,4 +68,5 @@
 (let append (lambda (ls elem)
     (if (= ls (list)) (cons elem ls)
     (cons (hd ls) (append (tl ls) elem)))))
-(print (append (list 1 2 3) 4))
+(let x (append (list 1 2 3) 4))
+(print (list x))
