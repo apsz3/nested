@@ -151,22 +151,10 @@ class VMIR:
                             # so we don't need to do it again.
                             continue
                         else:
+                            # Add the relative jump
                             self.frame.ip += args[0]
                     case OpCode.JUMP:
                         self.frame.ip += args[0]
-                    # case OpCode.JUMP_IF_FALSE:
-                    #     cond = self.stack.pop()
-                    #     if cond:
-                    #         # We've already advanced the IP
-                    #         # before stepping into the match statemenst,
-                    #         # so we don't need to do it again.
-                    #         # TODO: revisit this to make when we call next()
-                    #         # less confusing.
-                    #         continue
-                    #     else:
-                    #         self.frame.ip = args[1]
-                    # case OpCode.JUMP:
-                    #     self.frame.ip = args[1]
                     case OpCode.BEGIN_MODULE:
                         pass
                     case OpCode.END_MODULE:

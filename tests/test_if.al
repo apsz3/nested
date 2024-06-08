@@ -27,3 +27,8 @@
   (+ (fib (- n 1)) (fib (- n 2)))))))
 
 (print (fib 10))
+
+(let map (lambda (f l)
+  (if (= l (list)) (list)
+  (list (f (hd l)) (map f (tl l))))))
+(print (map (lambda (x) (+ x 1)) (list 1 2 3 4 5)))
