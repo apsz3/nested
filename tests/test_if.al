@@ -11,7 +11,7 @@
 ;;   (if (= n 1) 1 2))))
 ;; (print (fib 1))
 
-(if #f 1 2)
+(if #f (if #t 1 2) (if #f 2 3))
 ;; (let sum (lambda (n)
 ;;   (if (= n 0) 0
 ;;   (if (!= n 0)
