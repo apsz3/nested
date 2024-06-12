@@ -185,7 +185,7 @@ class VMIR:
                         next(self.frame) # Skip the POP_LAMBDA
                     case OpCode.JUMP_IF_FALSE:
                         cond = self.stack.pop()
-                        if cond == Symbol("t"):
+                        if cond is True:
                             # We've already advanced the IP
                             # before stepping into the match statemenst,
                             # so we don't need to do it again.
@@ -229,7 +229,7 @@ class VMIR:
 
     def eq(self):
         a, b = self.stack.pop(), self.stack.pop()
-        self.stack.append(Symbol.from_bool(a == b))
+        self.stack.append(a == b)
 
     # def sub(self, n:int):
     #     try:
@@ -238,7 +238,7 @@ class VMIR:
     #         err(str(e))
     def neq(self):
         a, b = self.stack.pop(), self.stack.pop()
-        self.stack.append(Symbol.from_bool(a != b))
+        self.stack.append(a != b)
 
     def hd(self):
         ls = self.stack.pop()
