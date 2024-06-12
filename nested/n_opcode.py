@@ -105,7 +105,7 @@ class Op:
                 opcode = OpCode.FST
             case "rst":
                 opcode = OpCode.RST
-            case "quote":
+            case "'":
                 opcode = OpCode.QUOTE
             case "cons":
                 opcode = OpCode.CONS

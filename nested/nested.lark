@@ -13,15 +13,14 @@ list: "(" s_expr* ")"
 // REMEMBER TO CAPITALIZE TERMINAL RULES, OTHERWISE THEY PARSE AS TREES
 //ident: (LETTER) (LETTER | DIGIT | "_" | "-")*
 // regex accepting a single "+", or the ident below:
-OP: "+" | "-" | "=" | "!=" | ">" | "<" | ">=" | "-" | "<=" | "'"
+OP: "+" | "-" | "=" | "'" | "!=" | ">" | "<" | ">=" | "-" | "<=" 
 IDENTIFIER: /[^\W\d-][\w-]*/
 ident: OP | IDENTIFIER
 symbol: "#" ident
 
-?atom: ident
+?atom: symbol
     | NUMBER -> number
     | ESCAPED_STRING -> string
-    | symbol
     | ident
 
 COMMENT: /;.*/
