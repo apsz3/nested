@@ -164,6 +164,8 @@ class VMIR:
                         self.tl()
                     case OpCode.LOAD:
                         self.load(*args)
+                    case OpCode.QUOTE:
+                        self.quote(*args)
                     case OpCode.PUSH_REF:
                         self.push_ref(*args)
                     case OpCode.STORE:
@@ -183,7 +185,7 @@ class VMIR:
                         next(self.frame) # Skip the POP_LAMBDA
                     case OpCode.JUMP_IF_FALSE:
                         cond = self.stack.pop()
-                        if cond:
+                        if cond == Symbol("t"):
                             # We've already advanced the IP
                             # before stepping into the match statemenst,
                             # so we don't need to do it again.
@@ -212,6 +214,9 @@ class VMIR:
         # Always a new list, no mutability here ;) TODO
         self.stack.append(Pair(fst, snd))
 
+    def quote(self, *args):
+        # Do nothing -- leave the code unevaluated, will be used later
+        pass         
     def sub(self, n:int):
         # (- a b) -> a - b
         try:
@@ -222,11 +227,9 @@ class VMIR:
         b = sum(args[:-1])
         self.stack.append(a - b)
 
-    def neg(self):
-        self.stack.append(-self.stack.pop())
     def eq(self):
         a, b = self.stack.pop(), self.stack.pop()
-        self.stack.append(a == b)
+        self.stack.append(Symbol.from_bool(a == b))
 
     # def sub(self, n:int):
     #     try:

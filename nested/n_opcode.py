@@ -25,6 +25,8 @@ class OpCode(Enum):
     GTE = auto()
 
 
+    QUOTE = auto()
+
     LOAD = auto()
     PUSH_REF = auto()
 
@@ -103,6 +105,8 @@ class Op:
                 opcode = OpCode.FST
             case "rst":
                 opcode = OpCode.RST
+            case "quote":
+                opcode = OpCode.QUOTE
             case "cons":
                 opcode = OpCode.CONS
             # Value operations

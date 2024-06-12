@@ -145,7 +145,7 @@ class Compiler:
                     for child in node.children:
                         self.compile_node(child)
                     return
-
+                
                 case _:
                     for child in node.children:
                         self.compile_node(child)
