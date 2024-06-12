@@ -65,9 +65,7 @@
 (let z (cons 1 2))
 (print (fst z) (rst z))
 
-(let append (lambda (ls elem)
-    (if (= ls (list)) (cons elem ls)
-    (cons (fst ls) (append (rst ls) elem)))))
-(let x (append (list 1 2 3) 4))
-(print x)
-(print (list x))
+
+;; (print (list x))
+
+(print (cons 1 #empty))

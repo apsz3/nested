@@ -7,12 +7,11 @@ from nested.n_vm import VM
 from rich import print
 import click
 
-def repl():
+def repl(debug):
     # TODO: make the symbol table perist...
 
 
     v = VM(VMIR())
-    # frame = Frame(CodeObj([]), SymTable(), None)
     while True:
         try:
             program = input(">>> ")
@@ -24,7 +23,7 @@ def repl():
             c.compile_program()
             code = CodeObj(c.buffer)
             # TODO: get frame
-            v.run(code)
+            v.backend.run_repl(code, debug)
             stack, call_stack, _ = v.debug()
             print(*stack)
         except Exception as e:
@@ -38,7 +37,7 @@ def repl():
 @click.argument('file_path', type=click.Path(exists=True))
 def main(parse, compile, debug, i, file_path):
     if i:
-        repl()
+        repl(debug)
         return
     with open(file_path, "r") as fp:
         program = fp.read()

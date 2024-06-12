@@ -17,7 +17,10 @@ class Symbol:
         return self.name
 
     def __eq__(self, value: object) -> bool:
-        self.name = value.name
+        # TODO: is this what we want?
+        if isinstance(value, Symbol):
+            return self.name == value.name
+        return False
 
     @staticmethod
     def from_bool(b: bool):
@@ -48,13 +51,25 @@ def msg(msg):
 class VMIR:
     # Keep these functions separate as only in interpreter mode do we want to
     # cast things for example
+    def run_repl(self, code: CodeObj, debug=False):
+        if not hasattr(self, "frame"):
+            self.frame = Frame(code, SymTable(), None)
+
+        self.frame.code = code
+
+        self.stack = []
+        self.call_stack: List[Frame] = [self.frame]
+
+        self.exec(debug)
+
+
     def run(self, code: CodeObj, frame = None, debug=False):
         if frame is None:
             frame = Frame(code, SymTable(), None)
         else:
             frame.code = code
-        self.frame = frame
 
+        self.frame = frame
         self.stack = []
         self.call_stack: List[Frame] = [self.frame]
 
@@ -233,6 +248,10 @@ class VMIR:
     def push_list(self, n: int):
         # Create Cons pairs where the empty list is the final element.
         # https://old.reddit.com/r/Racket/comments/tnduc9/difference_between_cons_list/
+        if n == 0: 
+            self.stack.append(Symbol('empty'))
+            return
+        
         args = [self.stack.pop() for _ in range(n)]
         p = Pair(args[0], [])
         for a in args[1:]:
