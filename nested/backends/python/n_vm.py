@@ -331,7 +331,11 @@ class VMIR:
         self.frame = new
 
     def list(self, n: int):
-        self.stack.append([self.stack.pop() for _ in range(n)])
+        args = [self.stack.pop() for _ in range(n)]
+        args.reverse()
+        res = reduce(lambda elem, ls: Pair(elem, ls), args, Symbol('empty'))
+        self.stack.append(res)
+        # self.stack.append([self.stack.pop() for _ in range(n)])
 
     def print(self, n: int):
         try:
