@@ -214,9 +214,12 @@ class VMIR:
         # Always a new list, no mutability here ;) TODO
         self.stack.append(Pair(fst, snd))
 
-    def quote(self, *args):
+    def quote(self, n):
         # Do nothing -- leave the code unevaluated, will be used later
-        pass         
+        # Collect a CodeObj of the last N arguments, and push it
+        ops = [self.stack.pop() for _ in range(n)][::-1]
+        self.stack.append(CodeObj(ops))
+        print(ops)
     def sub(self, n:int):
         # (- a b) -> a - b
         try:
