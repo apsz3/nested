@@ -26,6 +26,7 @@ class OpCode(Enum):
 
 
     QUOTE = auto()
+    EVAL = auto()
 
     LOAD = auto()
     PUSH_REF = auto()
@@ -107,6 +108,8 @@ class Op:
                 opcode = OpCode.RST
             case "'":
                 opcode = OpCode.QUOTE
+            case "eval":
+                opcode = OpCode.EVAL
             case "cons":
                 opcode = OpCode.CONS
             # Value operations

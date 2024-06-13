@@ -120,6 +120,7 @@ class VMIR:
         return (self.stack, self.call_stack, self.frame)
 
     def exec(self, debug):
+        self.debug = debug
         while self.call_stack:
             self.frame = self.call_stack.pop()
             while self.frame.instr:
@@ -166,6 +167,8 @@ class VMIR:
                         self.load(*args)
                     case OpCode.QUOTE:
                         self.quote(*args)
+                    case OpCode.EVAL:
+                        self.eval(*args)
                     case OpCode.PUSH_REF:
                         self.push_ref(*args)
                     case OpCode.STORE:
@@ -208,6 +211,7 @@ class VMIR:
                         raise ValueError(f"Unknown opcode: {op}")
         return self.stack
 
+
     def cons(self, *args):
         # (a b) -> [a, b]
         snd, fst = self.stack.pop(), self.stack.pop()
@@ -216,8 +220,10 @@ class VMIR:
 
     def quote(self, n):
         # Do nothing -- leave the code unevaluated, will be used later
-        # Collect a CodeObj of the last N arguments, and push it
-        ops = [self.stack.pop() for _ in range(n)][::-1]
+        # Collect a CodeObj of the last N arguments, and push it.
+        # -1 because we have already advanced the instruction pointer
+        # to the next instr after fetching the quote op
+        ops = self.frame.code[self.frame.ip-n-1:self.frame.ip-1]
         self.stack.append(CodeObj(ops))
         print(ops)
     def sub(self, n:int):
@@ -250,6 +256,11 @@ class VMIR:
     def tl(self):
         ls = self.stack.pop()
         self.stack.append(ls[1:])
+
+    def eval(self, *args):
+        co : CodeObj = self.stack.pop()
+        breakpoint()
+        # self.frame.code = [*self.frame.code[:self.frame.ip], *co.code, *self.frame.code[self.frame.ip:]]
 
     def push_list(self, n: int):
         # Create Cons pairs where the empty list is the final element.

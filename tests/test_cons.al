@@ -9,7 +9,7 @@
 (let len (lambda (itr acc)
           (if (empty itr) acc
            (len (rst itr) (+ acc 1)))))
-(print (len (list 1 2 3) 0))
+(print (len (list 1 2 3 4) 0))
 ;; (print (len v 0))
 ;; ; (let get (lambda dict key)
  ;   # (if ())
