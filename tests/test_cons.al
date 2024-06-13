@@ -1,0 +1,15 @@
+(print (rst (rst (cons 1 (cons 2 #empty)))))
+
+;; (let make-vec (lambda (a b) (cons a b)))
+;; (let v (make-vec 1 2))
+;; (print v)
+(print (list 1 2 3))
+(let empty (lambda (ls) (= ls #empty)))
+(print (empty (rst (list 1))))
+(let len (lambda (itr acc)
+          (if (empty itr) acc
+           (len (rst itr) (+ acc 1)))))
+(print (len (list 1 2 3) 0))
+;; (print (len v 0))
+;; ; (let get (lambda dict key)
+ ;   # (if ())

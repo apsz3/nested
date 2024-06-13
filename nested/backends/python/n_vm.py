@@ -254,16 +254,28 @@ class VMIR:
     def push_list(self, n: int):
         # Create Cons pairs where the empty list is the final element.
         # https://old.reddit.com/r/Racket/comments/tnduc9/difference_between_cons_list/
-        if n == 0: 
+        # if n == 0: 
+        #     self.stack.append(Symbol('empty'))
+        #     return
+        if n == 0:
             self.stack.append(Symbol('empty'))
             return
         
         args = [self.stack.pop() for _ in range(n)]
-        p = Pair(args[0], [])
-        for a in args[1:]:
-            print(a)
-            p = Pair(a, p)
+        p = Pair(args[0], Symbol('empty'))
+        for arg in args[1:]:
+            p = Pair(arg, p)
         self.stack.append(p)
+
+        # args = [self.stack.pop() for _ in range(n)]
+        # res = reduce(lambda elem, ls: Pair(elem, ls), args, Symbol('empty'))
+        # print(res)
+        # self.stack.append(res)
+        # p = Pair(args[0], Symbol('empty'))
+        # for a in args[1:]:
+        #     print(a)
+        #     p = Pair(a, p)
+        # self.stack.append(p)
         # breakpoint()
         # ls = reduce(lambda elem, ls: Pair(elem, ls), reversed([self.stack.pop() for _ in range(n)]), [])
         # self.stack.append(ls)
