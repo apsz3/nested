@@ -21,12 +21,12 @@
 ;; (print (sum 100))
 ;; (print (sum 100))
 
-;; (let fib (lambda (n)
-;;   (if (= n 0) 0
-;;   (if (= n 1) 1
-;;   (+ (fib (- n 1)) (fib (- n 2)))))))
+(let fib (lambda (n)
+  (if (= n 0) 0
+  (if (= n 1) 1
+  (+ (fib (- n 1)) (fib (- n 2)))))))
 
-;; (print (fib 10))
+(print (fib 10))
 
 ;; (let map (lambda (f l)
 ;;   (if (= l (list)) (list)
@@ -65,9 +65,9 @@
 (let z (cons 1 2))
 (print (fst z) (rst z))
 
-(let append (lambda (ls elem)
-    (if (= ls (list)) (cons elem ls)
-    (cons (fst ls) (append (rst ls) elem)))))
-(let x (append (list 1 2 3) 4))
-(print x)
-(print (list x))
+
+;; (print (list x))
+
+(print (cons 1 #empty))
+
+

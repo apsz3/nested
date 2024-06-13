@@ -25,7 +25,8 @@ def repl(debug):
             c = Compiler(tree)
             c.compile_program()
             code = CodeObj(c.buffer)
-            v.backend.run(code, frame, debug=debug)
+            # TODO: get frame
+            v.backend.run_repl(code, debug)
             stack, call_stack, _ = v.debug()
             print(*stack)
         except Exception as e:
@@ -61,6 +62,7 @@ def repl(debug):
 @click.argument('file_path', type=click.Path(exists=True))
 def main(parse, compile, debug, i, file_path):
     if i:
+        repl(debug)
         repl(debug)
         return
     with open(file_path, "r") as fp:
