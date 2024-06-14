@@ -29,6 +29,11 @@ class SymTable:
 
     def dump(self):
         return self.symbols
+    @classmethod
+    def from_dict(cls, d):
+        new = SymTable()
+        new.symbols.update(d)
+        return new
 
     def copy(self):
         new = SymTable()

@@ -49,12 +49,17 @@ def err(msg):
 def msg(msg):
     print(f"[green]{msg}[/green]")
 
+_builtins = {
+    "+": OpCode.ADD,
+}
+
+
 class VMIR:
     # Keep these functions separate as only in interpreter mode do we want to
     # cast things for example
     def run_repl(self, code: CodeObj, debug=False):
         if not hasattr(self, "frame"):
-            self.frame = Frame(code, SymTable(), None)
+            self.frame = Frame(code, SymTable.from_dict(_builtins), None)
 
         self.frame.code = code
 
@@ -66,7 +71,7 @@ class VMIR:
 
     def run(self, code: CodeObj, frame = None, debug=False):
         if frame is None:
-            frame = Frame(code, SymTable(), None)
+            frame = Frame(code, SymTable.from_dict(_builtins), None)
         else:
             frame.code = code
 
@@ -266,19 +271,17 @@ class VMIR:
         # ops.reverse()
         # print(ops)
         pair = self.stack.pop()
-        expr = pair.fst
-        if pair.rst == Symbol('empty'):
-            self.eval_basic(expr)
+        if not isinstance(pair, Pair):
+            self.eval_basic(pair)
             return
 
-        self.eval(pair.rst)
-        self.eval_basic(expr)
-        return
+        if pair.rst == Symbol('empty'):
+            self.eval_basic(pair.fst)
+            return
 
-    class QuotedCodeObj(CodeObj):
-        def __init__(self, co):
-            self.co = co
-            self.n = len(co)
+        self.eval_basic(pair.fst)
+        self.eval(pair.rst)
+        return
 
     def quote(self, n):
         # When compiled, we pushed Op(LOAD_SYM, symbol) for each node encountered
@@ -286,12 +289,16 @@ class VMIR:
         # When executing, forget about the LOAD_SYM opcodes, and just push the argument,
         # which is the symbolic value.
         # ops = list(map(lambda op: op.args, self.frame.code[self.frame.ip-n-1:self.frame.ip-1]))
-        self.stack.pop() # Discard the `'`
         ops = [self.stack.pop() for _ in range(n - 1)]
-        # print(ops)
+        self.stack.pop() # Remove the quote char. TODO: do we need to push it?:
+        print(":", ops)
+        # p = Pair(ops[-1], Symbol('empty'))
+        # for o in ops[:-1]:
+        #     p = Pair(o, p)
         # for o in ops:
             # self.stack.append(Pair(o.opcode, o.args))
         self.stack.append(self._make_list(ops))
+        # self.stack.append(p)
         print(self.stack)
     def sub(self, n:int):
         # (- a b) -> a - b

@@ -153,10 +153,10 @@ class Compiler:
                             self.emit(Op(OpCode.LOAD_SYM, n.value))
                             return
 
+                        do_quote(n.value) # This must go first, to keep order of args sensible with it
                         for c in n.children:
                             do_quote(c)
 
-                        do_quote(n.value)
 
                     start = self.ip
                     # BFS but need DFS?
