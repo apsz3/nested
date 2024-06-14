@@ -237,7 +237,7 @@ class VMIR:
         # print(ops)
         ops = self.stack.pop()
         operand = ops.fst
-        breakpoint()
+        # breakpoint()
 
     class QuotedCodeObj(CodeObj):
         def __init__(self, co):
@@ -249,8 +249,9 @@ class VMIR:
         # in the AST.
         # When executing, forget about the LOAD_SYM opcodes, and just push the argument,
         # which is the symbolic value.
-        ops = list(map(lambda op: op.args, self.frame.code[self.frame.ip-n-1:self.frame.ip-1]))
-        ops.reverse()
+        # ops = list(map(lambda op: op.args, self.frame.code[self.frame.ip-n-1:self.frame.ip-1]))
+        self.stack.pop() # Discard the `'`
+        ops = [self.stack.pop() for _ in range(n - 1)]
         # print(ops)
         # for o in ops:
             # self.stack.append(Pair(o.opcode, o.args))
