@@ -151,9 +151,11 @@ class Compiler:
                     # not just the number of children
                     start = self.ip
                     for child in node.children:
+
                         self.compile_node(child)
                     self.emit(Op.from_id(node.value, self.ip - start))
                     return
+
                 case _:
                     for child in node.children:
                         self.compile_node(child)

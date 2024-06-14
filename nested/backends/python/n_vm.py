@@ -40,7 +40,8 @@ class Pair:
         return f"({self.fst} . {self.rst})"
 
     def __rich_repr__(self):
-        return f"({self.fst} . {self.rst})"
+        yield self.fst
+        yield self.rst
 
 def err(msg):
     raise ValueError(f"[red]Error: {msg}[/red]")
@@ -224,9 +225,10 @@ class VMIR:
         self.stack.append(Pair(fst, snd))
 
 
-    def eval(self, *args):
-        co : CodeObj = self.stack.pop()
-        print(co)
+    def eval(self, n):
+        # co : CodeObj = self.stack.pop()
+        # print(co)
+        pass
         # We need to execute the code in the current frame
 
         # self.frame.code = [*self.frame.code[:self.frame.ip], *co.code, *self.frame.code[self.frame.ip:]]
@@ -237,8 +239,11 @@ class VMIR:
         # -1 because we have already advanced the instruction pointer
         # to the next instr after fetching the quote op
         ops = self.frame.code[self.frame.ip-n-1:self.frame.ip-1]
-        self.stack.append(CodeObj(ops))
+        ops.reverse()
         print(ops)
+        for o in ops:
+            self.stack.append(Pair(o.opcode, o.args))
+        # print(self.stack)
     def sub(self, n:int):
         # (- a b) -> a - b
         try:
