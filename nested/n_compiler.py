@@ -152,13 +152,13 @@ class Compiler:
                     # Rather, just retain the symbolic value of the nodes.
                     start = self.ip
                     # BFS
-                    children = node.children
+                    children = [*node.children]
                     while children:
                         child = children.pop(0)
                         if child is None:
                             break
-                        if isinstance(child, ASTOp):
-                            self.emit(Op.from_id(child.value))
+                        if isinstance(child.value, ASTOp):
+                            self.emit(Op(OpCode.LOAD_SYM, child.value.value))
                         else:
                             self.emit(Op(OpCode.LOAD_SYM, child.value))
                         # if isinstance(child, ASTOp):

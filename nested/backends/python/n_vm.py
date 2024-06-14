@@ -247,11 +247,12 @@ class VMIR:
         # -1 because we have already advanced the instruction pointer
         # to the next instr after fetching the quote op
         ops = self.frame.code[self.frame.ip-n-1:self.frame.ip-1]
-        # ops.reverse()
+        ops.reverse()
         # print(ops)
-        for o in ops:
-            self.stack.append(Pair(o.opcode, o.args))
-        # print(self.stack)
+        # for o in ops:
+            # self.stack.append(Pair(o.opcode, o.args))
+        self.stack.append(self._make_list(ops))
+        print(self.stack)
     def sub(self, n:int):
         # (- a b) -> a - b
         try:
@@ -283,6 +284,14 @@ class VMIR:
         ls = self.stack.pop()
         self.stack.append(ls[1:])
 
+    def _make_list(self, args):
+        if len(args) == 0:
+            return Symbol('empty')
+
+        p = Pair(args[0], Symbol('empty'))
+        for arg in args[1:]:
+            p = Pair(arg, p)
+        return p
 
     def push_list(self, n: int):
         # Create Cons pairs where the empty list is the final element.
