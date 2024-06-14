@@ -232,9 +232,12 @@ class VMIR:
         # We shouldn't though be dealing with ops like
         # Jumps, etc, because those are inserted by the compiler;
         # we just deal with primitives.
-        ops = [self.stack.pop() for _ in range(n)]
-        ops.reverse()
-        print(ops)
+        # ops = [self.stack.pop() for _ in range(n)]
+        # ops.reverse()
+        # print(ops)
+        ops = self.stack.pop()
+        operand = ops.fst
+        breakpoint()
 
     class QuotedCodeObj(CodeObj):
         def __init__(self, co):
