@@ -147,24 +147,20 @@ class Compiler:
                     return
 
                 case OpCode.QUOTE:
-                    # Do not compile things -- we don't want to deal
-                    # with implementation ops like jumps, etc.
-                    # Rather, just retain the symbolic value of the nodes.
+                    def do_quote(n):
+                        # TODO: Fix this parser bug that makes children a tuple
+                        if n.children == (None,):
+                            self.emit(Op(OpCode.LOAD_SYM, n.value))
+                            return
+
+                        for c in n.children:
+                            do_quote(c)
+
+                        do_quote(n.value)
+
                     start = self.ip
-                    # BFS
-                    children = [*node.children]
-                    while children:
-                        child = children.pop(0)
-                        if child is None:
-                            break
-                        if isinstance(child.value, ASTOp):
-                            self.emit(Op(OpCode.LOAD_SYM, child.value.value))
-                        else:
-                            self.emit(Op(OpCode.LOAD_SYM, child.value))
-                        # if isinstance(child, ASTOp):
-                        #     self.emit(Op.from_id(child.value, 0))
-                        for c in child.children:
-                            children.append(c)
+                    # BFS but need DFS?
+                    do_quote(node)
                     self.emit(Op.from_id(node.value, self.ip - start))
                     return
 
@@ -174,6 +170,7 @@ class Compiler:
 
                     self.emit(Op.from_id(node.value, len(node.children)))
                     return
+
         for child in node.children:
             self.compile_node(child)
 
