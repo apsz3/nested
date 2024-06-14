@@ -242,10 +242,10 @@ class VMIR:
             self.n = len(co)
 
     def quote(self, n):
-        # Do nothing -- leave the code unevaluated, will be used later
-        # Collect a CodeObj of the last N arguments, and push it.
-        # -1 because we have already advanced the instruction pointer
-        # to the next instr after fetching the quote op
+        # When compiled, we pushed Op(LOAD_SYM, symbol) for each node encountered
+        # in the AST.
+        # When executing, forget about the LOAD_SYM opcodes, and just push the argument,
+        # which is the symbolic value.
         ops = list(map(lambda op: op.args, self.frame.code[self.frame.ip-n-1:self.frame.ip-1]))
         ops.reverse()
         # print(ops)
