@@ -223,6 +223,14 @@ class VMIR:
         # Always a new list, no mutability here ;) TODO
         self.stack.append(Pair(fst, snd))
 
+
+    def eval(self, *args):
+        co : CodeObj = self.stack.pop()
+        print(co)
+        # We need to execute the code in the current frame
+
+        # self.frame.code = [*self.frame.code[:self.frame.ip], *co.code, *self.frame.code[self.frame.ip:]]
+
     def quote(self, n):
         # Do nothing -- leave the code unevaluated, will be used later
         # Collect a CodeObj of the last N arguments, and push it.
@@ -262,11 +270,6 @@ class VMIR:
         ls = self.stack.pop()
         self.stack.append(ls[1:])
 
-    def eval(self, *args):
-        co : CodeObj = self.stack.pop()
-        # We need to execute the code in the current frame
-
-        # self.frame.code = [*self.frame.code[:self.frame.ip], *co.code, *self.frame.code[self.frame.ip:]]
 
     def push_list(self, n: int):
         # Create Cons pairs where the empty list is the final element.
