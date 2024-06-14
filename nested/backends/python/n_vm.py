@@ -118,7 +118,7 @@ class VMIR:
         self.stack.append(fn) # Append the function object, since this could be inline;
         # a Let / definition will be popping it when needed
 
-    def debug(self):
+    def debug_output(self):
         return (self.stack, self.call_stack, self.frame)
 
     def do_op(self, op, args):
@@ -224,8 +224,38 @@ class VMIR:
         # Always a new list, no mutability here ;) TODO
         self.stack.append(Pair(fst, snd))
 
+    @staticmethod
+    def isint(i: Symbol):
+        try:
+            int(i.name)
+            return True
+        except ValueError:
+            return False
 
-    def eval(self, n):
+    @staticmethod
+    def isbool(i: Symbol):
+        return i.name == 't' or i.name == 'f'
+
+    @staticmethod
+    def isstr(i: Symbol):
+        # A string is a sequence of characters enclosed in double quotes
+        return i.name[0] == '"' and i.name[-1] == '"'
+
+    def eval_basic(self, expr):
+        # Eval the head
+        # We have a single expression to evaluate
+        if self.isint(expr):
+            self.stack.append(int(expr.name))
+        elif self.isstr(expr):
+            self.stack.append(expr.name)
+        elif self.isbool(expr):
+            self.stack.append(expr.name == "t")
+        else:
+            # Look up the symbol
+            self.stack.append(self.frame.getsym(expr.name))
+        return
+
+    def eval(self, *args):
         # Eval is going to be an interpreter --
         # look at machine code, and execute it;
         # very similar to our exec loop.
@@ -235,9 +265,15 @@ class VMIR:
         # ops = [self.stack.pop() for _ in range(n)]
         # ops.reverse()
         # print(ops)
-        ops = self.stack.pop()
-        operand = ops.fst
-        # breakpoint()
+        pair = self.stack.pop()
+        expr = pair.fst
+        if pair.rst == Symbol('empty'):
+            self.eval_basic(expr)
+            return
+
+        self.eval(pair.rst)
+        self.eval_basic(expr)
+        return
 
     class QuotedCodeObj(CodeObj):
         def __init__(self, co):

@@ -17,4 +17,4 @@ class VM:
         return self.backend.run(code, debug=debug)
 
     def debug(self):
-        return self.backend.debug()
+        return self.backend.debug_output()
