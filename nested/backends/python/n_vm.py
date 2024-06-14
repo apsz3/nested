@@ -246,7 +246,7 @@ class VMIR:
         # Collect a CodeObj of the last N arguments, and push it.
         # -1 because we have already advanced the instruction pointer
         # to the next instr after fetching the quote op
-        ops = self.frame.code[self.frame.ip-n-1:self.frame.ip-1]
+        ops = list(map(lambda op: op.args, self.frame.code[self.frame.ip-n-1:self.frame.ip-1]))
         ops.reverse()
         # print(ops)
         # for o in ops:
