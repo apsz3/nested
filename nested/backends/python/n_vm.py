@@ -226,12 +226,20 @@ class VMIR:
 
 
     def eval(self, n):
-        # co : CodeObj = self.stack.pop()
-        # print(co)
-        pass
-        # We need to execute the code in the current frame
+        # Eval is going to be an interpreter --
+        # look at machine code, and execute it;
+        # very similar to our exec loop.
+        # We shouldn't though be dealing with ops like
+        # Jumps, etc, because those are inserted by the compiler;
+        # we just deal with primitives.
+        ops = [self.stack.pop() for _ in range(n)]
+        ops.reverse()
+        print(ops)
 
-        # self.frame.code = [*self.frame.code[:self.frame.ip], *co.code, *self.frame.code[self.frame.ip:]]
+    class QuotedCodeObj(CodeObj):
+        def __init__(self, co):
+            self.co = co
+            self.n = len(co)
 
     def quote(self, n):
         # Do nothing -- leave the code unevaluated, will be used later
@@ -239,8 +247,8 @@ class VMIR:
         # -1 because we have already advanced the instruction pointer
         # to the next instr after fetching the quote op
         ops = self.frame.code[self.frame.ip-n-1:self.frame.ip-1]
-        ops.reverse()
-        print(ops)
+        # ops.reverse()
+        # print(ops)
         for o in ops:
             self.stack.append(Pair(o.opcode, o.args))
         # print(self.stack)
