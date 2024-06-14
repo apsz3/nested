@@ -74,6 +74,7 @@ class VMIR:
         self.call_stack: List[Frame] = [self.frame]
 
         self.exec(debug)
+        return self.stack, self.frame, self.call_stack
 
     def exec_defn_lambda(self, start, stop):
         # Iterate over the list, handling three sections:
@@ -264,19 +265,19 @@ class VMIR:
     def eval(self, *args):
         co : CodeObj = self.stack.pop()
         # We need to execute the code in the current frame
-        
+
         # self.frame.code = [*self.frame.code[:self.frame.ip], *co.code, *self.frame.code[self.frame.ip:]]
 
     def push_list(self, n: int):
         # Create Cons pairs where the empty list is the final element.
         # https://old.reddit.com/r/Racket/comments/tnduc9/difference_between_cons_list/
-        # if n == 0: 
+        # if n == 0:
         #     self.stack.append(Symbol('empty'))
         #     return
         if n == 0:
             self.stack.append(Symbol('empty'))
             return
-        
+
         args = [self.stack.pop() for _ in range(n)]
         p = Pair(args[0], Symbol('empty'))
         for arg in args[1:]:

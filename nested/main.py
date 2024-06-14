@@ -21,14 +21,16 @@ def repl(debug):
 
             tree = p.children[0]
             tree.visit()
-            print(tree)
+
             c = Compiler(tree)
             c.compile_program()
+
+            v = VM(VMIR())
             code = CodeObj(c.buffer)
-            # TODO: get frame
-            v.backend.run_repl(code, debug)
-            stack, call_stack, _ = v.debug()
-            print(*stack)
+            stack, frame, call_stack = v.run(code, debug=debug)
+            if stack:
+                print(stack[-1])
+
         except Exception as e:
             print(e)
 
