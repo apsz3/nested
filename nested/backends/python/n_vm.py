@@ -246,9 +246,11 @@ class VMIR:
         # A string is a sequence of characters enclosed in double quotes
         return i.name[0] == '"' and i.name[-1] == '"'
 
-    def eval_basic(self, expr):
+    def eval_basic(self, expr: Symbol):
         # Eval the head
         # We have a single expression to evaluate
+        print(expr, type(expr))
+
         if self.isint(expr):
             self.stack.append(int(expr.name))
         elif self.isstr(expr):
@@ -271,15 +273,18 @@ class VMIR:
         # ops.reverse()
         # print(ops)
         pair = self.stack.pop()
+        # print("!", pair, type(pair))
+        # Literal
         if not isinstance(pair, Pair):
             self.eval_basic(pair)
             return
 
+        # Leaf
         if pair.rst == Symbol('empty'):
             self.eval_basic(pair.fst)
             return
 
-        self.eval_basic(pair.fst)
+        self.eval_basic(pair.fst) # TODO: Eval instead?
         self.eval(pair.rst)
         return
 
