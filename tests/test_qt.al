@@ -29,3 +29,17 @@
 (let empty ('))
 (print empty)
 (print (= empty (')))
+
+(let big ('
+    (a (b e (c) (d)))
+    (e (f (g) (h)))))
+
+(let tree ('
+    (1 (2 3) (4 5))))
+
+(let sum-tree (lambda (t)
+    (if (= t #empty) 0 ; done
+    (if (= (rst t) #empty) 1 ; leaf
+    (+ (sum-tree (fst t)) (sum-tree (rst t))))))) ; pair
+
+(sum-tree (rst (fst tree)))
