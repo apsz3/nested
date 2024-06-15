@@ -291,7 +291,7 @@ class VMIR:
         # ops = list(map(lambda op: op.args, self.frame.code[self.frame.ip-n-1:self.frame.ip-1]))
         print(">>", self.stack, n)
         ops = self.stack.pop()
-        self.stack.pop() # Remove the quote char. TODO: do we need to push it?:
+        # self.stack.pop() # Remove the quote char. TODO: do we need to push it?:
         print(":", ops)
         self.stack.append(ops)
         # self.stack.append(p)

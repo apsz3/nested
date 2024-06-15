@@ -151,6 +151,7 @@ class Compiler:
                         # TODO: Fix this parser bug that makes children a tuple
                         if n.children == (None,):
                             self.emit(Op(OpCode.LOAD_SYM, n.value))
+
                             return
                         start = self.ip
                         do_quote(n.value) # This must go first, to keep order of args sensible with it
@@ -165,9 +166,11 @@ class Compiler:
                     # (' + 1 2) and (' (+ 1 2)) !!!!
                     # FIGURE OUT HOW TO INVOKE THAT
                     # Perhaps it is Pair(op, Pair(<args>)) vs (Pair (op, Pair(Pair(arg1, Pair(arg2)  ))))
-
                     start = self.ip
-                    do_quote(node)
+                    for n in node.children:
+                        do_quote(n)
+                    self.emit(Op(OpCode.PUSH_LIST, len(node.children))) # Look at children, not total instrs emitted, because those will have been collected with list push/pops in the interim
+                    print("buf", self.buffer)
                     self.emit(Op.from_id(node.value, self.ip - start))
                     return
 # ASTExpr(ASTOp("'"), ASTExpr(ASTIdentifier('add'), ASTConstantValue('int', '1'), ASTConstantValue('int', '2')))
