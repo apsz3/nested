@@ -25,3 +25,7 @@
 (let b (' 1 2 3))
 (print (fst b))
 (print (rst b))
+
+(let empty ('))
+(print empty)
+(print (= empty (')))
