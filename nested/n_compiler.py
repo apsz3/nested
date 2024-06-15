@@ -157,8 +157,9 @@ class Compiler:
                         do_quote(n.value) # This must go first, to keep order of args sensible with it
                         for c in n.children:
                             do_quote(c)
-                        self.emit(Op(OpCode.PUSH_LIST, self.ip - start - 1)) # -1 because reasons -- think its because we need to disappear the quote char!
-                        # IS required for (' add 1 2) and (' (add 1 2))
+                        self.emit(Op(OpCode.PUSH_LIST, len(n.children) + 1)) # + 1 because we need to include the do_quote(n.value) used above here; note we don't do this in the outer code, because we treat the `'`
+                        # operator separately.
+                        # NOTE DISTINCTION IS required for (' add 1 2) and (' (add 1 2))
                         return
                     # breakpoint()
 
