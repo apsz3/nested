@@ -152,18 +152,26 @@ class Compiler:
                         if n.children == (None,):
                             self.emit(Op(OpCode.LOAD_SYM, n.value))
                             return
-
+                        start = self.ip
                         do_quote(n.value) # This must go first, to keep order of args sensible with it
                         for c in n.children:
                             do_quote(c)
+                        self.emit(Op(OpCode.PUSH_LIST, self.ip - start - 1)) # -1 because reasons -- think its because we need to disappear the quote char!
+                        # IS required for (' add 1 2) and (' (add 1 2))
+                        return
+                    # breakpoint()
 
+                    # TODO: THERE IS A DIFFERENCE BETWEEN
+                    # (' + 1 2) and (' (+ 1 2)) !!!!
+                    # FIGURE OUT HOW TO INVOKE THAT
+                    # Perhaps it is Pair(op, Pair(<args>)) vs (Pair (op, Pair(Pair(arg1, Pair(arg2)  ))))
 
                     start = self.ip
-                    # BFS but need DFS?
                     do_quote(node)
                     self.emit(Op.from_id(node.value, self.ip - start))
                     return
-
+# ASTExpr(ASTOp("'"), ASTExpr(ASTIdentifier('add'), ASTConstantValue('int', '1'), ASTConstantValue('int', '2')))
+# ASTExpr(ASTOp("'"), ASTIdentifier('add'), ASTConstantValue('int', '1'), ASTConstantValue('int', '2'))
                 case _:
                     for child in node.children:
                         self.compile_node(child)

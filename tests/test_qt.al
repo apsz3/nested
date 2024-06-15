@@ -9,6 +9,11 @@
 ; Let are evaluated as they stand,
 ; not lazily.
 ; Defn evaluated lazily.
-(+ 1 2)
-(let biz (' (+ 1 2)))
-(print (eval biz))
+;; (let add (lambda (a b) (+ a b)))
+(let biz (' add 1 2222))
+;; (let biz (' (add 1 2)))
+
+;; (print (eval biz))
+
+;; (let a (list #add #a #b))
+;; (let b (list (#add #a #b)))

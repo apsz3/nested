@@ -289,15 +289,11 @@ class VMIR:
         # When executing, forget about the LOAD_SYM opcodes, and just push the argument,
         # which is the symbolic value.
         # ops = list(map(lambda op: op.args, self.frame.code[self.frame.ip-n-1:self.frame.ip-1]))
-        ops = [self.stack.pop() for _ in range(n - 1)]
+        print(">>", self.stack, n)
+        ops = self.stack.pop()
         self.stack.pop() # Remove the quote char. TODO: do we need to push it?:
         print(":", ops)
-        # p = Pair(ops[-1], Symbol('empty'))
-        # for o in ops[:-1]:
-        #     p = Pair(o, p)
-        # for o in ops:
-            # self.stack.append(Pair(o.opcode, o.args))
-        self.stack.append(self._make_list(ops))
+        self.stack.append(ops)
         # self.stack.append(p)
         print(self.stack)
     def sub(self, n:int):
@@ -349,7 +345,7 @@ class VMIR:
         if n == 0:
             self.stack.append(Symbol('empty'))
             return
-
+        print(self.stack, n)
         args = [self.stack.pop() for _ in range(n)]
         p = Pair(args[0], Symbol('empty'))
         for arg in args[1:]:

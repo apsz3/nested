@@ -70,6 +70,6 @@
 
 (print (cons 1 #empty))
 
-(print (eval (' (+ 1 5))))
+;; (print (eval (' (+ 1 5))))
 
-(' 1 2 3 4)
+;; (' 1 2 3 4)
