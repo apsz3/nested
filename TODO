@@ -3,6 +3,8 @@
 - Compile arguments in reverse order so they do as expected in variadics, e.g.:
 - (print a b) -> a b, not -> b a
 
+- Bind operator builtins to symbol keywords
+
 - Add primitive for Pair? Symbol? Int? Str? as well as Symbol->Val casts
 # Bugs
 
@@ -22,3 +24,11 @@ the parse:     ASTExpr(ASTOp('let'), ASTIdentifier('x'), ASTExpr(ASTExpr(ASTExpr
 
 # Ideation
 - Compile error message metadata, e.g. what would be most helpful based on the situation of opcodes and likely errors? For example, shadowing a global ID with a function parameter, and trying to call it.
+
+# Accomplished
+- Functions are first-class;
+```
+(let say (lambda (msg) (print msg)))
+(apply say "hello, world!")
+> "hello, world!"
+```

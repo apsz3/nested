@@ -49,3 +49,14 @@
 
 (let x (( (lambda (a b) 1))))
 (print x)
+
+(let apply (lambda (fn arg) (fn arg)))
+(let say (lambda (msg) (print msg)))
+(apply say "hello, world!")
+
+(let biz (lambda (x) (begin
+    (let foo 1)
+    (let bar 2)
+    (+ foo bar))))
+(print (biz))
+(print foo)
