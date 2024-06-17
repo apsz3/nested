@@ -258,9 +258,11 @@ class VMIR:
                 # self.exec_defn_lambda(start, stop)
                 # next(self.frame)  # Skip the POP_LAMBDA
                 self.exec_defn_lambda()
+                # breakpoint()
+                next(self.frame)  # Skip the POP_LAMBDA
             case OpCode.POP_LAMBDA:
                 # Lambdas used as values, not definitions;
-                breakpoint()
+                raise ValueError("VM: POP_LAMBDA encountered outside of definition")
             case OpCode.JUMP_IF_FALSE:
                 cond = self.stack.pop()
                 if cond == Symbol("t"):
@@ -289,6 +291,7 @@ class VMIR:
         self.debug = debug
         while self.call_stack:
             self.frame = self.call_stack.pop()
+            print(self.frame)
             while self.frame.instr:
                 op = self.frame.instr.opcode
                 args = self.frame.instr.args
