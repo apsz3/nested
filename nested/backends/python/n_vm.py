@@ -58,7 +58,7 @@ class VMIR:
     @property
     def _builtins(self):
         return {
-            "+": self.add,
+            "+": CodeObj([Op(OpCode.ADD, 0)])
         }
 
     # Keep these functions separate as only in interpreter mode do we want to
@@ -123,6 +123,8 @@ class VMIR:
         #         params.append(ParamObj(a.args[0], 'type'))
         #     else:
         #         err(f"Unknown opcode in args: {a.opcode}")
+
+        # TODO: What if we have nested lambdas?
         co = CodeObj(body)
         fn = FunObj(co, params)
         # breakpoint()
@@ -171,6 +173,8 @@ class VMIR:
             case OpCode.EVAL:
                 nargs = self.eval(self.stack.pop(), *args)
                 # TODO:
+                if isinstance(self.stack[-1], CodeObj): # Primitive
+                    self.do_op(self.stack.pop().code[0].opcode, [nargs - 1])
                 if isinstance(self.stack[-1], FunObj):
                     print(nargs, self.stack)
                     self.call(nargs - 1)
@@ -198,6 +202,9 @@ class VMIR:
                 stop = self.frame.ip # POP_LAMBDA
                 self.exec_defn_lambda(start, stop)
                 next(self.frame) # Skip the POP_LAMBDA
+            case OpCode.POP_LAMBDA:
+                # Lambdas used as values, not definitions
+                breakpoint()
             case OpCode.JUMP_IF_FALSE:
                 cond = self.stack.pop()
                 if cond == Symbol("t"):
@@ -480,7 +487,8 @@ class VMIR:
                 bind.set(fn.params[param_idx].name, arg_val)
         except IndexError:
             raise ValueError("LANG: Invalid number of arguments supplied!")
-
+        except AttributeError:
+            raise ValueError(f"LANG: value is not a procedure?")
         # No need to make a copy of the parent's locals --
         # we will traverse up when needed.
         # Don't push the Function object -- only push its code
