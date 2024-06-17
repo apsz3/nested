@@ -189,14 +189,16 @@ class VMIR:
                     # fn : FunObj = self.stack[-1]
                     # self.call(len(fn.params))
                 # if not isinstance(self.stack[-1], FunObj)
+            case OpCode.ASSERT:
+                self._assert()
             case OpCode.PUSH_REF:
                 self.push_ref(*args)
             case OpCode.STORE:
                 self.store(*args)
             case OpCode.LOAD_TRUE:
-                self.stack.append(True)
+                self.stack.append(TRUE)
             case OpCode.LOAD_FALSE:
-                self.stack.append(False)
+                self.stack.append(FALSE)
             case OpCode.PUSH_LIST:
                 self.push_list(*args)
             case OpCode.PUSH_LAMBDA:
@@ -382,6 +384,10 @@ class VMIR:
         a, b = self.stack.pop(), self.stack.pop()
         self.stack.append(Symbol.from_bool(a == b))
 
+    def _assert(self):
+        # Assert that the top of the stack is True
+        if self.stack.pop() != TRUE:
+            err("Assertion failed")
     # def sub(self, n:int):
     #     try:
     #         self.stack.append(self.stack.pop() - sum([self.stack.pop() for _ in range(n-1)]))

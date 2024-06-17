@@ -42,6 +42,8 @@ class OpCode(Enum):
 
     STORE = auto()
 
+    ASSERT = auto()
+
     BEGIN = auto()
     PUSH_LIST = auto()
 
@@ -142,6 +144,8 @@ class Op:
                 opcode = OpCode.END_MODULE
             case "begin":
                 opcode = OpCode.BEGIN
+            case "assert":
+                opcode = OpCode.ASSERT
             case _:
                 raise ValueError(f"Unknown opcode: {i.value}")
         return Op(opcode, *args)

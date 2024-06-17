@@ -153,6 +153,7 @@ class ASTIdentifier(ASTLeaf):
         "fst",
         "rst",
         "cons",
+        "assert",
         "hd",
         "tl",
         "if",

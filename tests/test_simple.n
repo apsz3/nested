@@ -1,4 +1,4 @@
-(- 1 2)
+;; (- 1 2)
 ;; 1
 ;; 1.0
 ;; -1
@@ -11,3 +11,9 @@
 ;; (let x 1)
 ;; (print x)
 ;; (print (add x 2))
+
+(let x (= 1 1))
+(print x)
+(print (= 1 1))
+(print (= (= 1 1) #t))
+(assert (= x #t))
