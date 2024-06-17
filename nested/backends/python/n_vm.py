@@ -51,6 +51,7 @@ def msg(msg):
 
 TRUE = Symbol("t")
 FALSE = Symbol("f")
+EMPTY = Symbol("empty")
 
 class VMIR:
 
@@ -169,8 +170,17 @@ class VMIR:
                 self.quote(*args)
             case OpCode.EVAL:
                 nargs = self.eval(self.stack.pop(), *args)
+                # TODO:
                 if isinstance(self.stack[-1], FunObj):
-                    self.call(nargs)
+                    print(nargs, self.stack)
+                    breakpoint()
+                    self.call(nargs - 1)
+                    # TODO: could check args here against
+                    # fun obj expected params, just like
+                    # we do eleswhere?
+
+                    # fn : FunObj = self.stack[-1]
+                    # self.call(len(fn.params))
                 # if not isinstance(self.stack[-1], FunObj)
             case OpCode.PUSH_REF:
                 self.push_ref(*args)
@@ -273,6 +283,7 @@ class VMIR:
             print(self.stack)
         return
 
+    # Define (quote a b c) as (a b c) e.g. A applied to (b, c)
     def eval(self, pair, *args):
         # Eval is going to be an interpreter --
         # look at machine code, and execute it;
@@ -285,28 +296,52 @@ class VMIR:
         # print(ops)
         # Literal
         # breakpoint()
-        if not isinstance(pair, Pair):
-            self.eval_basic(pair)
+        # if not isinstance(pair, Pair):
+        #     self.eval_basic(pair)
+        #     return 0
+        # # Leaf
+        # if pair.rst == Symbol('empty'):
+        #     return self.eval(pair.fst)
+
+        # # Otherwise, this is APPLICATION;
+        # # eval the proc and the args, then DO it.
+        # self.eval(pair.fst) # Reverse order, proc goes on last, popped first by call.
+        # nargs = len(self.stack)
+        # self.eval(pair.rst)
+        # # Number of args to push is whatever happened after
+        # # evaluating the body of the proc
+        # nargs = len(self.stack) - nargs
+        # print(self.stack)
+        # # breakpoint()
+        # return nargs
+        # # print(self.stack)
+        # # print(self.stack)
+
+        # We expect the arg we operate on to be
+        # a constant, or a procedure!
+        # We Can assume this, it is intended.
+        if isinstance(pair, Pair):
+            nargs_fst = self.eval(pair.rst)
+            nargs_snd = self.eval(pair.fst)
+            return nargs_fst + nargs_snd
+        val = pair
+        if val == EMPTY:
             return 0
-        # Leaf
-        if pair.rst == Symbol('empty'):
-            return self.eval(pair.fst)
-
-        # Otherwise, this is APPLICATION;
-        # eval the proc and the args, then DO it.
-        nargs = len(self.stack)
-        self.eval(pair.rst)
-        # Number of args to push is whatever happened after
-        # evaluating the body of the proc
-        nargs = len(self.stack) - nargs
-        print(self.stack)
-        # breakpoint()
-        self.eval(pair.fst) # Reverse order, proc goes on last, popped first by call.
-        return nargs
+        val = val.name # It's a symbol
+        if str.isnumeric(val):
+            self.stack.append(int(val))
+        elif val[0] == '"' and val[-1] == '"':
+            self.stack.append(val[1:-1])
+        else:
+            self.stack.append(self.frame.getsym(val))
+        return 1
+        # # return nargs
+        # if isinstance(pair, Pair):
+        #     if not pair.rst == Symbol('empty'):
+        #         self.eval(pair.rst)
+        # else:
+        #     self.eval_basic(pair)
         # print(self.stack)
-        # print(self.stack)
-
-        return nargs
 
     def quote(self, n):
         # When compiled, we pushed Op(LOAD_SYM, symbol) for each node encountered
@@ -435,13 +470,17 @@ class VMIR:
         # Load will have put the value already on the stack.
         # In our case, the value is a function object.
         # We could handle calls differently, but dont at the moment.
+
         fn: FunObj = self.stack.pop()
         # Collect args from the stack and assign to locals
         args = [self.stack.pop() for _ in range(n)]
         args.reverse()
         bind = SymTable()
-        for param_idx, arg_val in enumerate(args):
-            bind.set(fn.params[param_idx].name, arg_val)
+        try:
+            for param_idx, arg_val in enumerate(args):
+                bind.set(fn.params[param_idx].name, arg_val)
+        except IndexError:
+            raise ValueError("LANG: Invalid number of arguments supplied!")
 
         # No need to make a copy of the parent's locals --
         # we will traverse up when needed.
