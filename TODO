@@ -6,6 +6,10 @@
 - Add primitive for Pair? Symbol? Int? Str? as well as Symbol->Val casts
 # Bugs
 
+- This does not eval properly: (let x ( (lambda (a) 1)))  -- it binds x to a function, not the proc.
+the parse:     ASTExpr(ASTOp('let'), ASTIdentifier('x'), ASTExpr(ASTExpr(ASTExpr(ASTOp('lambda'), ASTExpr(ASTIdentifier('a'), ASTIdentifier('b')), ASTConstantValue('int', '1'))))),
+    Need to fix the idea of an Expr and an Application, etc.
+    Rigorously understand the rules for Scheme and use that
 - Symbols defined in global scope bind to function parameter names, e.g.
 ```
 (let x 1)

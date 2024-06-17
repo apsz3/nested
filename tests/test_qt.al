@@ -47,3 +47,5 @@
 (let add (lambda (a b c d) (+ a b c d)))
 (print (eval (' add "a" "b" "c" "d")))
 
+(let x (( (lambda (a b) 1))))
+(print x)
