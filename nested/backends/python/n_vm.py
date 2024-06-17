@@ -5,7 +5,7 @@ from rich import print
 from nested.backends.python.n_codeobj import CodeObj, FunObj, ParamObj
 from nested.backends.python.n_frame import Frame, SymTable
 from nested.n_opcode import Op, OpCode
-
+import operator
 class Symbol:
     def __init__(self, name):
         self.name = name
@@ -173,7 +173,6 @@ class VMIR:
                 # TODO:
                 if isinstance(self.stack[-1], FunObj):
                     print(nargs, self.stack)
-                    breakpoint()
                     self.call(nargs - 1)
                     # TODO: could check args here against
                     # fun obj expected params, just like
@@ -428,7 +427,7 @@ class VMIR:
 
     def add(self, n:int):
         try:
-            self.stack.append(sum([self.stack.pop() for _ in range(n)]))
+            self.stack.append(reduce(lambda elem, res: operator.add(elem, res), [self.stack.pop() for _ in range(n)]))
         except ValueError as e:
             err(str(e))
 

@@ -44,5 +44,6 @@
 
 ;; (let print-tree (lambda (t)
 ;;     ()
-(let add (lambda (a b) (+ a b)))
-(print (eval (' add 1 10)))
+(let add (lambda (a b c d) (+ a b c d)))
+(print (eval (' add "a" "b" "c" "d")))
+
