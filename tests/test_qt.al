@@ -39,7 +39,10 @@
 
 (let sum-tree (lambda (t)
     (if (= t #empty) 0 ; done
-    (if (= (rst t) #empty) (eval (fst t)) ; leaf
-    (+ (sum-tree (fst t)) (sum-tree (rst t))))))) ; pair
+    (if (= (rst t) #empty) (print (fst t)) ; leaf
+    (begin (print (fst t)) (sum-tree (fst t)) (sum-tree (rst t))))))) ; pair
 
-(print (sum-tree (fst (rst tree))))
+;; (let print-tree (lambda (t)
+;;     ()
+
+(print (eval (' (+ 1 2))))

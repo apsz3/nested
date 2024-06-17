@@ -26,7 +26,7 @@ class Symbol:
     def from_bool(b: bool):
         # TODO: how much of this is an implementation detail?
         # Should probably handle it specially in compilation
-        return Symbol("t") if b else Symbol("f")
+        return TRUE if b else FALSE
 
 class Pair:
     def __init__(self, fst, rst):
@@ -49,17 +49,22 @@ def err(msg):
 def msg(msg):
     print(f"[green]{msg}[/green]")
 
-_builtins = {
-    "+": OpCode.ADD,
-}
-
+TRUE = Symbol("t")
+FALSE = Symbol("f")
 
 class VMIR:
+
+    @property
+    def _builtins(self):
+        return {
+            "+": self.add,
+        }
+
     # Keep these functions separate as only in interpreter mode do we want to
     # cast things for example
     def run_repl(self, code: CodeObj, debug=False):
         if not hasattr(self, "frame"):
-            self.frame = Frame(code, SymTable.from_dict(_builtins), None)
+            self.frame = Frame(code, SymTable.from_dict(self._builtins), None)
 
         self.frame.code = code
 
@@ -71,7 +76,7 @@ class VMIR:
 
     def run(self, code: CodeObj, frame = None, debug=False):
         if frame is None:
-            frame = Frame(code, SymTable.from_dict(_builtins), None)
+            frame = Frame(code, SymTable.from_dict(self._builtins), None)
         else:
             frame.code = code
 
@@ -163,7 +168,7 @@ class VMIR:
             case OpCode.QUOTE:
                 self.quote(*args)
             case OpCode.EVAL:
-                self.eval(*args)
+                self.eval(self.stack.pop(), *args)
             case OpCode.PUSH_REF:
                 self.push_ref(*args)
             case OpCode.STORE:
@@ -249,20 +254,22 @@ class VMIR:
     def eval_basic(self, expr: Symbol):
         # Eval the head
         # We have a single expression to evaluate
-        print(expr, type(expr))
-
+        # print(expr, type(expr))
+        assert not isinstance(expr, Pair)
         if self.isint(expr):
+            # breakpoint()
             self.stack.append(int(expr.name))
         elif self.isstr(expr):
             self.stack.append(expr.name)
         elif self.isbool(expr):
-            self.stack.append(expr.name == "t")
+            self.stack.append(expr == TRUE)
         else:
             # Look up the symbol
+            # TODO: need to handle primitives here
             self.stack.append(self.frame.getsym(expr.name))
         return
 
-    def eval(self, *args):
+    def eval(self, pair, *args):
         # Eval is going to be an interpreter --
         # look at machine code, and execute it;
         # very similar to our exec loop.
@@ -272,19 +279,16 @@ class VMIR:
         # ops = [self.stack.pop() for _ in range(n)]
         # ops.reverse()
         # print(ops)
-        pair = self.stack.pop()
-        # print("!", pair, type(pair))
         # Literal
         if not isinstance(pair, Pair):
             self.eval_basic(pair)
             return
-
         # Leaf
         if pair.rst == Symbol('empty'):
-            self.eval_basic(pair.fst)
+            self.eval(pair.fst)
             return
 
-        self.eval_basic(pair.fst) # TODO: Eval instead?
+        self.eval(pair.fst)
         self.eval(pair.rst)
         return
 
@@ -294,13 +298,14 @@ class VMIR:
         # When executing, forget about the LOAD_SYM opcodes, and just push the argument,
         # which is the symbolic value.
         # ops = list(map(lambda op: op.args, self.frame.code[self.frame.ip-n-1:self.frame.ip-1]))
-        print(">>", self.stack, n)
+        # print(">>", self.stack, n)
         ops = self.stack.pop()
         # self.stack.pop() # Remove the quote char. TODO: do we need to push it?:
-        print(":", ops)
+        # print(":", ops)
         self.stack.append(ops)
         # self.stack.append(p)
-        print(self.stack)
+        if self.debug:
+            print(f"Qt: {self.stack}")
     def sub(self, n:int):
         # (- a b) -> a - b
         try:
@@ -350,7 +355,7 @@ class VMIR:
         if n == 0:
             self.stack.append(Symbol('empty'))
             return
-        print(self.stack, n)
+        # print(self.stack, n)
         args = [self.stack.pop() for _ in range(n)]
         p = Pair(args[0], Symbol('empty'))
         for arg in args[1:]:
