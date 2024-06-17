@@ -91,6 +91,8 @@ class ASTConstantValue(ASTLeaf):
 
 
 class ASTExpr(ASTNode):
+    # An Expr denotes application whenever it is in a parenthetical form,
+    # with the exception of special forms like `let`, `define`, etc.
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

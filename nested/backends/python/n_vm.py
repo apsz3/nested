@@ -92,48 +92,90 @@ class VMIR:
         self.exec(debug)
         return self.stack, self.frame, self.call_stack
 
-    def exec_defn_lambda(self, start, stop):
-        # Iterate over the list, handling three sections:
-        # Begin Args, End Args, and End Lambda:
-        # TODO: optimize
-        ip = 0
+    def exec_defn_lambda(self):
+        # Iterate over the code. If we encounter a PUSH_LAMBDA,
+        # add another layer to the stack.
+        # When encountering PUSH_ARGS and POP_ARGS, collect the arguments
+        # and create Param objects,
 
-        # Skip the PUSH_ARGS instr # TODO: fix this, not necessary probably
-        instrs = self.frame.code[start + 1 : stop]
+        envs = [FunObj(CodeObj([]), [])]
+        while envs:
+            cur = envs.pop()
+            # print(cur)
+            while True:
+                op = self.frame.instr.opcode
+                if op == OpCode.PUSH_LAMBDA:
+                    envs.append(cur)
+                    cur = FunObj(CodeObj([]), [])
+                    next(self.frame)
+                elif op == OpCode.PUSH_ARGS:
+                    next(self.frame)
+                    while (op := self.frame.instr.opcode) != OpCode.POP_ARGS:
+                        if op == OpCode.PUSH_REF:
+                            cur.params.append(ParamObj(self.frame.instr.args[0], "type"))
+                        else:
+                            err(f"Unknown opcode in args: {op}")
+                            return
+                        next(self.frame)
+                    next(self.frame) # Skip the POP_ARGS
+                elif op == OpCode.POP_LAMBDA:
+                    # End of the line, add the now defined lambda
+                    # with its body fully defined to the stack
+                    if len(envs) == 0:
+                        self.stack.append(cur)
+                        return
+                    # We're inside a lambda, add it to the outer layer's
+                    # code.
+                    envs[-1].code.code.append(cur)
+                    break
+                else:
+                    cur.code.code.append(self.frame.instr)
+                    next(self.frame)
+                print(cur)
+        self.stack.append(cur)
 
-        # ITerate over the frame, collecting arguments
-        # until the POP_ARGS opcode is reached, then continue
-        # collecting the body of the lambda until the POP_LAMBDA:
-        end_args_ip = list(map(lambda i: i.opcode, instrs)).index(OpCode.POP_ARGS)
-        start_body_ip = end_args_ip + 1
-        args = instrs[0:end_args_ip]
-        body = instrs[start_body_ip:]
-        params = []
-        for a in args:
-            if a.opcode == OpCode.PUSH_REF:
-                params.append(ParamObj(a.args[0], "type"))
-            else:
-                err(f"Unknown opcode in args: {a.opcode}")
-        # begin_args_ip = start+1
-        # end_args_ip = _opcodes.index(OpCode.POP_ARGS)
-        # start_body_ip = end_args_ip+1
-        # end_body_ip = stop-1
+    # def exec_defn_lambda(self, start, stop):
+    #     # Iterate over the list, handling three sections:
+    #     # Begin Args, End Args, and End Lambda:
+    #     # TODO: optimize
+    #     ip = 0
 
-        # args = self.frame.instrs[begin_args_ip:end_args_ip]
-        # body = self.frame.instrs[end_args_ip+1:]
-        # params = []
-        # for a in args:
-        #     if a.opcode == OpCode.PUSH_REF:
-        #         params.append(ParamObj(a.args[0], 'type'))
-        #     else:
-        #         err(f"Unknown opcode in args: {a.opcode}")
+    #     # Skip the PUSH_ARGS instr # TODO: fix this, not necessary probably
+    #     instrs = self.frame.code[start + 1 : stop]
 
-        # TODO: What if we have nested lambdas?
-        co = CodeObj(body)
-        fn = FunObj(co, params)
-        # breakpoint()
-        self.stack.append(fn)  # Append the function object, since this could be inline;
-        # a Let / definition will be popping it when needed
+    #     # ITerate over the frame, collecting arguments
+    #     # until the POP_ARGS opcode is reached, then continue
+    #     # collecting the body of the lambda until the POP_LAMBDA:
+    #     end_args_ip = list(map(lambda i: i.opcode, instrs)).index(OpCode.POP_ARGS)
+    #     start_body_ip = end_args_ip + 1
+    #     args = instrs[0:end_args_ip]
+    #     body = instrs[start_body_ip:]
+    #     params = []
+    #     for a in args:
+    #         if a.opcode == OpCode.PUSH_REF:
+    #             params.append(ParamObj(a.args[0], "type"))
+    #         else:
+    #             err(f"Unknown opcode in args: {a.opcode}")
+    #     # begin_args_ip = start+1
+    #     # end_args_ip = _opcodes.index(OpCode.POP_ARGS)
+    #     # start_body_ip = end_args_ip+1
+    #     # end_body_ip = stop-1
+
+    #     # args = self.frame.instrs[begin_args_ip:end_args_ip]
+    #     # body = self.frame.instrs[end_args_ip+1:]
+    #     # params = []
+    #     # for a in args:
+    #     #     if a.opcode == OpCode.PUSH_REF:
+    #     #         params.append(ParamObj(a.args[0], 'type'))
+    #     #     else:
+    #     #         err(f"Unknown opcode in args: {a.opcode}")
+
+    #     # TODO: What if we have nested lambdas?
+    #     co = CodeObj(body)
+    #     fn = FunObj(co, params)
+    #     # breakpoint()
+    #     self.stack.append(fn)  # Append the function object, since this could be inline;
+    #     # a Let / definition will be popping it when needed
 
     def debug_output(self):
         return (self.stack, self.call_stack, self.frame)
@@ -202,14 +244,22 @@ class VMIR:
             case OpCode.PUSH_LIST:
                 self.push_list(*args)
             case OpCode.PUSH_LAMBDA:
-                start = self.frame.ip  # PUSH_LAMBDA
-                while (op := self.frame.instr.opcode) != OpCode.POP_LAMBDA:
-                    next(self.frame)
-                stop = self.frame.ip  # POP_LAMBDA
-                self.exec_defn_lambda(start, stop)
-                next(self.frame)  # Skip the POP_LAMBDA
+                # breakpoin()
+                # start = self.frame.ip  # PUSH_LAMBDA
+                # TODO: the bug here is that a lambda in the body of a
+                # function is not being handled correctly --
+                # we need to keep collecting until we hit the _outermost_
+                # POP_LAMBDA, which is the end of _this_ definition.
+                # Otherwise, we currently prematurely terminate, meaning
+                # we don't properly define lambdas in the body of a function.
+                # while (op := self.frame.instr.opcode) != OpCode.POP_LAMBDA:
+                #     next(self.frame)
+                # stop = self.frame.ip  # POP_LAMBDA
+                # self.exec_defn_lambda(start, stop)
+                # next(self.frame)  # Skip the POP_LAMBDA
+                self.exec_defn_lambda()
             case OpCode.POP_LAMBDA:
-                # Lambdas used as values, not definitions
+                # Lambdas used as values, not definitions;
                 breakpoint()
             case OpCode.JUMP_IF_FALSE:
                 cond = self.stack.pop()
