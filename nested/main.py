@@ -9,8 +9,9 @@ import click
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import FileHistory
 
+
 def repl(debug):
-    history = FileHistory('.nst_history.txt')
+    history = FileHistory(".nst_history.txt")
     v = VM(VMIR())
     session = PromptSession(history=history)
     frame = Frame(CodeObj([]), SymTable(), None)
@@ -34,6 +35,7 @@ def repl(debug):
         except Exception as e:
             print(e)
 
+
 #     # TODO: make the symbol table perist...
 
 
@@ -56,12 +58,13 @@ def repl(debug):
 #         except Exception as e:
 #             print(e)
 
+
 @click.command()
-@click.option('-p', '--parse', is_flag=True, help='Parse the file')
-@click.option('-c', '--compile', is_flag=True, help='Compile the file')
-@click.option('-d', '--debug', is_flag=True, help='Parse and compile and run')
+@click.option("-p", "--parse", is_flag=True, help="Parse the file")
+@click.option("-c", "--compile", is_flag=True, help="Compile the file")
+@click.option("-d", "--debug", is_flag=True, help="Parse and compile and run")
 @click.option("-i", is_flag=True)
-@click.argument('file_path', type=click.Path(exists=True))
+@click.argument("file_path", type=click.Path(exists=True))
 def main(parse, compile, debug, i, file_path):
     if i:
         repl(debug)
@@ -95,6 +98,6 @@ def main(parse, compile, debug, i, file_path):
         print(frame)
     # print(f"> {v.run(c.buffer)}")
 
-if __name__ == '__main__':
-    main()
 
+if __name__ == "__main__":
+    main()

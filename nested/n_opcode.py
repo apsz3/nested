@@ -1,7 +1,7 @@
-
 from enum import Enum, auto
 
 from nested.n_parser import ASTIdentifier
+
 
 # TODO: Instr, vs Opcode -- instr has args, opcode doesnt.
 class OpCode(Enum):
@@ -23,7 +23,6 @@ class OpCode(Enum):
     LTE = auto()
     GT = auto()
     GTE = auto()
-
 
     QUOTE = auto()
     EVAL = auto()
@@ -56,7 +55,6 @@ class OpCode(Enum):
 
     PRINT = auto()
 
-
     # Internal
     BEGIN_MODULE = auto()
     END_MODULE = auto()
@@ -66,6 +64,7 @@ class OpCode(Enum):
 
     def __rich_repr__(self):
         yield self.name
+
 
 class Op:
     def __init__(self, opcode: OpCode, *args):

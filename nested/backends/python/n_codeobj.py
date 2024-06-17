@@ -16,6 +16,7 @@ class CodeObj:
     def __getitem__(self, item):
         return self.code[item]
 
+
 class ParamObj:
     def __init__(self, name: str, type: str):
         self.name = name
@@ -24,6 +25,7 @@ class ParamObj:
     def __rich_repr__(self):
         yield self.name
         yield self.type
+
 
 class FunObj:
     def __init__(self, code: CodeObj, params: List[ParamObj]):

@@ -5,12 +5,14 @@ from nested.n_opcode import OpCode
 from rich import print
 from nested.backends.python.n_vm import VMIR
 
+
 class VMJit:
     """
     Orchestrate execution from Python,
     but call out to the backend for the actual work.
     """
-    def __init__(self, backend = VMIR()):
+
+    def __init__(self, backend=VMIR()):
         self.ir = backend
 
     def run(self, code: CodeObj):

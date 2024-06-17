@@ -6,6 +6,8 @@ from nested.backends.python.n_codeobj import CodeObj, FunObj, ParamObj
 from nested.backends.python.n_frame import Frame, SymTable
 from nested.n_opcode import Op, OpCode
 import operator
+
+
 class Symbol:
     def __init__(self, name):
         self.name = name
@@ -28,6 +30,7 @@ class Symbol:
         # Should probably handle it specially in compilation
         return TRUE if b else FALSE
 
+
 class Pair:
     def __init__(self, fst, rst):
         self.fst = fst
@@ -43,23 +46,25 @@ class Pair:
         yield self.fst
         yield self.rst
 
+
 def err(msg):
     raise ValueError(f"[red]Error: {msg}[/red]")
 
+
 def msg(msg):
     print(f"[green]{msg}[/green]")
+
 
 TRUE = Symbol("t")
 FALSE = Symbol("f")
 EMPTY = Symbol("empty")
 
+
 class VMIR:
 
     @property
     def _builtins(self):
-        return {
-            "+": CodeObj([Op(OpCode.ADD, 0)])
-        }
+        return {"+": CodeObj([Op(OpCode.ADD, 0)])}
 
     # Keep these functions separate as only in interpreter mode do we want to
     # cast things for example
@@ -74,8 +79,7 @@ class VMIR:
 
         self.exec(debug)
 
-
-    def run(self, code: CodeObj, frame = None, debug=False):
+    def run(self, code: CodeObj, frame=None, debug=False):
         if frame is None:
             frame = Frame(code, SymTable.from_dict(self._builtins), None)
         else:
@@ -94,8 +98,8 @@ class VMIR:
         # TODO: optimize
         ip = 0
 
-         # Skip the PUSH_ARGS instr # TODO: fix this, not necessary probably
-        instrs = self.frame.code[start+1:stop]
+        # Skip the PUSH_ARGS instr # TODO: fix this, not necessary probably
+        instrs = self.frame.code[start + 1 : stop]
 
         # ITerate over the frame, collecting arguments
         # until the POP_ARGS opcode is reached, then continue
@@ -107,7 +111,7 @@ class VMIR:
         params = []
         for a in args:
             if a.opcode == OpCode.PUSH_REF:
-                params.append(ParamObj(a.args[0], 'type'))
+                params.append(ParamObj(a.args[0], "type"))
             else:
                 err(f"Unknown opcode in args: {a.opcode}")
         # begin_args_ip = start+1
@@ -128,7 +132,7 @@ class VMIR:
         co = CodeObj(body)
         fn = FunObj(co, params)
         # breakpoint()
-        self.stack.append(fn) # Append the function object, since this could be inline;
+        self.stack.append(fn)  # Append the function object, since this could be inline;
         # a Let / definition will be popping it when needed
 
     def debug_output(self):
@@ -173,7 +177,7 @@ class VMIR:
             case OpCode.EVAL:
                 nargs = self.eval(self.stack.pop(), *args)
                 # TODO:
-                if isinstance(self.stack[-1], CodeObj): # Primitive
+                if isinstance(self.stack[-1], CodeObj):  # Primitive
                     self.do_op(self.stack.pop().code[0].opcode, [nargs - 1])
                 if isinstance(self.stack[-1], FunObj):
                     print(nargs, self.stack)
@@ -196,12 +200,12 @@ class VMIR:
             case OpCode.PUSH_LIST:
                 self.push_list(*args)
             case OpCode.PUSH_LAMBDA:
-                start = self.frame.ip # PUSH_LAMBDA
+                start = self.frame.ip  # PUSH_LAMBDA
                 while (op := self.frame.instr.opcode) != OpCode.POP_LAMBDA:
                     next(self.frame)
-                stop = self.frame.ip # POP_LAMBDA
+                stop = self.frame.ip  # POP_LAMBDA
                 self.exec_defn_lambda(start, stop)
-                next(self.frame) # Skip the POP_LAMBDA
+                next(self.frame)  # Skip the POP_LAMBDA
             case OpCode.POP_LAMBDA:
                 # Lambdas used as values, not definitions
                 breakpoint()
@@ -224,10 +228,11 @@ class VMIR:
             case OpCode.CALL:
                 self.call(*args)
                 # NOTICE THE BREAK -- we must force
-                #break
+                # break
 
             case _:
                 raise ValueError(f"Unknown opcode: {op}")
+
     def exec(self, debug):
         self.debug = debug
         while self.call_stack:
@@ -246,7 +251,6 @@ class VMIR:
 
         return self.stack
 
-
     def cons(self, *args):
         # (a b) -> [a, b]
         snd, fst = self.stack.pop(), self.stack.pop()
@@ -263,7 +267,7 @@ class VMIR:
 
     @staticmethod
     def isbool(i: Symbol):
-        return i.name == 't' or i.name == 'f'
+        return i.name == "t" or i.name == "f"
 
     @staticmethod
     def isstr(i: Symbol):
@@ -333,7 +337,7 @@ class VMIR:
         val = pair
         if val == EMPTY:
             return 0
-        val = val.name # It's a symbol
+        val = val.name  # It's a symbol
         if str.isnumeric(val):
             self.stack.append(int(val))
         elif val[0] == '"' and val[-1] == '"':
@@ -363,7 +367,8 @@ class VMIR:
         # self.stack.append(p)
         if self.debug:
             print(f"Qt: {self.stack}")
-    def sub(self, n:int):
+
+    def sub(self, n: int):
         # (- a b) -> a - b
         try:
             args = [self.stack.pop() for _ in range(n)]
@@ -396,9 +401,9 @@ class VMIR:
 
     def _make_list(self, args):
         if len(args) == 0:
-            return Symbol('empty')
+            return Symbol("empty")
 
-        p = Pair(args[0], Symbol('empty'))
+        p = Pair(args[0], Symbol("empty"))
         for arg in args[1:]:
             p = Pair(arg, p)
         return p
@@ -410,11 +415,11 @@ class VMIR:
         #     self.stack.append(Symbol('empty'))
         #     return
         if n == 0:
-            self.stack.append(Symbol('empty'))
+            self.stack.append(Symbol("empty"))
             return
         # print(self.stack, n)
         args = [self.stack.pop() for _ in range(n)]
-        p = Pair(args[0], Symbol('empty'))
+        p = Pair(args[0], Symbol("empty"))
         for arg in args[1:]:
             p = Pair(arg, p)
         self.stack.append(p)
@@ -432,9 +437,14 @@ class VMIR:
         # ls = reduce(lambda elem, ls: Pair(elem, ls), reversed([self.stack.pop() for _ in range(n)]), [])
         # self.stack.append(ls)
 
-    def add(self, n:int):
+    def add(self, n: int):
         try:
-            self.stack.append(reduce(lambda elem, res: operator.add(elem, res), [self.stack.pop() for _ in range(n)]))
+            self.stack.append(
+                reduce(
+                    lambda elem, res: operator.add(elem, res),
+                    [self.stack.pop() for _ in range(n)],
+                )
+            )
         except ValueError as e:
             err(str(e))
 
@@ -453,7 +463,7 @@ class VMIR:
                 err(f"Unknown type: {op}")
 
     def load(self, v: str):
-        #breakpoint()
+        # breakpoint()
         self.stack.append(self.frame.getsym(v))
 
     def store(self):
@@ -501,7 +511,7 @@ class VMIR:
     def list(self, n: int):
         args = [self.stack.pop() for _ in range(n)]
         args.reverse()
-        res = reduce(lambda elem, ls: Pair(elem, ls), args, Symbol('empty'))
+        res = reduce(lambda elem, ls: Pair(elem, ls), args, Symbol("empty"))
         self.stack.append(res)
         # self.stack.append([self.stack.pop() for _ in range(n)])
 

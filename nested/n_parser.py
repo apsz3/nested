@@ -1,25 +1,23 @@
-from lark import Lark, Visitor, v_args # type: ignore
+from lark import Lark, Visitor, v_args  # type: ignore
 from lark import Tree, Transformer
 from lark.visitors import Interpreter
 from enum import Enum, auto
 from pathlib import Path
 
 cwd = Path(__file__).parent
-with open(cwd / 'nested.Lark', 'r') as file:
+with open(cwd / "nested.Lark", "r") as file:
     grammar_contents = file.read()
 parser = Lark(grammar_contents)
 from rich import print
 
+
 def parse(text):
     # with open('C:/nested/nested/test.nest', 'r') as file:
 
-
     # result = parser.parse(input_contents)
-    res: Tree= T().transform(parser.parse(text))
+    res: Tree = T().transform(parser.parse(text))
     # print(res.children)
     return res
-
-
 
 
 # class ASTNode(Tree):
@@ -34,6 +32,8 @@ def parse(text):
 #     def visit(self):
 #         return tuple(child.visit() for child in self.children)
 from rich import pretty
+
+
 class ASTNode:
 
     def __init__(self, value, *children):
@@ -54,6 +54,7 @@ class ASTNode:
         self.children = [child.visit() for child in self.children]
         return self
 
+
 class ASTModule(ASTNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -66,6 +67,7 @@ class ASTModule(ASTNode):
         self.children = [child.visit() for child in self.children]
         return self
 
+
 class ASTLeaf(ASTNode):
 
     def __init__(self, value):
@@ -77,6 +79,7 @@ class ASTLeaf(ASTNode):
     def __rich_repr__(self):
         yield self.value
 
+
 class ASTConstantValue(ASTLeaf):
     def __init__(self, type: str, value: str):
         super().__init__(value)
@@ -86,17 +89,21 @@ class ASTConstantValue(ASTLeaf):
         yield self.type
         yield self.value
 
+
 class ASTExpr(ASTNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def visit(self):
-        self.value = self.value.visit() # Visit the identifier to make it a Proc (builtin) or still just an ID (needs to be looked up in the symbol table)
+        self.value = (
+            self.value.visit()
+        )  # Visit the identifier to make it a Proc (builtin) or still just an ID (needs to be looked up in the symbol table)
         self.children = [child.visit() for child in self.children]
         # if isinstance(self.value, ASTIdentifier):
         #     # TODO: may not be necessary, just use ASTExpr still
         #     return ASTProc(self.value, *self.children)
         return self
+
 
 class ASTList(ASTNode):
     def __init__(self, *args, **kwargs):
@@ -116,6 +123,7 @@ class ASTList(ASTNode):
         n = ASTExpr(self.value, *self.children)
         return n.visit()
 
+
 class ASTOp(ASTLeaf):
     # ASTOp is a leaf, but it's a special leaf that represents a builtin
     # operation, which means we don't need to do any sort of symbol lookup
@@ -124,19 +132,37 @@ class ASTOp(ASTLeaf):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+
 class ASTIdentifier(ASTLeaf):
     builtins = {
-        "+", "-", "*", "/", "//", "%",
-        "=", "!=", "<", ">", "<=", ">=",
-        "'", "eval",
-        "list", "fst", "rst", "cons", "hd", "tl",
+        "+",
+        "-",
+        "*",
+        "/",
+        "//",
+        "%",
+        "=",
+        "!=",
+        "<",
+        ">",
+        "<=",
+        ">=",
+        "'",
+        "eval",
+        "list",
+        "fst",
+        "rst",
+        "cons",
+        "hd",
+        "tl",
         "if",
         "let",
         "begin",
         "lambda",
         "print",
-
-        "pos", "not", "neg", # unary ops, can be invoked with token shortcut, or as actual op.
+        "pos",
+        "not",
+        "neg",  # unary ops, can be invoked with token shortcut, or as actual op.
     }
 
     @property
@@ -151,20 +177,23 @@ class ASTIdentifier(ASTLeaf):
             return ASTOp(self.value)
         return self
 
+
 @v_args(inline=True)
 class T(Transformer):
-#    The question-mark prefixing value (”?value”) tells the tree-builder to inline this branch if it has only one member. In this case, value will always have only one member, and will always be inlined.
-
+    #    The question-mark prefixing value (”?value”) tells the tree-builder to inline this branch if it has only one member. In this case, value will always have only one member, and will always be inlined.
 
     # TODO: might be cleaner to have a raw, vanilla Parse transformer,
     # them take that and feed it through a different visitor class that
     # yields the AST nodes.
     def program(self, *children):
-        return ASTModule ("filename.nst", *children,)
+        return ASTModule(
+            "filename.nst",
+            *children,
+        )
 
     @v_args(inline=True)
     def list(self, *children):
-        return ASTList (*children)
+        return ASTList(*children)
 
     # @v_args(meta=True, inline=True)
     # def op(self, meta, token, *args):
@@ -189,17 +218,17 @@ class T(Transformer):
 
     @v_args(inline=True, meta=True)
     def number(self, meta, token):
-        return ASTConstantValue ("int", token.value)
+        return ASTConstantValue("int", token.value)
 
     @v_args(inline=True, meta=True)
     def string(self, meta, token):
         # Includes `""` in the string
-        return ASTConstantValue ("string-lit", token.value)
+        return ASTConstantValue("string-lit", token.value)
 
     @v_args(inline=True, meta=True)
     def ident(self, meta, token):
-        return ASTIdentifier (token.value)
+        return ASTIdentifier(token.value)
 
     @v_args(inline=True, meta=True)
     def symbol(self, meta, token):
-        return ASTConstantValue ("symbol", token.value)
+        return ASTConstantValue("symbol", token.value)

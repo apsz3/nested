@@ -4,6 +4,7 @@ from typing import Optional
 
 from nested.backends.python.n_codeobj import CodeObj
 
+
 class SymTable:
     def __init__(self):
         self.symbols = {}
@@ -29,6 +30,7 @@ class SymTable:
 
     def dump(self):
         return self.symbols
+
     @classmethod
     def from_dict(cls, d):
         new = SymTable()
@@ -39,6 +41,7 @@ class SymTable:
         new = SymTable()
         new.symbols.update(self.symbols)
         return new
+
 
 # We allow lexical scoping so overriding globals, hence the need to always
 # traverse up the chain of frames for lookups

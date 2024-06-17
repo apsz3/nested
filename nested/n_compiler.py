@@ -1,8 +1,17 @@
 from lark import Tree
 from enum import Enum, auto
 from rich import print
-from nested.n_parser import ASTExpr, ASTList, ASTNode, ASTModule, ASTConstantValue, ASTIdentifier, ASTOp
+from nested.n_parser import (
+    ASTExpr,
+    ASTList,
+    ASTNode,
+    ASTModule,
+    ASTConstantValue,
+    ASTIdentifier,
+    ASTOp,
+)
 from nested.n_opcode import Op, OpCode
+
 
 # Continuation -- add before / after / during, where during gets
 # the parent class fn as an arg.
@@ -78,11 +87,19 @@ class Compiler:
         ip_of_jump_to_end = self.ip
 
         # Decrement because of 0-indexing instr buffer
-        self.patch(ip_of_jump_if_false - 1, Op(OpCode.JUMP_IF_FALSE, ip_of_jump_to_end - ip_of_jump_if_false, ip_of_jump_to_end))
+        self.patch(
+            ip_of_jump_if_false - 1,
+            Op(
+                OpCode.JUMP_IF_FALSE,
+                ip_of_jump_to_end - ip_of_jump_if_false,
+                ip_of_jump_to_end,
+            ),
+        )
 
         self.compile_node(els)
-        self.patch(ip_of_jump_to_end - 1, Op(OpCode.JUMP, self.ip - ip_of_jump_to_end, self.ip))
-
+        self.patch(
+            ip_of_jump_to_end - 1, Op(OpCode.JUMP, self.ip - ip_of_jump_to_end, self.ip)
+        )
 
     def compile_const(self, node: ASTConstantValue):
         if node.type == "int":
@@ -119,7 +136,7 @@ class Compiler:
         # We cannot thus compile the children ahead of inspecting that,
         # as for the symbol we are defining, we would issue a Load
         # which would fail on execution
-        if isinstance(node.value, ASTOp): # builtin, just call its opcode
+        if isinstance(node.value, ASTOp):  # builtin, just call its opcode
             op = Op.from_id(node.value)
             opcode = op.opcode
 
@@ -147,6 +164,7 @@ class Compiler:
                     return
 
                 case OpCode.QUOTE:
+
                     def do_quote(n):
                         # TODO: Fix this parser bug that makes children a tuple
                         if n.children == (None,):
@@ -154,13 +172,18 @@ class Compiler:
 
                             return
                         start = self.ip
-                        do_quote(n.value) # This must go first, to keep order of args sensible with it
+                        do_quote(
+                            n.value
+                        )  # This must go first, to keep order of args sensible with it
                         for c in n.children:
                             do_quote(c)
-                        self.emit(Op(OpCode.PUSH_LIST, len(n.children) + 1)) # + 1 because we need to include the do_quote(n.value) used above here; note we don't do this in the outer code, because we treat the `'`
+                        self.emit(
+                            Op(OpCode.PUSH_LIST, len(n.children) + 1)
+                        )  # + 1 because we need to include the do_quote(n.value) used above here; note we don't do this in the outer code, because we treat the `'`
                         # operator separately.
                         # NOTE DISTINCTION IS required for (' add 1 2) and (' (add 1 2))
                         return
+
                     # breakpoint()
 
                     # TODO: THERE IS A DIFFERENCE BETWEEN
@@ -170,12 +193,14 @@ class Compiler:
                     start = self.ip
                     for n in node.children:
                         do_quote(n)
-                    self.emit(Op(OpCode.PUSH_LIST, len(node.children))) # Look at children, not total instrs emitted, because those will have been collected with list push/pops in the interim
+                    self.emit(
+                        Op(OpCode.PUSH_LIST, len(node.children))
+                    )  # Look at children, not total instrs emitted, because those will have been collected with list push/pops in the interim
                     print("buf", self.buffer)
                     self.emit(Op.from_id(node.value, self.ip - start))
                     return
-# ASTExpr(ASTOp("'"), ASTExpr(ASTIdentifier('add'), ASTConstantValue('int', '1'), ASTConstantValue('int', '2')))
-# ASTExpr(ASTOp("'"), ASTIdentifier('add'), ASTConstantValue('int', '1'), ASTConstantValue('int', '2'))
+                # ASTExpr(ASTOp("'"), ASTExpr(ASTIdentifier('add'), ASTConstantValue('int', '1'), ASTConstantValue('int', '2')))
+                # ASTExpr(ASTOp("'"), ASTIdentifier('add'), ASTConstantValue('int', '1'), ASTConstantValue('int', '2'))
                 case _:
                     for child in node.children:
                         self.compile_node(child)
@@ -197,7 +222,7 @@ class Compiler:
             raise ValueError(f"Unknown expr: {node.value}")
 
     def compile_lambda(self, node: ASTOp):
-        self.emit(Op(OpCode.PUSH_LAMBDA)) # TODO: this is probably not necessary,
+        self.emit(Op(OpCode.PUSH_LAMBDA))  # TODO: this is probably not necessary,
         # just check for PUSH_ARGS and take the K values up from there
         args = node.children[0]
         self.emit(Op(OpCode.PUSH_ARGS))
