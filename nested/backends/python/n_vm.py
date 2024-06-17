@@ -168,7 +168,10 @@ class VMIR:
             case OpCode.QUOTE:
                 self.quote(*args)
             case OpCode.EVAL:
-                self.eval(self.stack.pop(), *args)
+                nargs = self.eval(self.stack.pop(), *args)
+                if isinstance(self.stack[-1], FunObj):
+                    self.call(nargs)
+                # if not isinstance(self.stack[-1], FunObj)
             case OpCode.PUSH_REF:
                 self.push_ref(*args)
             case OpCode.STORE:
@@ -267,6 +270,7 @@ class VMIR:
             # Look up the symbol
             # TODO: need to handle primitives here
             self.stack.append(self.frame.getsym(expr.name))
+            print(self.stack)
         return
 
     def eval(self, pair, *args):
@@ -280,17 +284,29 @@ class VMIR:
         # ops.reverse()
         # print(ops)
         # Literal
+        # breakpoint()
         if not isinstance(pair, Pair):
             self.eval_basic(pair)
-            return
+            return 0
         # Leaf
         if pair.rst == Symbol('empty'):
-            self.eval(pair.fst)
-            return
+            return self.eval(pair.fst)
 
-        self.eval(pair.fst)
+        # Otherwise, this is APPLICATION;
+        # eval the proc and the args, then DO it.
+        nargs = len(self.stack)
         self.eval(pair.rst)
-        return
+        # Number of args to push is whatever happened after
+        # evaluating the body of the proc
+        nargs = len(self.stack) - nargs
+        print(self.stack)
+        # breakpoint()
+        self.eval(pair.fst) # Reverse order, proc goes on last, popped first by call.
+        return nargs
+        # print(self.stack)
+        # print(self.stack)
+
+        return nargs
 
     def quote(self, n):
         # When compiled, we pushed Op(LOAD_SYM, symbol) for each node encountered
@@ -423,7 +439,6 @@ class VMIR:
         # Collect args from the stack and assign to locals
         args = [self.stack.pop() for _ in range(n)]
         args.reverse()
-
         bind = SymTable()
         for param_idx, arg_val in enumerate(args):
             bind.set(fn.params[param_idx].name, arg_val)
