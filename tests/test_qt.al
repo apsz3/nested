@@ -59,4 +59,17 @@
     (let bar 2)
     (+ foo bar))))
 (print (biz))
-(print foo)
+;; (print foo) -- should fail!
+
+
+(let make-cls (lambda (name) ('
+    (let name name)
+    (let get-name (lambda (_) name))
+    (let set-name (lambda (new-name) (begin
+        (print "setting name")
+        (let name new-name))))
+    (let print-name (lambda (_) (print name)))
+    (let self (lambda (fn) (eval fn))))))
+
+(let foo (make-cls "foo"))
+(print ((foo) (get-name #foo)))
