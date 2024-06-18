@@ -128,6 +128,19 @@ class VMIR:
                         return
                     # We're inside a lambda, add it to the outer layer's
                     # code.
+                    # TODO: environments need a place to store tmp objects
+                    # and load from them; we would need to store the lambda
+                    # somewhere, then retrieve it with a Load, in order to issue the call.
+                    co = envs[-1].code
+                    # TODO:
+                    # 1) store the function object in the symbol table as some
+                    # obfuscated id
+                    # 2) issue a load + call to it from the outer lambda's code, appending
+                    # that code instrs there.
+
+                    # Big TODO: maybe we should have lower-level instructions
+                    # like bind-arg that does the variable binding for us, etc,
+                    # instead of leaving so much to implementation
                     envs[-1].code.code.append(cur)
                     # envs[-1].code.code.append(Op(OpCode.CALL, 1)) # Add it to the stack frame when encountered. TODO -- need this?
                     next(self.frame) # Skip the POP_LAMBDA of the inner defn
