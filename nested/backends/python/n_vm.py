@@ -104,6 +104,7 @@ class VMIR:
             # print(cur)
             while True:
                 op = self.frame.instr.opcode
+                # Nested lambda
                 if op == OpCode.PUSH_LAMBDA:
                     envs.append(cur)
                     cur = FunObj(CodeObj([]), [])
@@ -123,15 +124,18 @@ class VMIR:
                     # with its body fully defined to the stack
                     if len(envs) == 0:
                         self.stack.append(cur)
+                        next(self.frame) # Skip the POP_LAMBDA
                         return
                     # We're inside a lambda, add it to the outer layer's
                     # code.
                     envs[-1].code.code.append(cur)
+                    # envs[-1].code.code.append(Op(OpCode.CALL, 1)) # Add it to the stack frame when encountered. TODO -- need this?
+                    next(self.frame) # Skip the POP_LAMBDA of the inner defn
                     break
                 else:
                     cur.code.code.append(self.frame.instr)
                     next(self.frame)
-                print(cur)
+                # print(cur)
         self.stack.append(cur)
 
     # def exec_defn_lambda(self, start, stop):
@@ -259,7 +263,6 @@ class VMIR:
                 # next(self.frame)  # Skip the POP_LAMBDA
                 self.exec_defn_lambda()
                 # breakpoint()
-                next(self.frame)  # Skip the POP_LAMBDA
             case OpCode.POP_LAMBDA:
                 # Lambdas used as values, not definitions;
                 raise ValueError("VM: POP_LAMBDA encountered outside of definition")
@@ -293,6 +296,22 @@ class VMIR:
             self.frame = self.call_stack.pop()
             print(self.frame)
             while self.frame.instr:
+                # TODO: we have decided to push FunctionObjects
+                # into the body of lambdas that define nested lambdas.
+                # In this case, the next "instr" is an anonymous function object.
+                # We don't want this, we should alias the lambdas to
+                # some name, and call out to those.
+                # Or, we can execute them inline here.
+                if isinstance(self.frame.instr, FunObj):
+                    print(">>", self.frame.instr)
+                    self.stack.append(self.frame.instr)
+                    self.call(len(self.frame.instr.params) - 1)
+                    next(self.frame)
+                    continue
+                    # self.call_stack.append(Frame(self.frame.instr.code, SymTable(), self.frame))
+
+                print(self.frame.instr)
+
                 op = self.frame.instr.opcode
                 args = self.frame.instr.args
 
