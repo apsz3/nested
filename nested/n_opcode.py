@@ -87,16 +87,24 @@ class Op:
                 opcode = OpCode.ADD
             case "-":
                 opcode = OpCode.SUB
+            case ">":
+                opcode = OpCode.GT
+            case ">=":
+                opcode = OpCode.GTE
+            case "<":
+                opcode = OpCode.LT
+            case "<=":
+                opcode = OpCode.LTE
+            case "=":
+                opcode = OpCode.EQ
+            case "!=":
+                opcode = OpCode.NEQ
             case "pos":
                 opcode = OpCode.POS
             case "neg":
                 opcode = OpCode.NEG
             case "print":
                 opcode = OpCode.PRINT
-            case "=":
-                opcode = OpCode.EQ
-            case "!=":
-                opcode = OpCode.NEQ
             # List
             case "list":
                 opcode = OpCode.PUSH_LIST

@@ -301,6 +301,14 @@ class VMIR:
                 self.call(*args)
                 # NOTICE THE BREAK -- we must force
                 # break
+            case OpCode.GT:
+                self.gt()
+            case OpCode.LT:
+                self.lt()
+            case OpCode.GTE:
+                self.gte()
+            case OpCode.LTE:
+                self.lte()
 
             case _:
                 raise ValueError(f"Unknown opcode: {op}")
@@ -471,6 +479,22 @@ class VMIR:
         a, b = self.stack.pop(), self.stack.pop()
         self.stack.append(Symbol.from_bool(a == b))
 
+    def lt(self):
+        a, b = self.stack.pop(), self.stack.pop()
+        self.stack.append(Symbol.from_bool(a < b))
+
+    def gt(self):
+        a, b = self.stack.pop(), self.stack.pop()
+        self.stack.append(Symbol.from_bool(a > b))
+    
+    def gte(self):
+        a, b = self.stack.pop(), self.stack.pop()
+        self.stack.append(Symbol.from_bool(a >= b))
+    
+    def lte(self):
+        a, b = self.stack.pop(), self.stack.pop()
+        self.stack.append(Symbol.from_bool(a <= b))
+    
     def _not(self):
 
         val = self.stack.pop()
