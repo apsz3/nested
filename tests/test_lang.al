@@ -7,7 +7,7 @@
 #f
 (' foo)
 (' foo (bar baz))
-(cons 1 (cons 2 'empty))
+(cons 1 (cons 2 #empty))
 (cons 1 (' qtd)) ; TODO: doesn't parse (' ())
 
 ; expressions
@@ -20,8 +20,8 @@
 (!= 1 2)
 (>= 1 2)
 (<= 1 2)
-(fst (cons 1 (cons 2 'empty))
-(rst (cons 1 (cons 2 'empty))
+(fst (cons 1 (cons 2 #empty)))
+(rst (cons 1 (cons 2 #empty)))
 (fst (list 1 2))
 (print "Hello, world!")
 
@@ -72,6 +72,7 @@
 (asseq (+ (+ 1 2) (+ 1 2)) 6)
 
 (asseq (cons 1 2) (cons 1 2))
+(assneq (cons 1 2) (cons 1 #empty))
 (let x 1)
 (asseq x 1)
 (asseq (+ x 1) 2)
@@ -85,7 +86,7 @@
 (asseq (fib 10) 55)
 
 
-;; (assert #t)
-;; (assert (= 1 1))
-;; (asseq #t #t)
-;; (asseq 1 1)
+(assert #t)
+(assert (= 1 1))
+(asseq #t #t)
+(asseq 1 1)

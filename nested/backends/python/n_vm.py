@@ -46,6 +46,10 @@ class Pair:
         yield self.fst
         yield self.rst
 
+    def __eq__(self, a):
+        # Two pairs are equal if their fsts are equal and their rsts are equal
+        return self.fst == a.fst and self.rst == a.rst
+
 
 def err(msg):
     raise ValueError(f"[red]Error: {msg}[/red]")
