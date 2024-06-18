@@ -5,6 +5,10 @@
 "val"
 #t
 #f
+(' foo)
+(' foo (bar baz))
+(cons 1 (cons 2 'empty))
+(cons 1 (' qtd)) ; TODO: doesn't parse (' ())
 
 ; expressions
 (+ 1 2)
@@ -16,6 +20,9 @@
 (!= 1 2)
 (>= 1 2)
 (<= 1 2)
+(fst (cons 1 (cons 2 'empty))
+(rst (cons 1 (cons 2 'empty))
+(fst (list 1 2))
 (print "Hello, world!")
 
 ; compound expressions
@@ -64,6 +71,18 @@
 (asseq (+ (+ 1 2) 1) 4)
 (asseq (+ (+ 1 2) (+ 1 2)) 6)
 
+(asseq (cons 1 2) (cons 1 2))
+(let x 1)
+(asseq x 1)
+(asseq (+ x 1) 2)
+(let y (+ x 1))
+(asseq y 2)
+
+(let fib (lambda (n)
+    (if (= n 0) 0
+    (if (= n 1) 1
+    (+ (fib (- n 1)) (fib (- n 2)))))))
+(asseq (fib 10) 55)
 
 
 ;; (assert #t)
