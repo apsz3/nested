@@ -207,6 +207,8 @@ class VMIR:
                 self.cons(*args)
             case OpCode.NEG:
                 self.neg()
+            case OpCode.NOT:
+                self._not()
             case OpCode.PRINT:
                 self.print(*args)
             case OpCode.LOAD_INT:
@@ -469,6 +471,15 @@ class VMIR:
         a, b = self.stack.pop(), self.stack.pop()
         self.stack.append(Symbol.from_bool(a == b))
 
+    def _not(self):
+
+        val = self.stack.pop()
+        if val != FALSE and val != TRUE: 
+            err("Cannot negate non-boolean")
+        if val == FALSE:
+            self.stack.append(TRUE)
+        else:
+            self.stack.append(FALSE)
     def _assert(self):
         # Assert that the top of the stack is True
         if self.stack.pop() != TRUE:

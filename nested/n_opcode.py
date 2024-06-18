@@ -23,6 +23,7 @@ class OpCode(Enum):
     LTE = auto()
     GT = auto()
     GTE = auto()
+    NOT = auto()
 
     QUOTE = auto()
     EVAL = auto()
@@ -113,6 +114,8 @@ class Op:
                 opcode = OpCode.EVAL
             case "cons":
                 opcode = OpCode.CONS
+            case "not":
+                opcode = OpCode.NOT
             # Value operations
             case "lambda":
                 opcode = OpCode.PUSH_LAMBDA
