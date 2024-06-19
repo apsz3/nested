@@ -237,7 +237,8 @@ class T(Transformer):
         if not isinstance(expr, ASTList):
             return ASTExpr(ASTOp("quote"), expr)
         # Treat the list as a single value with space delimiters
-        return expr
+        # TODO: handle quoting large lists with operators and embedded quotes...?
+        return ASTExpr(ASTOp("quote"), expr)
 
     # @v_args(inline=True, meta=True)
     # def symbol(self, meta, token):
