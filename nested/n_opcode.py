@@ -116,8 +116,8 @@ class Op:
                 opcode = OpCode.FST
             case "rst":
                 opcode = OpCode.RST
-            case "'":
-                opcode = OpCode.QUOTE
+            # case "'":
+            #     opcode = OpCode.QUOTE
             case "eval":
                 opcode = OpCode.EVAL
             case "cons":
@@ -144,6 +144,8 @@ class Op:
             # Function calls
             case "call":
                 opcode = OpCode.CALL
+            case "quote":
+                opcode = OpCode.QUOTE
             # Stack manipulation
             case "push":
                 opcode = OpCode.PUSH

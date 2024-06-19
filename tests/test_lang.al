@@ -10,7 +10,7 @@
 't
 'f
 'foo
-;; (quote foo)
+(quote foo)
 ;; (quote foo (bar baz))
 (cons 1 (cons 2 'empty))
 (cons 1 (' qtd)) ; TODO: doesn't parse (' ())

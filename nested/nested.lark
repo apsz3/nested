@@ -12,15 +12,14 @@ list: "(" s_expr* ")"
 // https://github.com/lark-parser/lark/blob/master/lark/grammars/common.lark
 
 // REMEMBER TO CAPITALIZE TERMINAL RULES, OTHERWISE THEY PARSE AS TREES
-//ident: (LETTER) (LETTER | DIGIT | "_" | "-")*
-// regex accepting a single "+", or the ident below:
-OP: "+" | "-" | "=" | "!=" | ">" | "<" | ">=" | "-" | "<="
-IDENTIFIER: /[^\W\d-][\w-]*/
-ident: OP | IDENTIFIER
+// https://www.scheme.com/tspl2/grammar.html
+INITIAL: LETTER | "+" | "-" | "=" | "!" | ">" | "<" | "-" | "_" | "?" | "^" | "~"
+SUBSEQUENT: (DIGIT | INITIAL)+
+IDENTIFIER: INITIAL SUBSEQUENT*
 
 ?atom: NUMBER -> number
     | ESCAPED_STRING -> string
-    | ident
+    | IDENTIFIER -> ident
 
 COMMENT: /;.*/
 

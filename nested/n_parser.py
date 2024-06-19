@@ -149,13 +149,13 @@ class ASTIdentifier(ASTLeaf):
         ">",
         "<=",
         ">=",
-        "'",
         "eval",
         "list",
         "fst",
         "rst",
         "cons",
         "assert",
+        "quote",
         "hd",
         "tl",
         "if",
@@ -234,7 +234,10 @@ class T(Transformer):
 
     @v_args(inline=True, meta=True)
     def qtd(self, meta, expr):
-        return ASTExpr(ASTOp("'"), expr)
+        if not isinstance(expr, ASTList):
+            return ASTExpr(ASTOp("quote"), expr)
+        # Treat the list as a single value with space delimiters
+        return expr
 
     # @v_args(inline=True, meta=True)
     # def symbol(self, meta, token):
