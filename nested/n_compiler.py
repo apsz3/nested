@@ -201,7 +201,8 @@ class Compiler:
                     # 'foo, or (quote foo) -- we do not want to push a list here,
                     # but rather just want to push the symbol.
                     if len(node.children) == 1:
-                        if isinstance(node.children[0], ASTIdentifier):
+                        assert not isinstance(node.children[0], ASTList)
+                        if not isinstance(node.children[0], ASTExpr):
                             self.emit(Op(OpCode.LOAD_SYM, node.children[0].value))
                             self.emit(Op(OpCode.QUOTE, self.ip - start))
                             return

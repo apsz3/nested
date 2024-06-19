@@ -233,5 +233,9 @@ class T(Transformer):
         return ASTIdentifier(token.value)
 
     @v_args(inline=True, meta=True)
-    def symbol(self, meta, token):
-        return ASTExpr(ASTOp("'"), ASTIdentifier(token.value))
+    def qtd(self, meta, expr):
+        return ASTExpr(ASTOp("'"), expr)
+
+    # @v_args(inline=True, meta=True)
+    # def symbol(self, meta, token):
+    #     return ASTExpr(ASTOp("'"), ASTIdentifier(token.value))

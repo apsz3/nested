@@ -1,8 +1,11 @@
 # TODO - basics
+- ((eval '+) 1 2) doesn't rely on a compile-time `n` arg count
 - Allow for empty lambda arg exprs
 - Add variadic args in lambda defns
 - Allow [] and ()
+# Done TODOs
 - Support equaliy of cons's , i.e. all members are equal
+-
 # Impl
 - Use UserList and other classes to avoid leaning too much on Python builtins for the runtime.
 - Compile arguments in reverse order so they do as expected in variadics, e.g.:

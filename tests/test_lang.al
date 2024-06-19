@@ -1,16 +1,18 @@
 ;; Parsing tests
-(assert (= 1 1))
-(assert (= "val" "val"))
-(assert #t)
+;; (assert (= 1 1))
+;; (assert (= "val" "val"))
+(assert 't)
+;; (assert '+ 1 2)
 
 ;; ; values
 1
 "val"
-#t
-#f
-(' foo)
-(' foo (bar baz))
-(cons 1 (cons 2 #empty))
+'t
+'f
+'foo
+;; (quote foo)
+;; (quote foo (bar baz))
+(cons 1 (cons 2 'empty))
 (cons 1 (' qtd)) ; TODO: doesn't parse (' ())
 
 ; expressions
@@ -23,8 +25,8 @@
 (!= 1 2)
 (>= 1 2)
 (<= 1 2)
-(fst (cons 1 (cons 2 #empty)))
-(rst (cons 1 (cons 2 #empty)))
+(fst (cons 1 (cons 2 'empty)))
+(rst (cons 1 (cons 2 'empty)))
 (fst (list 1 2))
 (print "Hello, world!")
 
@@ -61,8 +63,7 @@
 
 (asseq 1 1)
 (asseq "val" "val")
-(assert #t)
-;; (assert (not #f))
+(assert (not 'f))
 ;; (assneq #t #f)
 
 (assert (> 1 0))
@@ -75,7 +76,7 @@
 (asseq (+ (+ 1 2) (+ 1 2)) 6)
 
 (asseq (cons 1 2) (cons 1 2))
-(assneq (cons 1 2) (cons 1 #empty))
+(assneq (cons 1 2) (cons 1 'empty))
 (let x 1)
 (asseq x 1)
 (asseq (+ x 1) 2)

@@ -574,6 +574,10 @@ class VMIR:
         # self.stack.append(ls)
 
     def add(self, n: int):
+        # TODO: if we rely on sending in `n` for nargs,
+        # how do we handle ((eval '+) 1 2)?
+        # We don't know the arg count at compile time
+        # We need to rely on expression groupings instead!
         try:
             self.stack.append(
                 reduce(
