@@ -238,6 +238,7 @@ class T(Transformer):
             return ASTExpr(ASTOp("quote"), expr)
         # Treat the list as a single value with space delimiters
         # TODO: handle quoting large lists with operators and embedded quotes...?
+        breakpoint()
         return ASTExpr(ASTOp("quote"), expr)
 
     # @v_args(inline=True, meta=True)
