@@ -172,7 +172,7 @@ class Compiler:
                             self.emit(Op(OpCode.LOAD_SYM, n.value))
 
                             return
-                        start = self.ip
+
                         do_quote(
                             n.value
                         )  # This must go first, to keep order of args sensible with it
@@ -192,7 +192,6 @@ class Compiler:
                     # FIGURE OUT HOW TO INVOKE THAT
                     # Perhaps it is Pair(op, Pair(<args>)) vs (Pair (op, Pair(Pair(arg1, Pair(arg2)  ))))
                     start = self.ip
-                    breakpoint()
 
                     # Differentiate here between an Expr vs Constant-valued child.
                     # One requires a PushList, the other just push the symbol. TODO
@@ -202,8 +201,8 @@ class Compiler:
                     self.emit(
                         Op(OpCode.PUSH_LIST, len(node.children))
                     )  # Look at children, not total instrs emitted, because those will have been collected with list push/pops in the interim
-                    print("buf", self.buffer)
-                    self.emit(Op.from_id(node.value, self.ip - start))
+                    # print("buf", self.buffer)
+                    self.emit(Op(OpCode.QUOTE, self.ip - start))
                     return
                 # ASTExpr(ASTOp("'"), ASTExpr(ASTIdentifier('add'), ASTConstantValue('int', '1'), ASTConstantValue('int', '2')))
                 # ASTExpr(ASTOp("'"), ASTIdentifier('add'), ASTConstantValue('int', '1'), ASTConstantValue('int', '2'))

@@ -119,18 +119,20 @@ class VMIR:
                     next(self.frame)
                     while (op := self.frame.instr.opcode) != OpCode.POP_ARGS:
                         if op == OpCode.PUSH_REF:
-                            cur.params.append(ParamObj(self.frame.instr.args[0], "type"))
+                            cur.params.append(
+                                ParamObj(self.frame.instr.args[0], "type")
+                            )
                         else:
                             err(f"Unknown opcode in args: {op}")
                             return
                         next(self.frame)
-                    next(self.frame) # Skip the POP_ARGS
+                    next(self.frame)  # Skip the POP_ARGS
                 elif op == OpCode.POP_LAMBDA:
                     # End of the line, add the now defined lambda
                     # with its body fully defined to the stack
                     if len(envs) == 0:
                         self.stack.append(cur)
-                        next(self.frame) # Skip the POP_LAMBDA
+                        next(self.frame)  # Skip the POP_LAMBDA
                         return
                     # We're inside a lambda, add it to the outer layer's
                     # code.
@@ -149,7 +151,7 @@ class VMIR:
                     # instead of leaving so much to implementation
                     envs[-1].code.code.append(cur)
                     # envs[-1].code.code.append(Op(OpCode.CALL, 1)) # Add it to the stack frame when encountered. TODO -- need this?
-                    next(self.frame) # Skip the POP_LAMBDA of the inner defn
+                    next(self.frame)  # Skip the POP_LAMBDA of the inner defn
                     break
                 else:
                     cur.code.code.append(self.frame.instr)
@@ -492,28 +494,30 @@ class VMIR:
     def gt(self):
         b, a = self.stack.pop(), self.stack.pop()
         self.stack.append(Symbol.from_bool(a > b))
-    
+
     def gte(self):
         b, a = self.stack.pop(), self.stack.pop()
         self.stack.append(Symbol.from_bool(a >= b))
-    
+
     def lte(self):
         b, a = self.stack.pop(), self.stack.pop()
         self.stack.append(Symbol.from_bool(a <= b))
-    
+
     def _not(self):
 
         val = self.stack.pop()
-        if val != FALSE and val != TRUE: 
+        if val != FALSE and val != TRUE:
             err("Cannot negate non-boolean")
         if val == FALSE:
             self.stack.append(TRUE)
         else:
             self.stack.append(FALSE)
+
     def _assert(self):
         # Assert that the top of the stack is True
         if self.stack.pop() != TRUE:
             err("Assertion failed")
+
     # def sub(self, n:int):
     #     try:
     #         self.stack.append(self.stack.pop() - sum([self.stack.pop() for _ in range(n-1)]))
