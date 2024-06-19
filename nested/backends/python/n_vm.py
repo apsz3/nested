@@ -48,6 +48,8 @@ class Pair:
 
     def __eq__(self, a):
         # Two pairs are equal if their fsts are equal and their rsts are equal
+        if not isinstance(a, Pair):
+            return False
         return self.fst == a.fst and self.rst == a.rst
 
 

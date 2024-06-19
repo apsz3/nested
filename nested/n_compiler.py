@@ -167,6 +167,7 @@ class Compiler:
 
                     def do_quote(n):
                         # TODO: Fix this parser bug that makes children a tuple
+                        # breakpoint()
                         if n.children == (None,):
                             self.emit(Op(OpCode.LOAD_SYM, n.value))
 
@@ -191,6 +192,11 @@ class Compiler:
                     # FIGURE OUT HOW TO INVOKE THAT
                     # Perhaps it is Pair(op, Pair(<args>)) vs (Pair (op, Pair(Pair(arg1, Pair(arg2)  ))))
                     start = self.ip
+                    breakpoint()
+
+                    # Differentiate here between an Expr vs Constant-valued child.
+                    # One requires a PushList, the other just push the symbol. TODO
+                    # TODO: '(1 2 3)
                     for n in node.children:
                         do_quote(n)
                     self.emit(

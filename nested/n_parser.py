@@ -234,4 +234,4 @@ class T(Transformer):
 
     @v_args(inline=True, meta=True)
     def symbol(self, meta, token):
-        return ASTConstantValue("symbol", token.value)
+        return ASTExpr(ASTOp("'"), ASTIdentifier(token.value))
