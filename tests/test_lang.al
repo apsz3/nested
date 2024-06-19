@@ -1,6 +1,6 @@
 ;; Parsing tests
-;; (assert (= 1 1))
-;; (assert (= "val" "val"))
+(assert (= 1 1))
+(assert (= "val" "val"))
 (assert #t)
 
 ;; ; values

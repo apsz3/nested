@@ -196,6 +196,16 @@ class Compiler:
                     # Differentiate here between an Expr vs Constant-valued child.
                     # One requires a PushList, the other just push the symbol. TODO
                     # TODO: '(1 2 3)
+                    # Special case:
+                    # If there is only 1 child, we have the situation
+                    # 'foo, or (quote foo) -- we do not want to push a list here,
+                    # but rather just want to push the symbol.
+                    if len(node.children) == 1:
+                        if isinstance(node.children[0], ASTIdentifier):
+                            self.emit(Op(OpCode.LOAD_SYM, node.children[0].value))
+                            self.emit(Op(OpCode.QUOTE, self.ip - start))
+                            return
+
                     for n in node.children:
                         do_quote(n)
                     self.emit(
