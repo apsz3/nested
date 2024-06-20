@@ -3,6 +3,7 @@
 - Allow for empty lambda arg exprs
 - Add variadic args in lambda defns
 - Allow [] and ()
+- 
 # Done TODOs
 - Support equaliy of cons's , i.e. all members are equal
 -
@@ -15,6 +16,8 @@
 
 - Add primitive for Pair? Symbol? Int? Str? as well as Symbol->Val casts
 # Bugs
+- ((foo)) does not apply proc to (foo) -- just resolves to (foo)
+- (lambda foo (a b c) 1) does not err out  when called as (foo) -- no arg popping?
 - Does not execute, just returns the fn: (print ((lambda (x) (+ x 1)) 1))
 
 - This does not eval properly: (let x ( (lambda (a) 1)))  -- it binds x to a function, not the proc.
