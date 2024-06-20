@@ -54,6 +54,10 @@ class ASTNode:
         self.children = [child.visit() for child in self.children]
         return self
 
+    def __repr__(self):
+        if self.children is not None:
+            return f'{self.value}{self.children}'
+        return f'{self.value}'
 
 class ASTModule(ASTNode):
     def __init__(self, *args, **kwargs):
@@ -238,7 +242,7 @@ class T(Transformer):
             return ASTExpr(ASTOp("quote"), expr)
         # Treat the list as a single value with space delimiters
         # TODO: handle quoting large lists with operators and embedded quotes...?
-        return ASTExpr(ASTOp("quote"), expr)
+        return ASTExpr(ASTOp("quote"), expr.value, *expr.children) # * to UNPACK the list so we don't double-nest parens
 
     # @v_args(inline=True, meta=True)
     # def symbol(self, meta, token):

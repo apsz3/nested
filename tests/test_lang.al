@@ -89,4 +89,7 @@
     (+ (fib (- n 1)) (fib (- n 2)))))))
 (asseq (fib 7) 13)
 
-
+(asseq '1 '1)
+(assneq '1 '0)
+(asseq '(+ 1 2 3) (list '+ '1 '2 '3))
+(asseq (fst '(+ 1 2 3)) '+)
