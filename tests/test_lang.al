@@ -93,3 +93,6 @@
 (assneq '1 '0)
 (asseq '(+ 1 2 3) (list '+ '1 '2 '3))
 (asseq (fst '(+ 1 2 3)) '+)
+
+(print '())
+(asseq '() 'empty)

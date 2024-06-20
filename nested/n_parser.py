@@ -113,7 +113,10 @@ class ASTExpr(ASTNode):
 
 class ASTList(ASTNode):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        if args == tuple(): # '()
+            super().__init__(ASTIdentifier("empty"))
+        else:
+            super().__init__(*args, **kwargs)
 
     # def visit(self):
     #     if isinstance(self.value, ASTIdentifier):
