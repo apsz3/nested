@@ -20,3 +20,13 @@
 ;; (asseq (fst '(+ 1 2 3)) '+)
 '()
 'a
+(let _len (lambda (l acc)
+    (if (= l '()) acc
+    (_len (rst l) (+ 1 acc)))))
+;; (let len )
+(print (= (_len (list) 0) 0))
+(print (list))
+(print '())
+
+(let qt '(+ 1 22))
+(print (eval qt))

@@ -94,5 +94,10 @@
 (asseq '(+ 1 2 3) (list '+ '1 '2 '3))
 (asseq (fst '(+ 1 2 3)) '+)
 
-(print '())
 (asseq '() 'empty)
+
+(let _len (lambda (l acc)
+    (if (= l '()) acc
+    (_len (rst l) (+ 1 acc)))))
+;; (let len )
+(asseq (_len (list) 0) 0)
