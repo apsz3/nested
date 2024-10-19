@@ -28,9 +28,27 @@
                 (_min (rst ls) (hd ls))
                 (_min (rst ls) m)))))
     (_min ls (fst ls)))))
-(print (min (list 3 10 51 891 2)))
 
-;; (let quicksort (lambda (ls)
+(let del (lambda (ls val)
+    (begin
+        (let _del (lambda (ls acc)
+            (if (empty? ls) acc
+            (if (= (hd ls) val) (_del (rst ls) acc)
+                (_del (rst ls) (cons (hd ls) acc))))))
+        (_del ls 'empty))))
+
+(let x (list 1 8923 47 1926 782 17 9))
+(print (del x (min x)))
+
+
+;; (let simple-sort (lambda (ls) (begin
+;;     (let ss (lambda (ls acc)
+;;         (if (empty? ls) acc
+;;             ()
+;; )))
+;; (print (simple-sort 'empty))
+
+;; ;; (let quicksort (lambda (ls)
 ;;     (if (empty? ls)
 ;;         'empty
 ;;         (begin
