@@ -64,7 +64,7 @@
 (asseq 1 1)
 (asseq "val" "val")
 (assert (not 'f))
-;; (assneq #t #f)
+(assneq 't 'f)
 
 (assert (> 1 0))
 (assert (< 0 1))
@@ -88,4 +88,3 @@
     (if (= n 1) 1
     (+ (fib (- n 1)) (fib (- n 2)))))))
 (asseq (fib 7) 13)
-

@@ -5,7 +5,9 @@ setup(
     version="1.0",
     packages=find_packages(),
     install_requires=[
-        # Add any dependencies required by your project here
+        "rich>=10.0.0",
+        "click>=7.0",
+        "prompt_toolkit>=3.0.0",
     ],
     entry_points={
         "console_scripts": [
