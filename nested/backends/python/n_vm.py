@@ -336,7 +336,8 @@ class VMIR:
                 if isinstance(self.frame.instr, FunObj):
                     print(">>", self.frame.instr)
                     self.stack.append(self.frame.instr)
-                    self.call(len(self.frame.instr.params) - 1)
+                    res = self.call(len(self.frame.instr.params) - 1)
+                    breakpoint()
                     next(self.frame)
                     continue
                     # self.call_stack.append(Frame(self.frame.instr.code, SymTable(), self.frame))
@@ -489,6 +490,7 @@ class VMIR:
 
     def lt(self):
         b, a = self.stack.pop(), self.stack.pop()
+        # breakpoint()
         self.stack.append(Symbol.from_bool(a < b))
 
     def gt(self):
@@ -529,11 +531,11 @@ class VMIR:
 
     def hd(self):
         ls = self.stack.pop()
-        self.stack.append(ls[0])
+        self.stack.append(ls.fst)
 
     def tl(self):
         ls = self.stack.pop()
-        self.stack.append(ls[1:])
+        self.stack.append(ls.rst)
 
     def _make_list(self, args):
         if len(args) == 0:
