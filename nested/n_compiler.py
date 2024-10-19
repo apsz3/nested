@@ -257,7 +257,6 @@ class Compiler:
             # in lambda arg definition, and not some fancy expressions or anything.
             # If we DID, we would need to compile_noad / reduce the arg somehow,
             # to an identifier...
-            print(arg)
             self.emit(Op(OpCode.PUSH_REF, arg.value))
             # self.emit(Op(OpCode.STORE, 1)) # Store will pop the ref and the value off, incrementally, at runtiem
 

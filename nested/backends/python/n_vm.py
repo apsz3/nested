@@ -333,11 +333,26 @@ class VMIR:
                 # We don't want this, we should alias the lambdas to
                 # some name, and call out to those.
                 # Or, we can execute them inline here.
+
+                # Check if we've set up a DEFINITION VIA A PUSH_REF;
+                # THEN THIS IS A NESTED FUNCTION.
+                # OTHERWISE, IT"S TRULY ANONYMOUS, AND WE EXECUTE IT HERE AND NOW
                 if isinstance(self.frame.instr, FunObj):
+
                     print(">>", self.frame.instr)
+                    # Append FunObj
                     self.stack.append(self.frame.instr)
+                    if self.frame.code[self.frame.ip - 1].opcode == OpCode.PUSH_REF:
+                        # We're defining a lambda, not calling it
+                        # breakpoint()
+                        next(self.frame)
+                        continue
+                    # Call it
                     res = self.call(len(self.frame.instr.params) - 1)
-                    breakpoint()
+                    # breakpoint()
+                    if res is not None:
+                        breakpoint()
+                        self.stack.append(res)
                     next(self.frame)
                     continue
                     # self.call_stack.append(Frame(self.frame.instr.code, SymTable(), self.frame))
@@ -638,6 +653,7 @@ class VMIR:
             for param_idx, arg_val in enumerate(args):
                 bind.set(fn.params[param_idx].name, arg_val)
         except IndexError:
+            breakpoint()
             raise ValueError("LANG: Invalid number of arguments supplied!")
         except AttributeError:
             raise ValueError(f"LANG: value is not a procedure?")
