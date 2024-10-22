@@ -16,6 +16,8 @@ class CodeObj:
     def __getitem__(self, item):
         return self.code[item]
 
+    def __repr__(self) -> str:
+        return f"{self.code}"
 
 class ParamObj:
     def __init__(self, name: str, type: str):
@@ -25,6 +27,10 @@ class ParamObj:
     def __rich_repr__(self):
         yield self.name
         yield self.type
+
+    def __repr__(self):
+        return f"{self.name}:{self.type}"
+    
 
 
 class FunObj:
@@ -42,3 +48,6 @@ class FunObj:
     def __rich_repr__(self):
         yield self.params
         yield self.code
+
+    def __repr__(self):
+        return f"{repr(self.params)} => {repr(self.code)}"

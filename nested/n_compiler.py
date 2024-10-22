@@ -23,11 +23,16 @@ from nested.n_opcode import Op, OpCode
 # }
 class Compiler:
 
-    def __init__(self, tree: Tree):
+    def __init__(self, tree: Tree, debug = False):
         self.tree = tree
         self.buffer = []
         self.ip = 0
         self.macros = {}
+        self.debug = debug
+
+    def print_debug(self, x):
+        if self.debug:
+            print(x)
 
     def display_buffer(self):
         for i, instr in enumerate(self.buffer):
@@ -313,43 +318,22 @@ class Compiler:
         # 3) Replace the macro args with the actual values in the macro_body.
         args = node.children
         macro_arg_names = list(map(lambda m: m.value, macro_args))
-        # def compile_node(node):
-        #     if isinstance(node, ASTIdentifier):
-        #         if node.value in macro_arg_names:
-        #             idx = macro_arg_names.index(node.value)
-        #             print("replacing", node.value, "with", args[idx])
-        #             self.compile_node(args[idx]) # Replacement
-        #         else:
-        #             self.compile_node(node)
-        #     else:
-        #         if isinstance(node, ASTLeaf):
-        #             self.compile_node(node)
-        #         else: 
-        #             # The issue is expression compiling 
-        #             # is recursive; we cannot defer compilation of 
-        #             # the children to compiling the parent node,
-        #             # because we won't be doing any replacements that way.
-        #             # Instead we need to go ahead and just replace things in the AST, and 
-        #             # THEN compile the whole thing.
-        #             self.compile_expr(node)
-        #             for child in node.children:
-        #                 compile_node(child)
+
+        # The issue is expression compiling 
+        # is recursive; we cannot defer compilation of 
+        # the children to compiling the parent node,
+        # because we won't be doing any replacements that way.
+        # Instead we need to go ahead and just replace things in the AST, and 
         # Substitute in the body.
         def substitute(node):
-            print(node)
-  
-
             # Naive
             if isinstance(node, ASTIdentifier):
-                print(f"ID: {node}")
                 if node.value in macro_arg_names:
                     idx = macro_arg_names.index(node.value)
-                    print("replacing", node.value, "with", args[idx])
                     return args[idx]
                 return node
             # Excluding identifiers, i.e. constants
             elif isinstance(node, ASTLeaf):
-                # print(f"LEAF: {node}")
                 return node
             
             # NOT A LEAF (CONSTANT / ID) SO IT MUST BE AN EXPR
@@ -361,7 +345,10 @@ class Compiler:
             return ASTExpr(me, *new_children)
             
         node_transformed = substitute(macro_body)
-        print(node_transformed)
+        self.print_debug("-- Macro Transform:")
+        self.print_debug(macro_body)
+        self.print_debug(f"with {list(zip(macro_arg_names, args))}")
+        self.print_debug(node_transformed)
         self.compile_node(node_transformed)
         return
 

@@ -83,7 +83,7 @@ def main(parse, compile, debug, i, file_path):
         print("-- AST")
         print(tree)
 
-    c = Compiler(tree)
+    c = Compiler(tree, debug)
     c.compile_program()
     if compile or debug:
         print("-- IR")
