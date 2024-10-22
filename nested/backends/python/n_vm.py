@@ -249,7 +249,7 @@ class VMIR:
                 if isinstance(self.stack[-1], CodeObj):  # Primitive
                     self.do_op(self.stack.pop().code[0].opcode, [nargs - 1])
                 if isinstance(self.stack[-1], FunObj):
-                    print(nargs, self.stack)
+                    self.print_debug(nargs, self.stack)
                     self.call(nargs - 1)
                     # TODO: could check args here against
                     # fun obj expected params, just like
@@ -321,11 +321,15 @@ class VMIR:
             case _:
                 raise ValueError(f"Unknown opcode: {op}")
 
+    def print_debug(self, *args):
+        if self.debug:
+            print(*args)
+
     def exec(self, debug):
         self.debug = debug
         while self.call_stack:
             self.frame = self.call_stack.pop()
-            print(self.frame)
+            self.print_debug(self.frame)
             while self.frame.instr:
                 # TODO: we have decided to push FunctionObjects
                 # into the body of lambdas that define nested lambdas.
@@ -338,8 +342,7 @@ class VMIR:
                 # THEN THIS IS A NESTED FUNCTION.
                 # OTHERWISE, IT"S TRULY ANONYMOUS, AND WE EXECUTE IT HERE AND NOW
                 if isinstance(self.frame.instr, FunObj):
-
-                    print(">>", self.frame.instr)
+                    self.print_debug(">>", self.frame.instr)
                     # Append FunObj
                     self.stack.append(self.frame.instr)
                     if self.frame.code[self.frame.ip - 1].opcode == OpCode.PUSH_REF:
@@ -357,15 +360,14 @@ class VMIR:
                     continue
                     # self.call_stack.append(Frame(self.frame.instr.code, SymTable(), self.frame))
 
-                print(self.frame.instr)
+                self.print_debug(self.frame.instr)
 
                 op = self.frame.instr.opcode
                 args = self.frame.instr.args
 
-                if debug:
-                    print(f"{self.frame.ip:2} {op:2} {args}")
-                    print(f"{' ':4}{self.stack}")
-                    # print(self.frame)
+                self.print_debug(f"{self.frame.ip:2} {op:2} {args}")
+                self.print_debug(f"{' ':4}{self.stack}")
+                # print(self.frame)
 
                 next(self.frame)
                 self.do_op(op, args)
@@ -411,7 +413,7 @@ class VMIR:
             # Look up the symbol
             # TODO: need to handle primitives here
             self.stack.append(self.frame.getsym(expr.name))
-            print(self.stack)
+            self.print_debug(self.stack)
         return
 
     # Define (quote a b c) as (a b c) e.g. A applied to (b, c)
@@ -486,8 +488,7 @@ class VMIR:
         # print(":", ops)
         self.stack.append(ops)
         # self.stack.append(p)
-        if self.debug:
-            print(f"Qt: {self.stack}")
+        self.print_debug(f"Qt: {self.stack}")
 
     def sub(self, n: int):
         # (- a b) -> a - b
@@ -672,11 +673,3 @@ class VMIR:
         res = reduce(lambda elem, ls: Pair(elem, ls), args, Symbol("empty"))
         self.stack.append(res)
         # self.stack.append([self.stack.pop() for _ in range(n)])
-
-    def print(self, n: int):
-        try:
-            args = [str(self.stack.pop()) for _ in range(n)]
-            msg(f"> {' '.join(args)}")
-
-        except IndexError:
-            err("! Need more arguments")

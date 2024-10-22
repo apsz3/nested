@@ -73,18 +73,23 @@ def main(parse, compile, debug, i, file_path):
     with open(file_path, "r") as fp:
         program = fp.read()
     p = Parse(program)
-    print("-- Parse")
-    print(p.children)
+    if debug:
+        print("-- Parse")
+        print(p.children)
 
     tree = p.children[0]
     tree.visit()
-    print("-- AST")
-    print(tree)
+    if debug:
+        print("-- AST")
+        print(tree)
+
     c = Compiler(tree)
     c.compile_program()
-    print("-- IR")
-    # Align the operands and arguments for the items in the buffer:
-    c.display_buffer()
+    if debug:
+        print("-- IR")
+        # Align the operands and arguments for the items in the buffer:
+        c.display_buffer()
+
     v = VM(VMIR())
     code = CodeObj(c.buffer)
     v.run(code, debug=debug)
