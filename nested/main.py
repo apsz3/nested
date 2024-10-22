@@ -73,19 +73,19 @@ def main(parse, compile, debug, i, file_path):
     with open(file_path, "r") as fp:
         program = fp.read()
     p = Parse(program)
-    if debug:
+    if parse or debug:
         print("-- Parse")
         print(p.children)
 
     tree = p.children[0]
     tree.visit()
-    if debug:
+    if parse or debug:
         print("-- AST")
         print(tree)
 
     c = Compiler(tree)
     c.compile_program()
-    if debug:
+    if compile or debug:
         print("-- IR")
         # Align the operands and arguments for the items in the buffer:
         c.display_buffer()
