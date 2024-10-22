@@ -14,5 +14,8 @@
 (defmacro defn (name args body)
     (let name (lambda args body)))
 
-(defn z '() '())
-(print z)
+(defn fib (n) 
+    (if (= n 0) 0
+    (if (= n 1) 1
+        (+ (fib (- n 1)) (fib (- n 2))))))
+(asseq (fib 10) 55)
