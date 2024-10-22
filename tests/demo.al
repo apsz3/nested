@@ -33,14 +33,18 @@
 
 (let del (lambda (ls val)
     (begin
-        (let _del (lambda (ls acc)
-            (if (empty? ls) acc
-            (if (= (hd ls) val) (_del (rst ls) acc)
-                (_del (rst ls) (cons (hd ls) acc))))))
-        (_del ls 'empty))))
+        (let _del (lambda (ls)
+            (if (empty? ls) 'empty
+            (if (= (hd ls) val)
+                (_del (rst ls))
+                (cons (hd ls) (_del (rst ls)))))))
+        (_del ls))))
 
-(let x (list 923 47 1 1926 782 17 9))
+(let x (list 923 47 1 1926 782 1 17 9))
 (print (del x (min x)))
+
+(print (del (list 1 2 3) 2))
+(print (list 1 3))
 
 
 ;; (let simple-sort (lambda (ls) (begin
