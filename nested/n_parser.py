@@ -169,6 +169,7 @@ class ASTIdentifier(ASTLeaf):
         "let",
         "begin",
         "lambda",
+        "defmacro",
         "print",
         "pos",
         "not",

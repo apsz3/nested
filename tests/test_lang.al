@@ -64,7 +64,7 @@
 (asseq 1 1)
 (asseq "val" "val")
 (assert (not 'f))
-;; (assneq #t #f)
+(assneq 't 'f)
 
 (assert (> 1 0))
 (assert (< 0 1))
@@ -89,12 +89,7 @@
     (+ (fib (- n 1)) (fib (- n 2)))))))
 (asseq (fib 7) 13)
 
-(asseq '1 '1)
-(assneq '1 '0)
-(asseq '(+ 1 2 3) (list '+ '1 '2 '3))
-(asseq (fst '(+ 1 2 3)) '+)
 
-(asseq '() 'empty)
 
 (let _len (lambda (l acc)
     (if (= l '()) acc

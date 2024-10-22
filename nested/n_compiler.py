@@ -26,6 +26,7 @@ class Compiler:
         self.tree = tree
         self.buffer = []
         self.ip = 0
+        self.macros = {}
 
     def display_buffer(self):
         for i, instr in enumerate(self.buffer):
@@ -152,7 +153,9 @@ class Compiler:
                 case OpCode.PUSH_LAMBDA:
                     self.compile_lambda(node)
                     return
-
+                case OpCode.DEFMACRO:
+                    self.compile_defmacro(node)
+                    return
                 case OpCode.IF:
                     self.compile_if(node)
                     return
@@ -265,20 +268,51 @@ class Compiler:
         self.compile_node(body)
         self.emit(Op(OpCode.POP_LAMBDA))
 
+    def compile_defmacro(self, node: ASTOp):
+        name = node.children[0]
+        if len(node.children) != 3:
+            args = None
+            body = node.children[1]
+        else:
+            args = node.children[1]
+            body = node.children[2]
+        self.macros[name.value] = (args, body)
+
     def compile_identifier(self, node: ASTIdentifier):
         self.emit(Op(OpCode.LOAD, node.value))
+
+    def compile_macro(self, node: ASTNode):
+        # We could do something in the VM bytecode by swapping refs later or
+        # whatever but that seems way too complicated.
+        macro_id = node.value  # ASTIdentifier
+        args, body = self.macros[macro_id.value]  # ARe these hashable?>
+        # Bind the args provided to the node
+        # to the arg symbols in the `args` list,
+        # inject those into the body,
+        # and then render the body.
+
+        if args is None:
+            # Noop macro
+            self.compile_node(body)
+            return
+        else:
+            raise ValueError("Not implemented")
 
     def compile_node(self, node: ASTNode):
         if isinstance(node, ASTModule):
             self.compile_program(node.children)
         elif isinstance(node, ASTExpr):
-            self.compile_expr(node)
+            if (
+                isinstance(node.value, ASTIdentifier)
+                and node.value.value in self.macros
+            ):
+                self.compile_macro(node)
+            else:
+                self.compile_expr(node)
         elif isinstance(node, ASTConstantValue):
             self.compile_const(node)
         elif isinstance(node, ASTIdentifier):
             self.compile_identifier(node)
-        elif isinstance(node, ASTExpr):
-            self.compile_expr(node)
         else:
             msg = " ".join([_ for _ in node.__rich_repr__()])
             raise ValueError(f"Unknown node type '{msg}'")

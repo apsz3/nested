@@ -16,18 +16,18 @@
 (let x 1)
 (print x)
 (print (+ x 2))
-(let rizz 23)
-;(rizz 2 3)
+(let eee 23)
+;(eee 2 3)
 
  (lambda (x y) (+ x y))
-(let edge (lambda (x y) (+ x y)))
-(let rizz (lambda (x) (edge x 2)))
-(print (edge 1 2222))
+(let fff (lambda (x y) (+ x y)))
+(let eee (lambda (x) (fff x 2)))
+(print (fff 1 2222))
 
-(print (rizz 2))
+(print (eee 2))
 
-(let rizz 2)
-(print rizz)
+(let eee 2)
+(print eee)
 
 ; TODO: this works, bc we just push things on the stack ....
 (list 1 2 3)

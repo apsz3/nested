@@ -65,6 +65,8 @@ class OpCode(Enum):
     POP = auto()
     NOP = auto()
 
+    DEFMACRO = auto()
+
     def __rich_repr__(self):
         yield self.name
 
@@ -134,6 +136,8 @@ class Op:
             # Symbol operations
             case "let":
                 opcode = OpCode.STORE
+            case "defmacro":
+                opcode = OpCode.DEFMACRO
             # Conditionals and control flow
             case "if":
                 opcode = OpCode.IF

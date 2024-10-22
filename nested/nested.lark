@@ -14,12 +14,14 @@ list: "(" s_expr* ")"
 // REMEMBER TO CAPITALIZE TERMINAL RULES, OTHERWISE THEY PARSE AS TREES
 // https://www.scheme.com/tspl2/grammar.html
 INITIAL: LETTER | "+" | "-" | "=" | "!" | ">" | "<" | "-" | "_" | "?" | "^" | "~"
-SUBSEQUENT: (DIGIT | INITIAL)+
+SUBSEQUENT: (DIGIT | INITIAL | "'")
 IDENTIFIER: INITIAL SUBSEQUENT*
 
-?atom: NUMBER -> number
+?atom: IDENTIFIER -> ident
+    | NUMBER -> number
     | ESCAPED_STRING -> string
-    | IDENTIFIER -> ident
+
+
 
 COMMENT: /;.*/
 
