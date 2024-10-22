@@ -5,4 +5,4 @@
 ;(print (foo))
 
 (defmacro bar (x y z) (+ x (+ y z)))
-(bar 1 2 3)
+(print (bar 1 2 3))

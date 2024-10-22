@@ -3,6 +3,7 @@ from enum import Enum, auto
 from rich import print
 from nested.n_parser import (
     ASTExpr,
+    ASTLeaf,
     ASTList,
     ASTNode,
     ASTModule,
@@ -321,10 +322,10 @@ class Compiler:
                 else:
                     self.compile_node(node)
             else:
-                if isinstance(node, ASTConstantValue):
+                if isinstance(node, ASTLeaf):
                     self.compile_node(node)
                 else: 
-                    for child in macro_body.children:
+                    for child in node.children:
                         compile_node(child)
 
         compile_node(macro_body)
