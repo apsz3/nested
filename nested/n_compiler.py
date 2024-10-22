@@ -341,9 +341,9 @@ class Compiler:
             # Excluding identifiers, i.e. constants
             elif isinstance(node, ASTLeaf):
                 return node
-            
-            # NOT A LEAF (CONSTANT / ID) SO IT MUST BE AN EXPR
-            me = node.value
+            # NOT A LEAF (CONSTANT / ID) SO IT MUST BE AN EXPR;
+            # THE HEAD COULD BE A MACRO THOUGH!
+            me = substitute(node.value)
             new_children = []
             for child in node.children:
                 subbd = substitute(child)
