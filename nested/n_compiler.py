@@ -307,20 +307,24 @@ class Compiler:
         # and the head of it is the first ID which we want to capture.
         # So total args is len(macro_args.children) + 1 for the head.
         # TODO: this might break
-        assert len(node.children) == len(macro_args.children) + 1
+        macro_args = [macro_args.value, *macro_args.children]
+        assert len(node.children) == len(macro_args)
         # 3) Replace the macro args with the actual values in the macro_body.
         args = node.children
-
+        macro_arg_names = list(map(lambda m: m.value, macro_args))
         def compile_node(node):
             if isinstance(node, ASTIdentifier):
-                if node.value in macro_args.children:
-                    idx = macro_args.children.index(node.value)
+                if node.value in macro_arg_names:
+                    idx = macro_arg_names.index(node.value)
                     print("replacing", node.value, "with", args[idx])
                     self.compile_node(args[idx]) # Replacement
+                else:
+                    self.compile_node(node)
             else:
                 self.compile_node(node)
 
-        compile_node(macro_body)
+        for child in macro_body.children:
+            compile_node(child)
 
 
     def compile_node(self, node: ASTNode):
