@@ -90,9 +90,6 @@
 (asseq (fib 7) 13)
 
 
-
-(let _len (lambda (l acc)
-    (if (= l '()) acc
-    (_len (rst l) (+ 1 acc)))))
-;; (let len )
-(asseq (_len (list) 0) 0)
+(let x (lambda () (begin (let yy 2) (let x 333) (print x) (print yy))))
+(print x)
+(x)
