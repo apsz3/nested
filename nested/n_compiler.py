@@ -285,18 +285,43 @@ class Compiler:
         # We could do something in the VM bytecode by swapping refs later or
         # whatever but that seems way too complicated.
         macro_id = node.value  # ASTIdentifier
-        args, body = self.macros[macro_id.value]  # ARe these hashable?>
+        macro_args, macro_body = self.macros[macro_id.value]  # ARe these hashable?>
         # Bind the args provided to the node
         # to the arg symbols in the `args` list,
         # inject those into the body,
         # and then render the body.
 
-        if args is None:
+        if macro_args is None:
             # Noop macro
-            self.compile_node(body)
+            self.compile_node(macro_body)
             return
         else:
-            raise ValueError("Not implemented")
+            self.compile_naive_macro(macro_args, macro_body, node)
+
+    def compile_naive_macro(self, macro_args, macro_body, node):
+        # Get the args from the node, 
+        # and bind them to the symbols in the macro_args list,
+        # then compile the body of the macro referencing those values.
+
+        # (defmacro add (x y) (+ x y)) ; args are a ASTExpr(ASTIdentifier('x'), ASTIdentifier('y'))
+        # and the head of it is the first ID which we want to capture.
+        # So total args is len(macro_args.children) + 1 for the head.
+        # TODO: this might break
+        assert len(node.children) == len(macro_args.children) + 1
+        # 3) Replace the macro args with the actual values in the macro_body.
+        args = node.children
+
+        def compile_node(node):
+            if isinstance(node, ASTIdentifier):
+                if node.value in macro_args.children:
+                    idx = macro_args.children.index(node.value)
+                    print("replacing", node.value, "with", args[idx])
+                    self.compile_node(args[idx]) # Replacement
+            else:
+                self.compile_node(node)
+
+        compile_node(macro_body)
+
 
     def compile_node(self, node: ASTNode):
         if isinstance(node, ASTModule):
