@@ -18,6 +18,8 @@
         ls2
         (cons (fst ls1) (concat (rst ls1) ls2)))))
 
+(print (list 1 2 3))
+(print (concat (list 1 2 3) (list 4 5 6)))
 ;; (print (foo 3))  ; Should print 5
 (let min (lambda (ls) (begin
     (let _min (lambda
@@ -37,7 +39,7 @@
                 (_del (rst ls) (cons (hd ls) acc))))))
         (_del ls 'empty))))
 
-(let x (list 1 8923 47 1926 782 17 9))
+(let x (list 923 47 1 1926 782 17 9))
 (print (del x (min x)))
 
 
@@ -48,14 +50,14 @@
 ;; )))
 ;; (print (simple-sort 'empty))
 
-;; ;; (let quicksort (lambda (ls)
-;;     (if (empty? ls)
-;;         'empty
-;;         (begin
-;;             (let pivot (fst ls))
-;;             (print pivot)
-;;             (concat
-;;                 (quicksort (filter (lambda (x) (< x pivot)) (rst ls)))
-;;                 'empty)))))
+(let quicksort (lambda (ls)
+    (if (empty? ls)
+        'empty
+        (begin
+            (let pivot (fst ls))
+            (print pivot)
+            (concat
+                (quicksort (filter (lambda (x) (< x pivot)) (rst ls)))
+                'empty)))))
 ;; (print (quicksort (list 3 1 4 1 5 9 2 6 5 3 5)))
 ;; ;; (asseq (quicksort (list 3 1 4 1 5 9 2 6 5 3 5)) (list 1 1 2 3 3 4 5 5 5 6 9))
