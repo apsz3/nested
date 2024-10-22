@@ -55,9 +55,7 @@ class ASTNode:
         return self
 
     def __repr__(self):
-        if self.children is not None:
-            return f'{self.value}{self.children}'
-        return f'{self.value}'
+        return f'{self.value} {self.children}'
 
 class ASTModule(ASTNode):
     def __init__(self, *args, **kwargs):

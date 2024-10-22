@@ -313,22 +313,57 @@ class Compiler:
         # 3) Replace the macro args with the actual values in the macro_body.
         args = node.children
         macro_arg_names = list(map(lambda m: m.value, macro_args))
-        def compile_node(node):
+        # def compile_node(node):
+        #     if isinstance(node, ASTIdentifier):
+        #         if node.value in macro_arg_names:
+        #             idx = macro_arg_names.index(node.value)
+        #             print("replacing", node.value, "with", args[idx])
+        #             self.compile_node(args[idx]) # Replacement
+        #         else:
+        #             self.compile_node(node)
+        #     else:
+        #         if isinstance(node, ASTLeaf):
+        #             self.compile_node(node)
+        #         else: 
+        #             # The issue is expression compiling 
+        #             # is recursive; we cannot defer compilation of 
+        #             # the children to compiling the parent node,
+        #             # because we won't be doing any replacements that way.
+        #             # Instead we need to go ahead and just replace things in the AST, and 
+        #             # THEN compile the whole thing.
+        #             self.compile_expr(node)
+        #             for child in node.children:
+        #                 compile_node(child)
+        # Substitute in the body.
+        def substitute(node):
+            print(node)
+  
+
+            # Naive
             if isinstance(node, ASTIdentifier):
+                print(f"ID: {node}")
                 if node.value in macro_arg_names:
                     idx = macro_arg_names.index(node.value)
                     print("replacing", node.value, "with", args[idx])
-                    self.compile_node(args[idx]) # Replacement
-                else:
-                    self.compile_node(node)
-            else:
-                if isinstance(node, ASTLeaf):
-                    self.compile_node(node)
-                else: 
-                    for child in node.children:
-                        compile_node(child)
-
-        compile_node(macro_body)
+                    return args[idx]
+                return node
+            # Excluding identifiers, i.e. constants
+            elif isinstance(node, ASTLeaf):
+                # print(f"LEAF: {node}")
+                return node
+            
+            # NOT A LEAF (CONSTANT / ID) SO IT MUST BE AN EXPR
+            me = node.value
+            new_children = []
+            for child in node.children:
+                subbd = substitute(child)
+                new_children.append(subbd)
+            return ASTExpr(me, *new_children)
+            
+        node_transformed = substitute(macro_body)
+        print(node_transformed)
+        self.compile_node(node_transformed)
+        return
 
 
     def compile_node(self, node: ASTNode):
