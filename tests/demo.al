@@ -47,21 +47,13 @@
 (print (list 1 3))
 
 
-;; (let simple-sort (lambda (ls) (begin
-;;     (let ss (lambda (ls acc)
-;;         (if (empty? ls) acc
-;;             ()
-;; )))
-;; (print (simple-sort 'empty))
+(let naive-insertion-sort (lambda (ls) (begin
+    (let _nis (lambda (ls acc)
+        (if (empty? ls) acc
+            (concat (filter (lambda (x) (< x (hd ls))) ls)
 
-(let quicksort (lambda (ls)
-    (if (empty? ls)
-        'empty
-        (begin
-            (let pivot (fst ls))
-            (print pivot)
-            (concat
-                (quicksort (filter (lambda (x) (< x pivot)) (rst ls)))
-                'empty)))))
-;; (print (quicksort (list 3 1 4 1 5 9 2 6 5 3 5)))
+)))
+;; (print (simple-sort 'empty))
 ;; ;; (asseq (quicksort (list 3 1 4 1 5 9 2 6 5 3 5)) (list 1 1 2 3 3 4 5 5 5 6 9))
+(let x (list 1 2 3))
+(let y (cons 1 x))
