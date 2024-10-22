@@ -571,7 +571,7 @@ class VMIR:
             self.stack.append(Symbol("empty"))
             return
         # print(self.stack, n)
-        args = [self.stack.pop() for _ in range(n)]
+        args = [self.stack.pop() for _ in range(n)][::-1]
         p = Pair(args[0], Symbol("empty"))
         for arg in args[1:]:
             p = Pair(arg, p)
