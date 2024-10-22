@@ -321,10 +321,13 @@ class Compiler:
                 else:
                     self.compile_node(node)
             else:
-                self.compile_node(node)
+                if isinstance(node, ASTConstantValue):
+                    self.compile_node(node)
+                else: 
+                    for child in macro_body.children:
+                        compile_node(child)
 
-        for child in macro_body.children:
-            compile_node(child)
+        compile_node(macro_body)
 
 
     def compile_node(self, node: ASTNode):
