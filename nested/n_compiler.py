@@ -305,6 +305,7 @@ class Compiler:
             self.compile_naive_macro(macro_args, macro_body, node)
 
     def compile_naive_macro(self, macro_args, macro_body, node):
+        # TODO: 
         # Get the args from the node, 
         # and bind them to the symbols in the macro_args list,
         # then compile the body of the macro referencing those values.
@@ -314,7 +315,12 @@ class Compiler:
         # So total args is len(macro_args.children) + 1 for the head.
         # TODO: this might break
         macro_args = [macro_args.value, *macro_args.children]
-        assert len(node.children) == len(macro_args)
+        try: 
+            assert len(node.children) == len(macro_args)
+        except AssertionError:
+            # TODO: the issue is that (test (1 2 3)) goes to (1 (2 3)) cons cells.
+            # which is length 2 instead of 3
+            breakpoint()
         # 3) Replace the macro args with the actual values in the macro_body.
         args = node.children
         macro_arg_names = list(map(lambda m: m.value, macro_args))

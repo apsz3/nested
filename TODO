@@ -3,7 +3,7 @@
 - Allow for empty lambda arg exprs
 - Add variadic args in lambda defns
 - Allow [] and ()
-- 
+- a b c... where c collects all other args so you can do things like print macro 
 # Done TODOs
 - Support equaliy of cons's , i.e. all members are equal
 -
