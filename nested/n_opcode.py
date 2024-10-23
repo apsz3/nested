@@ -70,7 +70,8 @@ class OpCode(Enum):
     # reserved word we have something more modular?
     DEFMACRO = auto()
     INCLUDE = auto()
-
+    PARAM = auto()
+    
     def __rich_repr__(self):
         yield self.name
 
@@ -144,6 +145,8 @@ class Op:
                 opcode = OpCode.DEFMACRO
             case "include":
                 opcode = OpCode.INCLUDE
+            case "param":
+                opcode = OpCode.PARAM
             # Conditionals and control flow
             case "if":
                 opcode = OpCode.IF

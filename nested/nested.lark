@@ -15,7 +15,7 @@ list: "(" s_expr* ")"
 // https://www.scheme.com/tspl2/grammar.html
 INITIAL: LETTER | "+" | "-" | "=" | "!" | ">" 
     | "<" | "-" | "_" | "?" | "^" | "~" | "/" | "\\"
-    | "." | ","
+    | "." | "," | ":"
 SUBSEQUENT: (DIGIT | INITIAL | "'")
 IDENTIFIER: INITIAL SUBSEQUENT*
 

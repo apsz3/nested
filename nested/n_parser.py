@@ -183,6 +183,7 @@ class ASTIdentifier(ASTLeaf):
         "pos",
         "not",
         "neg",  # unary ops, can be invoked with token shortcut, or as actual op.
+        "param" # CLI will read everything from STDIN, PARAM just means we bind the CLI args to that.
     }
 
     @property

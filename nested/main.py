@@ -64,6 +64,7 @@ def repl(debug):
 @click.option("-c", "--compile", is_flag=True, help="Compile the file")
 @click.option("-d", "--debug", is_flag=True, help="Parse and compile and run")
 @click.option("-i", is_flag=True)
+# @click.argument()
 @click.argument("file_path", type=click.Path(exists=True))
 def main(parse, compile, debug, i, file_path):
     if i:
@@ -94,6 +95,7 @@ def main(parse, compile, debug, i, file_path):
     code = CodeObj(c.buffer)
     v.run(code, debug=debug)
 
+    print(nargs)
     if debug:
         stack, call_stack, frame = v.debug()
 
