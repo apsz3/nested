@@ -95,7 +95,6 @@ def main(parse, compile, debug, i, file_path):
     code = CodeObj(c.buffer)
     v.run(code, debug=debug)
 
-    print(nargs)
     if debug:
         stack, call_stack, frame = v.debug()
 

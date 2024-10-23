@@ -374,22 +374,23 @@ class Compiler:
         self._hygenic_macro_int += 1
         macro_local_var_map = {}
         def substitute(node):
-            # Naive
-            if isinstance(node, ASTIdentifier):
+            if node == ASTIdentifier("let"):
+                var_name = node.children[0]
+                # IF WE ARE DOING AN ASSIGNMENT!!!
+                # Sanitize the name of the non-replaced identifier
+                if var_name not in macro_local_var_map:
+                    macro_local_var_map[var_name.value] = f"{var_name.value}#{this_macro_number}"
+                new_name = macro_local_var_map[var_name.value]
+                node = ASTIdentifier(new_name)
+                return node
+            # Could be just an identifier we need to swap out
+            elif isinstance(node, ASTIdentifier):
                 if node.value in macro_arg_names:
                     idx = macro_arg_names.index(node.value)
                     return args[idx]
-                # Sanitize the name of the non-replaced identifier
-                if node.value not in macro_local_var_map:
-                    # TODO: STANDARDIZE RESERVED WORDS!
-                    # Unpack Symbols into their strings , TODO CLEANUP
-                    # so we can compare to ASTIdentifier
-                    if node.value in RESERVED_WORDS:
-                        return node
-                    macro_local_var_map[node.value] = f"{node.value}#{this_macro_number}"
-                new_name = macro_local_var_map[node.value]
-                node = ASTIdentifier(new_name)
-                return node
+                else:
+                    return node
+           
             # Excluding identifiers, i.e. constants
             elif isinstance(node, ASTLeaf):
                 return node
