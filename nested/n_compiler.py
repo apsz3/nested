@@ -398,6 +398,11 @@ class Compiler:
                 if node.value in macro_arg_names:
                     idx = macro_arg_names.index(node.value)
                     return args[idx]
+                # Replace any previously sanitized macro vars
+                # that appear later in the body of the macor with the
+                # sanitized name.
+                elif node.value in macro_local_var_map:
+                    return ASTIdentifier(macro_local_var_map[node.value])
                 else:
                     return node
            
