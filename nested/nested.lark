@@ -13,7 +13,9 @@ list: "(" s_expr* ")"
 
 // REMEMBER TO CAPITALIZE TERMINAL RULES, OTHERWISE THEY PARSE AS TREES
 // https://www.scheme.com/tspl2/grammar.html
-INITIAL: LETTER | "+" | "-" | "=" | "!" | ">" | "<" | "-" | "_" | "?" | "^" | "~"
+INITIAL: LETTER | "+" | "-" | "=" | "!" | ">" 
+    | "<" | "-" | "_" | "?" | "^" | "~" | "/" | "\\"
+    | "." | ","
 SUBSEQUENT: (DIGIT | INITIAL | "'")
 IDENTIFIER: INITIAL SUBSEQUENT*
 

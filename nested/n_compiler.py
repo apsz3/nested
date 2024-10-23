@@ -52,10 +52,20 @@ class Compiler:
     def patch(self, ip, arg):
         self.buffer[ip] = arg
 
-    def compile_program(self):
-        self.emit(Op(OpCode.BEGIN_MODULE, "META"))
+    def compile_program(self, node: ASTModule = None):
+        # TODO: default ASTModule we wrap in should have a value passed...
+        # Need distingiusih outer program and inner module this is sloppy
+        # TODO: distingusih program and module
+        self.emit(Op(OpCode.BEGIN_MODULE, "meta"))
         # Get metadata from self.tree here (not children)
-        self.compile(self.tree.children)
+        if node is None:
+            self.compile(self.tree.children)
+        else: 
+            # TODO: PASS THE MODULE NAME WITH THE STATEMENTS
+            self.emit(Op(OpCode.BEGIN_MODULE, node.value))
+            self.compile(node.children)
+            self.emit(Op(OpCode.END_MODULE, "meta"))
+
         self.emit(Op(OpCode.END_MODULE, "META"))
 
     def compile(self, nodes):
@@ -154,6 +164,9 @@ class Compiler:
             opcode = op.opcode
 
             match opcode:
+                case OpCode.INCLUDE:
+                    assert False # should have been replaced?
+                    return 
                 case OpCode.STORE:
                     sym = node.children[0]
                     self.compile_ref(sym)
@@ -161,10 +174,6 @@ class Compiler:
                         self.compile_node(child)
                     self.emit(op)
                     return
-
-                # case OpCode.INCLUDE:
-                #     breakpoint()
-                #     with open(node.children[1])
                     
                 case OpCode.PUSH_LAMBDA:
                     self.compile_lambda(node)
@@ -398,7 +407,7 @@ class Compiler:
 
     def compile_node(self, node: ASTNode):
         if isinstance(node, ASTModule):
-            self.compile_program(node.children)
+            self.compile_program(node)
         elif isinstance(node, ASTExpr):
             if (
                 isinstance(node.value, ASTIdentifier)

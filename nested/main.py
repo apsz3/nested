@@ -72,7 +72,7 @@ def main(parse, compile, debug, i, file_path):
         return
     with open(file_path, "r") as fp:
         program = fp.read()
-    p = Parse(program)
+    p = Parse(program, file_path)
     if parse or debug:
         print("-- Parse")
         print(p.children)

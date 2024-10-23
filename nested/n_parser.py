@@ -11,14 +11,18 @@ parser = Lark(grammar_contents)
 from rich import print
 
 
-def parse(text):
+def parse(text, module_name):
     # with open('C:/nested/nested/test.nest', 'r') as file:
 
     # result = parser.parse(input_contents)
-    res: Tree = T().transform(parser.parse(text))
+    res: Tree = T(module_name).transform(parser.parse(text))
     # print(res.children)
     return res
 
+def read_and_parse(fname):
+    # Parse module
+    with open(fname, "r") as fp:
+        return parse(fp.read().strip(), fname)
 
 # class ASTNode(Tree):
 #     def __init__(self, name, children):
@@ -103,6 +107,7 @@ class ASTExpr(ASTNode):
             self.value.visit()
         )  # Visit the identifier to make it a Proc (builtin) or still just an ID (needs to be looked up in the symbol table)
         self.children = [child.visit() for child in self.children]
+
         # if isinstance(self.value, ASTIdentifier):
         #     # TODO: may not be necessary, just use ASTExpr still
         #     return ASTProc(self.value, *self.children)
@@ -128,6 +133,12 @@ class ASTList(ASTNode):
 
     def visit(self):
         n = ASTExpr(self.value, *self.children)
+        if n.value == ASTIdentifier("include"):
+            path = n.children[0].value
+            parsed = read_and_parse(path)
+            tree = parsed.children[0]
+            tree.visit()
+            return tree
         return n.visit()
 
 
@@ -187,9 +198,13 @@ class ASTIdentifier(ASTLeaf):
             return ASTOp(self.value)
         return self
 
-
+    def __eq__(self, a):
+        return isinstance(a, ASTIdentifier) and a.value == self.value
+    
 @v_args(inline=True)
 class T(Transformer):
+    def __init__(self, module_name:str = "UNSPECIFIED_MODULE"):
+        self.module_name = module_name
     #    The question-mark prefixing value (”?value”) tells the tree-builder to inline this branch if it has only one member. In this case, value will always have only one member, and will always be inlined.
 
     # TODO: might be cleaner to have a raw, vanilla Parse transformer,
@@ -197,7 +212,7 @@ class T(Transformer):
     # yields the AST nodes.
     def program(self, *children):
         return ASTModule(
-            "filename.nst",
+            self.module_name,
             *children,
         )
 
@@ -209,9 +224,9 @@ class T(Transformer):
     # def op(self, meta, token, *args):
     #     return ASTExpr(ASTOp(token.value), *[a.value for a in args])
 
-    @v_args(meta=True, inline=True)
-    def v_op(self, meta, op, *exprs):
-        return ASTExpr(ASTOp(op.value), *exprs)
+    # @v_args(meta=True, inline=True)
+    # def v_op(self, meta, op, *exprs):
+    #     return ASTExpr(ASTOp(op.value), *exprs)
 
     # @v_args(meta=True, inline=True)
     # def un_op(self, meta, op, atom):

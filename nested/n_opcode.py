@@ -142,6 +142,8 @@ class Op:
                 opcode = OpCode.STORE
             case "defmacro":
                 opcode = OpCode.DEFMACRO
+            case "include":
+                opcode = OpCode.INCLUDE
             # Conditionals and control flow
             case "if":
                 opcode = OpCode.IF
