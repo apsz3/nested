@@ -298,12 +298,8 @@ class Compiler:
         # inject those into the body,
         # and then render the body.
 
-        if macro_args is None:
-            # Noop macro
-            self.compile_node(macro_body)
-            return
-        else:
-            self.compile_naive_macro(macro_args, macro_body, node)
+
+        self.compile_naive_macro(macro_args, macro_body, node)
 
     def compile_naive_macro(self, macro_args, macro_body, node):
         # TODO: 
@@ -328,16 +324,19 @@ class Compiler:
         # TODO: this fails if you define a macro with empty () argslist;
         # you shouldnt be doing that if it takes no args though...
         # We should fix this to standardize it.
-        macro_args =  [macro_args.value, *macro_args.children]
-
-        # if not (node.children == [] and macro_args
-        try: 
-            assert len(node.children) == len(macro_args)
-        except AssertionError:
-            # TODO: the issue is that (test (1 2 3)) goes to (1 (2 3)) cons cells.
-            # which is length 2 instead of 3
-            breakpoint()
-            assert False
+        if macro_args is None: 
+            assert len(node.children) == 0
+            macro_args = []
+        else: 
+            macro_args =  [macro_args.value, *macro_args.children]
+            # if not (node.children == [] and macro_args
+            try: 
+                assert len(node.children) == len(macro_args)
+            except AssertionError:
+                # TODO: the issue is that (test (1 2 3)) goes to (1 (2 3)) cons cells.
+                # which is length 2 instead of 3
+                breakpoint()
+                assert False
         # 3) Replace the macro args with the actual values in the macro_body.
         args = node.children
         macro_arg_names = list(map(lambda m: m.value, macro_args))
