@@ -374,15 +374,25 @@ class Compiler:
         self._hygenic_macro_int += 1
         macro_local_var_map = {}
         def substitute(node):
-            if node == ASTIdentifier("let"):
-                var_name = node.children[0]
+            # TODO: might want to also do this for defmacro 
+            # TODO: fix this crap, handle it all below with Expr.
+            # HANDLE ASSIGNMENT
+            if isinstance(node, ASTExpr) and node.value == ASTOp("let"):
+                var_node = node.children[0]
+                var_name = var_node.value
                 # IF WE ARE DOING AN ASSIGNMENT!!!
                 # Sanitize the name of the non-replaced identifier
                 if var_name not in macro_local_var_map:
-                    macro_local_var_map[var_name.value] = f"{var_name.value}#{this_macro_number}"
-                new_name = macro_local_var_map[var_name.value]
-                node = ASTIdentifier(new_name)
-                return node
+                    macro_local_var_map[var_name] = f"{var_name}#{this_macro_number}"
+                new_name = macro_local_var_map[var_name]
+                # Reassign the identifier to the macro hygenizied name
+                new_children = [ASTIdentifier(new_name)] 
+                # Process the rest of the children
+                for child in node.children[1:]:
+                    subbd = substitute(child)
+                    new_children.append(subbd)
+                return ASTExpr(ASTOp("let"),  *new_children)
+
             # Could be just an identifier we need to swap out
             elif isinstance(node, ASTIdentifier):
                 if node.value in macro_arg_names:
@@ -406,7 +416,7 @@ class Compiler:
         node_transformed = substitute(macro_body)
         self.print_debug("-- Macro Transform:")
         self.print_debug(macro_body)
-        self.print_debug(f"with {list(zip(macro_arg_names, args))}")
+        self.print_debug(f"with args {list(zip(macro_arg_names, args))}")
         self.print_debug(node_transformed)
         self.compile_node(node_transformed)
         return

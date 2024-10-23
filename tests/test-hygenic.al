@@ -11,4 +11,4 @@
         (test-hygenic)
         x)))
 
-(print (res))
+(assert (= (res) 0))

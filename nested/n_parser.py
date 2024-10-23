@@ -60,7 +60,7 @@ class ASTNode:
 
     def __repr__(self):
         return f'{self.value} {self.children}'
-
+    
 class ASTModule(ASTNode):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -149,6 +149,8 @@ class ASTOp(ASTLeaf):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def __eq__(self, a):
+        return isinstance(a, ASTOp) and a.value == self.value
 
 class ASTIdentifier(ASTLeaf):
     builtins = {
