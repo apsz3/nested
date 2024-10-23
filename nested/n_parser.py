@@ -137,8 +137,7 @@ class ASTList(ASTNode):
             path = n.children[0].value
             parsed = read_and_parse(path)
             tree = parsed.children[0]
-            tree.visit()
-            return tree
+            return tree.visit()
         return n.visit()
 
 
