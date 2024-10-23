@@ -555,9 +555,9 @@ class VMIR:
 
     def _make_list(self, args):
         if len(args) == 0:
-            return Symbol("empty")
+            return EMPTY
 
-        p = Pair(args[0], Symbol("empty"))
+        p = Pair(args[0], EMPTY)
         for arg in args[1:]:
             p = Pair(arg, p)
         return p
@@ -569,11 +569,11 @@ class VMIR:
         #     self.stack.append(Symbol('empty'))
         #     return
         if n == 0:
-            self.stack.append(Symbol("empty"))
+            self.stack.append(EMPTY)
             return
         # print(self.stack, n)
         args = [self.stack.pop() for _ in range(n)]
-        p = Pair(args[0], Symbol("empty"))
+        p = Pair(args[0], EMPTY)
         for arg in args[1:]:
             p = Pair(arg, p)
         self.stack.append(p)
@@ -670,6 +670,6 @@ class VMIR:
     def list(self, n: int):
         args = [self.stack.pop() for _ in range(n)]
         args.reverse()
-        res = reduce(lambda elem, ls: Pair(elem, ls), args, Symbol("empty"))
+        res = reduce(lambda elem, ls: Pair(elem, ls), args, EMPTY)
         self.stack.append(res)
         # self.stack.append([self.stack.pop() for _ in range(n)])

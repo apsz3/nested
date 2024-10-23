@@ -1,6 +1,7 @@
 from lark import Tree
 from enum import Enum, auto
 from rich import print
+from nested.backends.python.n_vm import EMPTY
 from nested.n_parser import (
     ASTExpr,
     ASTLeaf,
@@ -314,13 +315,29 @@ class Compiler:
         # and the head of it is the first ID which we want to capture.
         # So total args is len(macro_args.children) + 1 for the head.
         # TODO: this might break
-        macro_args = [macro_args.value, *macro_args.children]
+        # TODO: () passed as arg list has length 1 instead of 0 when 
+        # comparing to the args being called with.
+        # TODO: (<call-macro-name>) as node.children = []
+        # whereas in the macro definition (having no args) it's argument value is 'empty;
+        # we need to do the  equivalence here.
+
+        # if macro_args.value != ASTIdentifier('empty'):
+        #     macro_args =  [macro_args.value, *macro_args.children]
+        # else:
+        #     macro_args = []
+        # TODO: this fails if you define a macro with empty () argslist;
+        # you shouldnt be doing that if it takes no args though...
+        # We should fix this to standardize it.
+        macro_args =  [macro_args.value, *macro_args.children]
+
+        # if not (node.children == [] and macro_args
         try: 
             assert len(node.children) == len(macro_args)
         except AssertionError:
             # TODO: the issue is that (test (1 2 3)) goes to (1 (2 3)) cons cells.
             # which is length 2 instead of 3
             breakpoint()
+            assert False
         # 3) Replace the macro args with the actual values in the macro_body.
         args = node.children
         macro_arg_names = list(map(lambda m: m.value, macro_args))
