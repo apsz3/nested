@@ -162,6 +162,10 @@ class Compiler:
                     self.emit(op)
                     return
 
+                # case OpCode.INCLUDE:
+                #     breakpoint()
+                #     with open(node.children[1])
+                    
                 case OpCode.PUSH_LAMBDA:
                     self.compile_lambda(node)
                     return

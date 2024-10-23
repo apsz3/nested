@@ -169,6 +169,7 @@ class ASTIdentifier(ASTLeaf):
         "lambda",
         "defmacro",
         "print",
+        "include",
         "pos",
         "not",
         "neg",  # unary ops, can be invoked with token shortcut, or as actual op.

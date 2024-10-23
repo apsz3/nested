@@ -65,7 +65,11 @@ class OpCode(Enum):
     POP = auto()
     NOP = auto()
 
+    # TODO should builtins IDs be like a ID(<name>)
+    # so that instead of defining ne opcodes for every
+    # reserved word we have something more modular?
     DEFMACRO = auto()
+    INCLUDE = auto()
 
     def __rich_repr__(self):
         yield self.name
