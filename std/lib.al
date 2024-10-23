@@ -17,15 +17,17 @@
 ;; (test len 'empty 0)
 
 
-
+; NOTE: IF YOU STICK A PARAMATER NAME IN THE INNER FUNCTION
+; THAT MATCHES THE NAME OF AN ARGUMENT TO THE MACRO
+; THINGS WILL NOT WORK AS EXPECTED!!!!
 (defmacro test-all (ls) (begin
-    (let loop (lambda (ls) (
-        (if (not (empty? ls))
+    (let loop (lambda (NOT-LS) (
+        (if (not (empty? NOT-LS))
             (begin
-                (print (hd ls))
-                (loop (rst ls)))
+                (print (hd NOT-LS))
+                (loop (rst NOT-LS)))
             (print "done")))))
     (loop ls)))
 
 
-(test-all '(1 2 3))
+(test-all '(1 2 3 2 2 2 2 2 2 2 2 2))
