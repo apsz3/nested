@@ -10,6 +10,7 @@ class SymTable:
         self.symbols = {}
 
     def set(self, name, value):
+        breakpoint()
         self.symbols[name] = value
 
     def get(self, name):

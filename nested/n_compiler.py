@@ -401,6 +401,8 @@ class Compiler:
                 # Replace any previously sanitized macro vars
                 # that appear later in the body of the macor with the
                 # sanitized name.
+                # TODO: this doesnt seem to work if you use a defn / macro 
+                # that produces `let` inside a macro body...
                 elif node.value in macro_local_var_map:
                     return ASTIdentifier(macro_local_var_map[node.value])
                 else:
