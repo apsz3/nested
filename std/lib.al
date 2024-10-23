@@ -4,6 +4,7 @@
 
 ; Asserts a == b
 (defmacro asseq (a b) (assert (= a b)))
+; Asserts fn(a) == b
 (defmacro test (fn input expected) (asseq (fn input) expected))
 
 (defmacro empty? (ls) (= ls 'empty))

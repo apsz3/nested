@@ -75,6 +75,9 @@ class OpCode(Enum):
     def __rich_repr__(self):
         yield self.name
 
+    def __repr__(self):
+        return self.name
+
 
 class Op:
     def __init__(self, opcode: OpCode, *args):
@@ -85,6 +88,9 @@ class Op:
         yield self.opcode
         yield from self.args
 
+    def __repr__(self):
+        return f"{self.opcode} {self.args}"
+    
     @staticmethod
     def from_id(i: ASTIdentifier, *args):
         opcode = None

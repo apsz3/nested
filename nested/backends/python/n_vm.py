@@ -64,7 +64,7 @@ def msg(msg):
 TRUE = Symbol("t")
 FALSE = Symbol("f")
 EMPTY = Symbol("empty")
-
+RESERVED = [TRUE, FALSE, EMPTY]
 
 class VMIR:
 
@@ -329,7 +329,7 @@ class VMIR:
         self.debug = debug
         while self.call_stack:
             self.frame = self.call_stack.pop()
-            self.print_debug(self.frame)
+            self.print_debug("> pop frame")
             while self.frame.instr:
                 # TODO: we have decided to push FunctionObjects
                 # into the body of lambdas that define nested lambdas.
@@ -360,7 +360,7 @@ class VMIR:
                     continue
                     # self.call_stack.append(Frame(self.frame.instr.code, SymTable(), self.frame))
 
-                self.print_debug(self.frame.instr)
+                # self.print_debug(self.frame.instr)
 
                 op = self.frame.instr.opcode
                 args = self.frame.instr.args

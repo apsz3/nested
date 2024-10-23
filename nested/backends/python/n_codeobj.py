@@ -50,4 +50,4 @@ class FunObj:
         yield self.code
 
     def __repr__(self):
-        return f"{repr(self.params)} => {repr(self.code)}"
+        return f"({repr(self.params)}) => (...)" # {'repr(self.code)}"

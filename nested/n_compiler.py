@@ -1,7 +1,7 @@
 from lark import Tree
 from enum import Enum, auto
 from rich import print
-from nested.backends.python.n_vm import EMPTY
+from nested.backends.python.n_vm import EMPTY, FALSE, RESERVED, TRUE
 from nested.n_parser import (
     ASTExpr,
     ASTLeaf,
@@ -14,6 +14,7 @@ from nested.n_parser import (
 )
 from nested.n_opcode import Op, OpCode
 
+RESERVED_WORDS = list(map(lambda k: k.name, RESERVED)) + list(ASTIdentifier.builtins)
 
 # Continuation -- add before / after / during, where during gets
 # the parent class fn as an arg.
@@ -380,6 +381,11 @@ class Compiler:
                     return args[idx]
                 # Sanitize the name of the non-replaced identifier
                 if node.value not in macro_local_var_map:
+                    # TODO: STANDARDIZE RESERVED WORDS!
+                    # Unpack Symbols into their strings , TODO CLEANUP
+                    # so we can compare to ASTIdentifier
+                    if node.value in RESERVED_WORDS:
+                        return node
                     macro_local_var_map[node.value] = f"{node.value}#{this_macro_number}"
                 new_name = macro_local_var_map[node.value]
                 node = ASTIdentifier(new_name)
