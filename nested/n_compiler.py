@@ -31,6 +31,10 @@ class Compiler:
         self.macros = {}
         self.debug = debug
 
+        # TODO: perhaps map to var names as hash map 
+        # to not have huge integers as codebase grows...
+        self._hygenic_macro_int = 0
+
     def print_debug(self, x):
         if self.debug:
             print(x)
@@ -39,6 +43,7 @@ class Compiler:
         for i, instr in enumerate(self.buffer):
 
             print(f"{i:<4}: {instr.opcode:<25} {' '.join(map(str, instr.args)):<15}")
+
 
     def emit(self, arg):
         self.buffer.append(arg)
@@ -169,6 +174,7 @@ class Compiler:
 
                 case OpCode.BEGIN:
                     # Only compile the children, not the value
+                    # TODO: Should we push the value here too?
                     for child in node.children:
                         self.compile_node(child)
                     return
@@ -324,6 +330,8 @@ class Compiler:
         # TODO: this fails if you define a macro with empty () argslist;
         # you shouldnt be doing that if it takes no args though...
         # We should fix this to standardize it.
+
+
         if macro_args is None: 
             assert len(node.children) == 0
             macro_args = []
@@ -347,12 +355,21 @@ class Compiler:
         # because we won't be doing any replacements that way.
         # Instead we need to go ahead and just replace things in the AST, and 
         # Substitute in the body.
+
+        this_macro_number = self._hygenic_macro_int
+        self._hygenic_macro_int += 1
+        macro_local_var_map = {}
         def substitute(node):
             # Naive
             if isinstance(node, ASTIdentifier):
                 if node.value in macro_arg_names:
                     idx = macro_arg_names.index(node.value)
                     return args[idx]
+                # Sanitize the name of the non-replaced identifier
+                if node.value not in macro_local_var_map:
+                    macro_local_var_map[node.value] = f"{node.value}#{this_macro_number}"
+                new_name = macro_local_var_map[node.value]
+                node = ASTIdentifier(new_name)
                 return node
             # Excluding identifiers, i.e. constants
             elif isinstance(node, ASTLeaf):
