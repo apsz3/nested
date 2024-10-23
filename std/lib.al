@@ -21,13 +21,30 @@
 ; THAT MATCHES THE NAME OF AN ARGUMENT TO THE MACRO
 ; THINGS WILL NOT WORK AS EXPECTED!!!!
 (defmacro test-all (ls) (begin
-    (let loop (lambda (NOT-LS) (
-        (if (not (empty? NOT-LS))
+    (let loop (lambda (not-ls) (
+        (if (not (empty? not-ls))
             (begin
-                (print (hd NOT-LS))
-                (loop (rst NOT-LS)))
+                (let inner (hd not-ls))
+                (let fn (hd inner))
+                (let input (hd (rst inner)))
+                (let expected (hd (rst (rst inner))))
+                ; TODO: REVERSE ORDER OF PRINT!!!
+                (print "Testing function" fn 
+                    "on intput" input
+                    "expecting" expected)
+                (test fn input expected)
+                (loop (rst not-ls)))
             (print "done")))))
     (loop ls)))
 
+; Curesd but works; if we use # in identifiers names internally for macros,
+; and disallow it in the grammar, then we can guarantee a user never
+; mistakenly calls a macro alias....
+;(loop#0 (list 1 2 3))
 
-(test-all '(1 2 3 2 2 2 2 2 2 2 2 2))
+; TODO: can we make it so outer scope just doesn't have the macro aliases?
+; No, because macros always go into the global scope, they're not functions!?
+
+(test-all '(
+        (a b c)
+        (e f d)))
