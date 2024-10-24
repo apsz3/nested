@@ -93,7 +93,6 @@ class VMIR:
         # add another layer to the stack.
         # When encountering PUSH_ARGS and POP_ARGS, collect the arguments
         # and create Param objects,
-
         envs = [FunObj(CodeObj([]), [])]
         while envs:
             cur = envs.pop()
@@ -148,49 +147,6 @@ class VMIR:
                     next(self.frame)
                 # print(cur)
         self.stack.append(cur)
-
-    # def exec_defn_lambda(self, start, stop):
-    #     # Iterate over the list, handling three sections:
-    #     # Begin Args, End Args, and End Lambda:
-    #     # TODO: optimize
-    #     ip = 0
-
-    #     # Skip the PUSH_ARGS instr # TODO: fix this, not necessary probably
-    #     instrs = self.frame.code[start + 1 : stop]
-
-    #     # ITerate over the frame, collecting arguments
-    #     # until the POP_ARGS opcode is reached, then continue
-    #     # collecting the body of the lambda until the POP_LAMBDA:
-    #     end_args_ip = list(map(lambda i: i.opcode, instrs)).index(OpCode.POP_ARGS)
-    #     start_body_ip = end_args_ip + 1
-    #     args = instrs[0:end_args_ip]
-    #     body = instrs[start_body_ip:]
-    #     params = []
-    #     for a in args:
-    #         if a.opcode == OpCode.PUSH_REF:
-    #             params.append(ParamObj(a.args[0], "type"))
-    #         else:
-    #             err(f"Unknown opcode in args: {a.opcode}")
-    #     # begin_args_ip = start+1
-    #     # end_args_ip = _opcodes.index(OpCode.POP_ARGS)
-    #     # start_body_ip = end_args_ip+1
-    #     # end_body_ip = stop-1
-
-    #     # args = self.frame.instrs[begin_args_ip:end_args_ip]
-    #     # body = self.frame.instrs[end_args_ip+1:]
-    #     # params = []
-    #     # for a in args:
-    #     #     if a.opcode == OpCode.PUSH_REF:
-    #     #         params.append(ParamObj(a.args[0], 'type'))
-    #     #     else:
-    #     #         err(f"Unknown opcode in args: {a.opcode}")
-
-    #     # TODO: What if we have nested lambdas?
-    #     co = CodeObj(body)
-    #     fn = FunObj(co, params)
-    #     # breakpoint()
-    #     self.stack.append(fn)  # Append the function object, since this could be inline;
-    #     # a Let / definition will be popping it when needed
 
     def debug_output(self):
         return (self.stack, self.call_stack, self.frame)
@@ -337,11 +293,11 @@ class VMIR:
                 #     self.stack.append(self.frame.instr)
                 #     # if isinsntance(self.frame.instr.code[0], OpCode.PUSH_LAMBDA):
                 #     # giga-hack around defining and using double() see sicp.al
-                #     if not isinstance(self.frame.code[self.frame.ip - 1], FunObj) and self.frame.code[self.frame.ip - 1].opcode == OpCode.PUSH_REF:
-                #         #We're defining a lambda, not calling it
-                #         breakpoint()
-                #         next(self.frame)
-                #         continue
+                #     # if not isinstance(self.frame.code[self.frame.ip - 1], FunObj) and self.frame.code[self.frame.ip - 1].opcode == OpCode.PUSH_REF:
+                #     #     #We're defining a lambda, not calling it
+                #     #     breakpoint()
+                #     #     next(self.frame)
+                #     #     continue
                 #     # Call it
                 #     res = self.call(len(self.frame.instr.params) - 1)
                 #     # breakpoint()
@@ -357,8 +313,8 @@ class VMIR:
                 op = self.frame.instr.opcode
                 args = self.frame.instr.args
 
-                self.print_debug(f"{self.frame.ip:2} {op:2} {args}")
                 self.print_debug(f"{' ':4}{self.stack}")
+                self.print_debug(f"{self.frame.ip:2} {op:2} {args}")
                 # print(self.frame)
 
                 next(self.frame)
