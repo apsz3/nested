@@ -138,6 +138,9 @@ class VMIR:
                     # Big TODO: maybe we should have lower-level instructions
                     # like bind-arg that does the variable binding for us, etc,
                     # instead of leaving so much to implementation
+                    # TODO: DO NOT APPEND CODE OBJECTS INTO REAL CODE OF ANOTHER CODE OBJECT!!!!
+                    # TODO: figure out what to append here!
+                    print("!!!!!! FIX N_VM POP_LAMBDA"*20)
                     envs[-1].code.code.append(cur)
                     # envs[-1].code.code.append(Op(OpCode.CALL, 1)) # Add it to the stack frame when encountered. TODO -- need this?
                     next(self.frame)  # Skip the POP_LAMBDA of the inner defn

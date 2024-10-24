@@ -281,6 +281,7 @@ class Compiler:
             # If the direct child is an ASTExpr, then we need to issue a call?
             self.compile_expr(node.value)
             # Any ASTExpr(ASTExpr will be calling something; emit a call.
+            # TODO: need this? (gut check: yes)
             self.emit(Op(OpCode.CALL, len(node.children)))
         else:
             raise ValueError(f"Unknown expr: {node.value}")
