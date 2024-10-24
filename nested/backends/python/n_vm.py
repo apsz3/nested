@@ -276,40 +276,7 @@ class VMIR:
             self.frame = self.call_stack.pop()
             self.print_debug("> pop frame")
             while self.frame.instr:
-                # TODO: we have decided to push FunctionObjects
-                # into the body of lambdas that define nested lambdas.
-                # In this case, the next "instr" is an anonymous function object.
-                # We don't want this, we should alias the lambdas to
-                # some name, and call out to those.
-                # Or, we can execute them inline here.
-
-                # Check if we've set up a DEFINITION VIA A PUSH_REF;
-                # THEN THIS IS A NESTED FUNCTION.
-                # OTHERWISE, IT"S TRULY ANONYMOUS, AND WE EXECUTE IT HERE AND NOW
-                # print(self.frame.instr)
-                # if isinstance(self.frame.instr, FunObj):
-                #     self.print_debug(">>", self.frame.instr)
-                #     # Append FunObj
-                #     self.stack.append(self.frame.instr)
-                #     # if isinsntance(self.frame.instr.code[0], OpCode.PUSH_LAMBDA):
-                #     # giga-hack around defining and using double() see sicp.al
-                #     # if not isinstance(self.frame.code[self.frame.ip - 1], FunObj) and self.frame.code[self.frame.ip - 1].opcode == OpCode.PUSH_REF:
-                #     #     #We're defining a lambda, not calling it
-                #     #     breakpoint()
-                #     #     next(self.frame)
-                #     #     continue
-                #     # Call it
-                #     res = self.call(len(self.frame.instr.params) - 1)
-                #     # breakpoint()
-                #     if res is not None:
-                #         breakpoint()
-                #         self.stack.append(res)
-                #     next(self.frame)
-                #     continue
-                    # self.call_stack.append(Frame(self.frame.instr.code, SymTable(), self.frame))
-
-                # self.print_debug(self.frame.instr)
-
+                
                 op = self.frame.instr.opcode
                 args = self.frame.instr.args
 
@@ -318,6 +285,7 @@ class VMIR:
                 # print(self.frame)
 
                 next(self.frame)
+                # If this op is a CALL, then
                 self.do_op(op, args)
 
         return self.stack
@@ -588,6 +556,10 @@ class VMIR:
             err("! Need more arguments")
 
     def call(self, n: int):
+        # Create a new entry on the call stack 
+        # and set the new frame so that next loop in exec
+        # pulls down the new frame
+
         # Before we get to issue Call, we will have issued Load.
         # Load will have put the value already on the stack.
         # In our case, the value is a function object.
@@ -610,6 +582,22 @@ class VMIR:
         # No need to make a copy of the parent's locals --
         # we will traverse up when needed.
         # Don't push the Function object -- only push its code
+        breakpoint()
+        # WHY IS INSTR GOING TO A FUNOBJ?
+        # FRAME.INSTR = FRAME.CODE[FRAME.IP]
+        
+        # EXPLANATION
+        # Our calling model is push function object -> OpCode.CALL
+        # This means that when we do a CALL of a CALL (like `((expr))` )
+        # the way we construct the frame matters.
+        # Normally `fn.code` we push as the code of the Frame 
+        # is an OPCODE because *nothing* is an object EXCEPT FUNCTIONOBJS
+        # (CodeObj always resides inside FunObj.)
+        # This means that when we go to put the frame on the stack,
+        # ONLY when calling, and then pull it off and execute it, 
+        # we get a FunObj instead of an OPCODE.
+        # We should change this / wrap it so that FunObjs are properly
+        # stored in some intermediate storage and then loaded like everything else.
         new = Frame(fn.code, bind, self.frame)
         # Save the old frame on the call stack, paradoxically
         self.call_stack.append(self.frame)
