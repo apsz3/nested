@@ -12,13 +12,15 @@ from prompt_toolkit.history import FileHistory
 
 def repl(debug):
     history = FileHistory(".nst_history.txt")
-    v = VM(VMIR())
     session = PromptSession(history=history)
     frame = Frame(CodeObj([]), SymTable(), None)
     while True:
+
         try:
+            v = VM(VMIR())
+
             program = session.prompt(">>> ")
-            p = Parse(program)
+            p = Parse(program, "repl")
 
             tree = p.children[0]
             tree.visit()
@@ -26,11 +28,12 @@ def repl(debug):
             c = Compiler(tree)
             c.compile_program()
 
-            v = VM(VMIR())
+            # v = VM()
             code = CodeObj(c.buffer)
-            stack, frame, call_stack = v.run(code, debug=debug)
-            if stack:
-                print(stack[-1])
+
+            frame.code = code
+            stack, _frame, _call_stack = v.backend.run(code, frame=frame, debug=debug)
+            print(stack)
 
         except Exception as e:
             print(e)

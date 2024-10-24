@@ -194,11 +194,19 @@ class Compiler:
                     return
 
                 case OpCode.QUOTE:
+                    # HOW DO QUOTES GET HANDLED IN SCHEME?
+                    # TL;DR: They are different; use list when in doubt.
+                    # A rule of thumb: use list whenever you want the 
+                    # arguments to be evaluated; 
+                    # quote “distributes” over its arguments, 
+                    # so '(+ 1 2) is like (list '+ '1 '2). 
+                    # You’ll end up with a symbol in your list, not a function.
 
                     def do_quote(n):
                         # TODO: Fix this parser bug that makes children a tuple
                         # breakpoint()
                         if n.children == (None,):
+                            # breakpoint()
                             self.emit(Op(OpCode.LOAD_SYM, n.value))
 
                             return
@@ -244,6 +252,7 @@ class Compiler:
                     )  # Look at children, not total instrs emitted, because those will have been collected with list push/pops in the interim
                     # print("buf", self.buffer)
                     self.emit(Op(OpCode.QUOTE, self.ip - start))
+                    # breakpoint()
                     return
                 # ASTExpr(ASTOp("'"), ASTExpr(ASTIdentifier('add'), ASTConstantValue('int', '1'), ASTConstantValue('int', '2')))
                 # ASTExpr(ASTOp("'"), ASTIdentifier('add'), ASTConstantValue('int', '1'), ASTConstantValue('int', '2'))

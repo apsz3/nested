@@ -46,15 +46,15 @@
 
 ; TODO: can we make it so outer scope just doesn't have the macro aliases?
 ; No, because macros always go into the global scope, they're not functions!?
-(let id (lambda (x) x))
-(test-all (list 
-    (list id 1 1) ; Do we need quasiquote here? How does 1 get coerced to int?
-    (list id 2 2)))
-(let fib (lambda (n) 
-    (if (= n 0) 0
-    (if (= n 1) 1
-    (+ (fib (- n 1)) (fib (- n 2)))))))
-(test fib 5 5)
+;; (let id (lambda (x) x))
+;; (test-all (list 
+;;     (list id 1 1) ; Do we need quasiquote here? How does 1 get coerced to int?
+;;     (list id 2 2)))
+;; (let fib (lambda (n) 
+;;     (if (= n 0) 0
+;;     (if (= n 1) 1
+;;     (+ (fib (- n 1)) (fib (- n 2)))))))
+;; (test fib 5 5)
 
 ;; (print (eval (quote id)))
 ; TODO: there is something wrong with how quote/  and eval work;
@@ -65,3 +65,17 @@
 ;; ))
 ;; (let add (lambda (a b c d) (+ a b c d)))
 ;; (print (eval (' add "a" "b" "c" "d")))
+
+
+(defmacro tt (ls) (begin
+    (let loop (lambda (not-ls) (
+        (if (not (empty? not-ls))
+            (begin
+                (let inner (hd not-ls))
+                (let input (hd inner))
+                (let expected (hd (rst inner)))
+                (print (+ input expected))
+                (loop (rst not-ls)))
+            (print "done")))))
+    (loop ls)))
+(tt '((1 2) (3 4)))

@@ -72,18 +72,6 @@ class VMIR:
     def _builtins(self):
         return {"+": CodeObj([Op(OpCode.ADD, 0)])}
 
-    # Keep these functions separate as only in interpreter mode do we want to
-    # cast things for example
-    def run_repl(self, code: CodeObj, debug=False):
-        if not hasattr(self, "frame"):
-            self.frame = Frame(code, SymTable.from_dict(self._builtins), None)
-
-        self.frame.code = code
-
-        self.stack = []
-        self.call_stack: List[Frame] = [self.frame]
-
-        self.exec(debug)
 
     def run(self, code: CodeObj, frame=None, debug=False):
         if frame is None:
