@@ -50,7 +50,11 @@
 (test-all (list 
     (list id 1 1) ; Do we need quasiquote here? How does 1 get coerced to int?
     (list id 2 2)))
-
+(let fib (lambda (n) 
+    (if (= n 0) 0
+    (if (= n 1) 1
+    (+ (fib (- n 1)) (fib (- n 2)))))))
+(test fib 5 5)
 
 ;; (print (eval (quote id)))
 ; TODO: there is something wrong with how quote/  and eval work;
