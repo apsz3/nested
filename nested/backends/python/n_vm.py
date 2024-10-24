@@ -397,24 +397,24 @@ class VMIR:
         # A string is a sequence of characters enclosed in double quotes
         return i.name[0] == '"' and i.name[-1] == '"'
 
-    def eval_basic(self, expr: Symbol):
-        # Eval the head
-        # We have a single expression to evaluate
-        # print(expr, type(expr))
-        assert not isinstance(expr, Pair)
-        if self.isint(expr):
-            # breakpoint()
-            self.stack.append(int(expr.name))
-        elif self.isstr(expr):
-            self.stack.append(expr.name)
-        elif self.isbool(expr):
-            self.stack.append(expr == TRUE)
-        else:
-            # Look up the symbol
-            # TODO: need to handle primitives here
-            self.stack.append(self.frame.getsym(expr.name))
-            self.print_debug(self.stack)
-        return
+    # def eval_basic(self, expr: Symbol):
+    #     # Eval the head
+    #     # We have a single expression to evaluate
+    #     # print(expr, type(expr))
+    #     assert not isinstance(expr, Pair)
+    #     if self.isint(expr):
+    #         # breakpoint()
+    #         self.stack.append(int(expr.name))
+    #     elif self.isstr(expr):
+    #         self.stack.append(expr.name)
+    #     elif self.isbool(expr):
+    #         self.stack.append(expr == TRUE)
+    #     else:
+    #         # Look up the symbol
+    #         # TODO: need to handle primitives here
+    #         self.stack.append(self.frame.getsym(expr.name))
+    #         self.print_debug(self.stack)
+    #     return
 
     # Define (quote a b c) as (a b c) e.g. A applied to (b, c)
     def eval(self, pair, *args):

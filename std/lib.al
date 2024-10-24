@@ -22,12 +22,12 @@
 ; THINGS WILL NOT WORK AS EXPECTED!!!!
 ; TODO: FIX THIS IN MACRO CODE SO THAT WE SCOPE PROPERLY
 (defmacro test-all (ls) (begin
+    (print ls)
     (let loop (lambda (not-ls) (
         (if (not (empty? not-ls))
             (begin
                 (let inner (hd not-ls))
                 (let fn (hd inner))
-                (print fn)
                 (let input (hd (rst inner)))
                 (let expected (hd (rst (rst inner))))
                 ; TODO: REVERSE ORDER OF PRINT!!!
@@ -50,8 +50,14 @@
 (test-all (list 
     (list id 1 1) ; Do we need quasiquote here? How does 1 get coerced to int?
     (list id 2 2)))
+
+
+;; (print (eval (quote id)))
+; TODO: there is something wrong with how quote/  and eval work;
+; we're trying to evaluate functions and not handling that properly....
+;; (test-all '( 
+;;     (id 1 10) ; Do we need quasiquote here? How does 1 get coerced to int?
+;;     (id 2 2)))
 ;; ))
-;; (test id 1 1)
-;; (test-all '(
-;;         (empty? '() 't)
-;;         (empty? '() 't )))
+;; (let add (lambda (a b c d) (+ a b c d)))
+;; (print (eval (' add "a" "b" "c" "d")))
