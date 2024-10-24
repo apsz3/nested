@@ -454,8 +454,7 @@ class VMIR:
         if type(val) in [int, str]:
             self.stack.append(val)
         else:
-            # breakpoint()
-            self.stack.append(val)
+            self.stack.append(self.frame.getsym(val.name))
         return 1
         # # return nargs
         # if isinstance(pair, Pair):

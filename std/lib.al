@@ -80,4 +80,5 @@
     (loop ls)))
 (tt '((1 2) (3 4)))
 
+; TODO: (eval (quote (+ 1 2))) doesnt do anything the same as (eval '(+ 1 2)) does ....
 (eval '(+ 1 2))
