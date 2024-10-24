@@ -205,9 +205,15 @@ class Compiler:
                     def do_quote(n):
                         # TODO: Fix this parser bug that makes children a tuple
                         # breakpoint()
+#                        Now, one might ask: what happens if you quote something other than a symbol or a list? Well, the answer is... nothing! You just get it back.
+
+
                         if n.children == (None,):
-                            # breakpoint()
-                            self.emit(Op(OpCode.LOAD_SYM, n.value))
+                            # NON-SYMBOL, NON-LIST DO NOT GET QUOTED.
+                            if isinstance(n, ASTConstantValue):
+                                self.compile_const(n)                            
+                            else:
+                                self.emit(Op(OpCode.LOAD_SYM, n.value))
 
                             return
 
