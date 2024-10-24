@@ -70,6 +70,8 @@ class VMIR:
 
     @property
     def _builtins(self):
+        # TODO: This is how we can avoid a bunch of 
+        # defined builtins and map symbols here... ?
         return {"+": CodeObj([Op(OpCode.ADD, 0)])}
 
 
@@ -237,7 +239,8 @@ class VMIR:
                 if isinstance(self.stack[-1], CodeObj):  # Primitive
                     self.do_op(self.stack.pop().code[0].opcode, [nargs - 1])
                 if isinstance(self.stack[-1], FunObj):
-                    self.print_debug(nargs, self.stack)
+                    # self.print_debug("!", nargs, self.stack)
+                    # breakpoint()
                     self.call(nargs - 1)
                     # TODO: could check args here against
                     # fun obj expected params, just like
@@ -295,8 +298,6 @@ class VMIR:
                 pass
             case OpCode.CALL:
                 self.call(*args)
-                # NOTICE THE BREAK -- we must force
-                # break
             case OpCode.GT:
                 self.gt()
             case OpCode.LT:
@@ -329,23 +330,26 @@ class VMIR:
                 # Check if we've set up a DEFINITION VIA A PUSH_REF;
                 # THEN THIS IS A NESTED FUNCTION.
                 # OTHERWISE, IT"S TRULY ANONYMOUS, AND WE EXECUTE IT HERE AND NOW
-                if isinstance(self.frame.instr, FunObj):
-                    self.print_debug(">>", self.frame.instr)
-                    # Append FunObj
-                    self.stack.append(self.frame.instr)
-                    if self.frame.code[self.frame.ip - 1].opcode == OpCode.PUSH_REF:
-                        # We're defining a lambda, not calling it
-                        # breakpoint()
-                        next(self.frame)
-                        continue
-                    # Call it
-                    res = self.call(len(self.frame.instr.params) - 1)
-                    # breakpoint()
-                    if res is not None:
-                        breakpoint()
-                        self.stack.append(res)
-                    next(self.frame)
-                    continue
+                # print(self.frame.instr)
+                # if isinstance(self.frame.instr, FunObj):
+                #     self.print_debug(">>", self.frame.instr)
+                #     # Append FunObj
+                #     self.stack.append(self.frame.instr)
+                #     # if isinsntance(self.frame.instr.code[0], OpCode.PUSH_LAMBDA):
+                #     # giga-hack around defining and using double() see sicp.al
+                #     if not isinstance(self.frame.code[self.frame.ip - 1], FunObj) and self.frame.code[self.frame.ip - 1].opcode == OpCode.PUSH_REF:
+                #         #We're defining a lambda, not calling it
+                #         breakpoint()
+                #         next(self.frame)
+                #         continue
+                #     # Call it
+                #     res = self.call(len(self.frame.instr.params) - 1)
+                #     # breakpoint()
+                #     if res is not None:
+                #         breakpoint()
+                #         self.stack.append(res)
+                #     next(self.frame)
+                #     continue
                     # self.call_stack.append(Frame(self.frame.instr.code, SymTable(), self.frame))
 
                 # self.print_debug(self.frame.instr)
@@ -632,7 +636,7 @@ class VMIR:
         # Load will have put the value already on the stack.
         # In our case, the value is a function object.
         # We could handle calls differently, but dont at the moment.
-
+        # breakpoint()
         fn: FunObj = self.stack.pop()
         # Collect args from the stack and assign to locals
         args = [self.stack.pop() for _ in range(n)]

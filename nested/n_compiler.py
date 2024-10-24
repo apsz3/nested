@@ -277,8 +277,11 @@ class Compiler:
             self.emit(Op(OpCode.CALL, len(node.children)))
 
         elif isinstance(node.value, ASTExpr):
-            # Need this for things like ((eval 'add) 1 2)); need to eval procs too
+            # Need this for things like ((eval 'add) 1 2)); need to eval procs too.
+            # If the direct child is an ASTExpr, then we need to issue a call?
             self.compile_expr(node.value)
+            # Any ASTExpr(ASTExpr will be calling something; emit a call.
+            self.emit(Op(OpCode.CALL, len(node.children)))
         else:
             raise ValueError(f"Unknown expr: {node.value}")
 
