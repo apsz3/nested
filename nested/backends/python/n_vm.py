@@ -274,19 +274,39 @@ class VMIR:
         self.debug = debug
         while self.call_stack:
             self.frame = self.call_stack.pop()
+             # TODO: we have decided to push FunctionObjects
+             # into the body of lambdas that define nested lambdas.
+             # In this case, the next "instr" is an anonymous function object.
+             # We don't want this, we should alias the lambdas to
+             # some name, and call out to those.
+             # Or, we can execute them inline here.
+ 
+             # Check if we've set up a DEFINITION VIA A PUSH_REF;
+             # THEN THIS IS A NESTED FUNCTION.
+             # OTHERWISE, IT"S TRULY ANONYMOUS, AND WE EXECUTE IT HERE AND NOW
             self.print_debug("> pop frame")
             while self.frame.instr:
-                
-                op = self.frame.instr.opcode
-                args = self.frame.instr.args
+                # TODO: this is where we would figure out how to handle objects
+                # on the stack that arne't just code.
+                # However we should REALLY not be injecting code 
+                # in the form of function objects
+                if isinstance(self.frame.instr, FunObj):
+                    fn  = self.frame.instr
+                    self.print_debug(f"{' ':4}{self.stack}")
+                    self.print_debug(f"{self.frame.ip:2} {fn.nargs:2} {fn.params}")
+                    # Just leave it alone, no need to do anything.
+                    next(self.frame)
+                else: 
+                    op = self.frame.instr.opcode
+                    args = self.frame.instr.args
 
-                self.print_debug(f"{' ':4}{self.stack}")
-                self.print_debug(f"{self.frame.ip:2} {op:2} {args}")
-                # print(self.frame)
+                    self.print_debug(f"{' ':4}{self.stack}")
+                    self.print_debug(f"{self.frame.ip:2} {op:2} {args}")
+                    # print(self.frame)
 
-                next(self.frame)
-                # If this op is a CALL, then
-                self.do_op(op, args)
+                    next(self.frame)
+                    # If this op is a CALL, then
+                    self.do_op(op, args)
 
         return self.stack
 
@@ -598,6 +618,10 @@ class VMIR:
         # we get a FunObj instead of an OPCODE.
         # We should change this / wrap it so that FunObjs are properly
         # stored in some intermediate storage and then loaded like everything else.
+
+        # new_code = CodeObj([OpCode.LOAD()
+        # We need some way of getting an opcode object handler here properly.
+        # for when dealinhg with FunctionObjects
         new = Frame(fn.code, bind, self.frame)
         # Save the old frame on the call stack, paradoxically
         self.call_stack.append(self.frame)
