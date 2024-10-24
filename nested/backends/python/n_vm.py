@@ -657,6 +657,7 @@ class VMIR:
             breakpoint()
             raise ValueError("LANG: Invalid number of arguments supplied!")
         except AttributeError:
+            breakpoint()
             raise ValueError(f"LANG: value is not a procedure?")
         # No need to make a copy of the parent's locals --
         # we will traverse up when needed.

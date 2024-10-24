@@ -26,6 +26,7 @@
             (begin
                 (let inner (hd not-ls))
                 (let fn (hd inner))
+                (print fn)
                 (let input (hd (rst inner)))
                 (let expected (hd (rst (rst inner))))
                 ; TODO: REVERSE ORDER OF PRINT!!!
@@ -44,7 +45,12 @@
 
 ; TODO: can we make it so outer scope just doesn't have the macro aliases?
 ; No, because macros always go into the global scope, they're not functions!?
-
-(test-all '(
-        (a b c)
-        (e f d)))
+(let id (lambda (x) x))
+(test-all (list 
+    (list id 1 1)
+    (list id 2 2)))
+;; ))
+(test id 1 1)
+;; (test-all '(
+;;         (empty? '() 't)
+;;         (empty? '() 't )))
