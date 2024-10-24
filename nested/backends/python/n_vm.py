@@ -448,13 +448,14 @@ class VMIR:
         val = pair
         if val == EMPTY:
             return 0
-        val = val.name  # It's a symbol
-        if str.isnumeric(val):
-            self.stack.append(int(val))
-        elif val[0] == '"' and val[-1] == '"':
-            self.stack.append(val[1:-1])
+        # By the time things show up here they have been stripped 
+        # of their outer AST class wrapping and are just values,
+        # either Pair, Symbol, or int/str etc.
+        if type(val) in [int, str]:
+            self.stack.append(val)
         else:
-            self.stack.append(self.frame.getsym(val))
+            # breakpoint()
+            self.stack.append(val)
         return 1
         # # return nargs
         # if isinstance(pair, Pair):
