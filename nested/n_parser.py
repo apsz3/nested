@@ -79,6 +79,9 @@ class ASTLeaf(ASTNode):
     def __init__(self, value):
         super().__init__(value, None)
 
+    def __hash__(self):
+        return hash(self.value)
+    
     def visit(self):
         return self
 
@@ -152,6 +155,9 @@ class ASTOp(ASTLeaf):
     def __eq__(self, a):
         return isinstance(a, ASTOp) and a.value == self.value
 
+    def __hash__(self):
+        return hash(self.value)
+    
 class ASTIdentifier(ASTLeaf):
     builtins = {
         "+",

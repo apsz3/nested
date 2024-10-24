@@ -80,5 +80,38 @@
     (loop ls)))
 (tt '((1 2) (3 4)))
 
+(let id (lambda (x) x))
+(defmacro do-over (over do-something) (begin
+     (let _loop (lambda (ls)
+        (if (not (empty? ls))
+            (begin
+                ;; (print ls)
+                (do-something (hd ls))
+                ;; (print (hd ls))
+                ; TODO: I had (rst not-ls) here but got an invalid argumentse issue not symbol not found!
+                (_loop (rst ls)))
+            'empty
+            )))
+    (_loop over)))
+; TODO: When passing `print` to the macro thinsg work fine, but not if we 
+; pass a lambda (x) (print x) ???
+;; (loop (list 1 2 3) (lambda (x) (print x)))
+(do-over (list 1 2 3) print)
+(let myprint (lambda (x) (print x)))
+(do-over (list 1 2 3) myprint) ; works
 ; TODO: (eval (quote (+ 1 2))) doesnt do anything the same as (eval '(+ 1 2)) does ....
-(eval '(+ 1 2))
+;; (print (eval '(+ 1 552)))
+
+(defmacro let-zip (vars ls) (begin
+    (let _let-zip (lambda (vars ls) 
+        (begin
+            (if (empty? ls) 'empty 
+                (if (not (= (len vars) (len ls)))
+                    (assert False)
+                    (begin
+                        (let (hd vars) (hd ls))
+                        (_let-zip (rst vars) (rst ls)))))
+        (_let-zip vars ls))))))
+
+(let-zip '(a b c) '(1 2 3))
+(print a)

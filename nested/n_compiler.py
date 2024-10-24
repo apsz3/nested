@@ -402,9 +402,19 @@ class Compiler:
                 var_name = var_node.value
                 # IF WE ARE DOING AN ASSIGNMENT!!!
                 # Sanitize the name of the non-replaced identifier
-                if var_name not in macro_local_var_map:
+                # NOTE: we can have a meta-statement like (let (hd x) val)
+                # in the macro; we need to therefore let Ops be hashable 
+                # so we can look them up in the macro dict.
+                # TODO: exclude list of builtin ops from this
+
+
+                if var_name not in macro_local_var_map and var_name not in RESERVED_WORDS:
                     macro_local_var_map[var_name] = f"{var_name}#{this_macro_number}"
-                new_name = macro_local_var_map[var_name]
+
+                if isinstance(var_name, ASTOp) and var_name.value in RESERVED:
+                    new_name = var_name.value
+                else:
+                    new_name = macro_local_var_map[var_name]
                 # Reassign the identifier to the macro hygenizied name
                 new_children = [ASTIdentifier(new_name)] 
                 # Process the rest of the children
