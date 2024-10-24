@@ -602,13 +602,13 @@ class VMIR:
         # No need to make a copy of the parent's locals --
         # we will traverse up when needed.
         # Don't push the Function object -- only push its code
-        breakpoint()
+        # breakpoint()
         # WHY IS INSTR GOING TO A FUNOBJ?
         # FRAME.INSTR = FRAME.CODE[FRAME.IP]
         
         # EXPLANATION
         # Our calling model is push function object -> OpCode.CALL
-        # This means that when we do a CALL of a CALL (like `((expr))` )
+        #** This means that when we do a CALL of a CALL (like `((expr))` )**
         # the way we construct the frame matters.
         # Normally `fn.code` we push as the code of the Frame 
         # is an OPCODE because *nothing* is an object EXCEPT FUNCTIONOBJS
