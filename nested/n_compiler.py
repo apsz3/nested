@@ -373,6 +373,11 @@ class Compiler:
         this_macro_number = self._hygenic_macro_int
         self._hygenic_macro_int += 1
         macro_local_var_map = {}
+
+        # NOTE: IF YOU STICK A PARAMATER NAME IN THE INNER FUNCTION
+        # THAT MATCHES THE NAME OF AN ARGUMENT TO THE MACRO
+        # THINGS WILL NOT WORK AS EXPECTED!!!!
+        # TODO: FIX THIS IN MACRO CODE SO THAT WE SCOPE PROPERLY
         def substitute(node):
             # TODO: might want to also do this for defmacro 
             # TODO: fix this crap, handle it all below with Expr.

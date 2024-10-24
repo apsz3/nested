@@ -20,6 +20,7 @@
 ; NOTE: IF YOU STICK A PARAMATER NAME IN THE INNER FUNCTION
 ; THAT MATCHES THE NAME OF AN ARGUMENT TO THE MACRO
 ; THINGS WILL NOT WORK AS EXPECTED!!!!
+; TODO: FIX THIS IN MACRO CODE SO THAT WE SCOPE PROPERLY
 (defmacro test-all (ls) (begin
     (let loop (lambda (not-ls) (
         (if (not (empty? not-ls))
@@ -47,10 +48,10 @@
 ; No, because macros always go into the global scope, they're not functions!?
 (let id (lambda (x) x))
 (test-all (list 
-    (list id 1 1)
+    (list id 1 1) ; Do we need quasiquote here? How does 1 get coerced to int?
     (list id 2 2)))
 ;; ))
-(test id 1 1)
+;; (test id 1 1)
 ;; (test-all '(
 ;;         (empty? '() 't)
 ;;         (empty? '() 't )))
