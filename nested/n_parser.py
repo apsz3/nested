@@ -204,6 +204,7 @@ class ASTIdentifier(ASTLeaf):
     def visit(self):
         if self.is_builtin:
             return ASTOp(self.value)
+
         return self
 
     def __eq__(self, a):

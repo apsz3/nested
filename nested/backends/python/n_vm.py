@@ -2,7 +2,7 @@ from functools import reduce
 from typing import List
 from rich import print
 
-from nested.backends.python.n_codeobj import CodeObj, FunObj, ParamObj
+from nested.backends.python.n_codeobj import CodeObj, FunObj, NativeFn, ParamObj
 from nested.backends.python.n_frame import Frame, SymTable
 from nested.n_opcode import Op, OpCode
 import operator
@@ -197,7 +197,7 @@ class VMIR:
                 # TODO:
                 if isinstance(self.stack[-1], CodeObj):  # Primitive
                     self.do_op(self.stack.pop().code[0].opcode, [nargs - 1])
-                if isinstance(self.stack[-1], FunObj):
+                elif isinstance(self.stack[-1], FunObj):
                     # self.print_debug("!", nargs, self.stack)
                     # breakpoint()
                     self.call(nargs - 1)
@@ -207,6 +207,8 @@ class VMIR:
 
                     # fn : FunObj = self.stack[-1]
                     # self.call(len(fn.params))
+                else:
+                    raise ValueError("VM: EVAL encountered non-code object in Eval")
                 # if not isinstance(self.stack[-1], FunObj)
             case OpCode.ASSERT:
                 self._assert()
@@ -588,7 +590,9 @@ class VMIR:
         # In our case, the value is a function object.
         # We could handle calls differently, but dont at the moment.
         # breakpoint()
-        fn: FunObj = self.stack.pop()
+        fn = self.stack.pop()
+        if not isinstance(fn, FunObj):
+            assert isinstance(fn, NativeFn)
         # Collect args from the stack and assign to locals
         args = [self.stack.pop() for _ in range(n)]
         args.reverse()

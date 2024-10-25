@@ -31,8 +31,26 @@ class ParamObj:
     def __repr__(self):
         return f"{self.name}:{self.type}"
     
+class NativeFn:
+    # Python function
+    def __init__(self, fn: callable, params: List[ParamObj]):
+        self.fn = fn
+        self.params = params
 
+    def __len__(self):
+        return len(self.code)
 
+    @property
+    def nargs(self):
+        return len(self.params)
+
+    def __rich_repr__(self):
+        yield self.params
+        yield self.code
+
+    def __repr__(self):
+        return f"({repr(self.params)}) => (...)" # {'repr(self.code)}"
+    
 class FunObj:
     def __init__(self, code: CodeObj, params: List[ParamObj]):
         self.code = code
