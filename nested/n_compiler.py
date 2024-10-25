@@ -282,7 +282,8 @@ class Compiler:
             self.compile_expr(node.value)
             # Any ASTExpr(ASTExpr will be calling something; emit a call.
             # TODO: need this? (gut check: yes)
-            self.emit(Op(OpCode.CALL, len(node.children)))
+            # Doesn't seem to be right ... fails a use case that should be fine.
+            # self.emit(Op(OpCode.CALL, len(node.children)))
         else:
             raise ValueError(f"Unknown expr: {node.value}")
 

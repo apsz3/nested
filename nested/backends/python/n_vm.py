@@ -290,17 +290,31 @@ class VMIR:
              # THEN THIS IS A NESTED FUNCTION.
              # OTHERWISE, IT"S TRULY ANONYMOUS, AND WE EXECUTE IT HERE AND NOW
             self.print_debug("> pop frame")
+            # We've set the frame to the FNObj at call time, its a new frame
+            # and it should contain the code we want to execute.
             while self.frame.instr:
+                self.print_debug(">", self.frame.instr)
                 # TODO: this is where we would figure out how to handle objects
                 # on the stack that arne't just code.
                 # However we should REALLY not be injecting code 
                 # in the form of function objects
                 if isinstance(self.frame.instr, FunObj):
+                    # I think we get here when we do a self.do_op of a CALL 
+                    # and the function object is on the stack.
                     fn  = self.frame.instr
                     self.print_debug(f"{' ':4}{self.stack}")
-                    self.print_debug(f"{self.frame.ip:2} {fn.nargs:2} {fn.params}")
-                    # Just leave it alone, no need to do anything.
-                    next(self.frame)
+                    self.print_debug(f"<FnObj>ip:{self.frame.ip:2} #nargs{fn.nargs:2} params({fn.params})")
+                    # We need to know if we have CALLED a function object vs just 
+                    # put one on the stack...
+                    # Also, we aren't actually calling or putting anything on the stack....
+                    ###### DO SOMETHING WITH FUNCTION OBJ CODE HERE 
+                    breakpoint()
+                    for co in fn.code.code:
+                        self.do_op(co.opcode, co.args)
+                    ##### END DOING SOMETHING
+                    next(self.frame) 
+
+                    # self.do_op(OpCode.CALL, [fn.nargs])
                 else: 
                     op = self.frame.instr.opcode
                     args = self.frame.instr.args
@@ -592,6 +606,7 @@ class VMIR:
         # breakpoint()
         fn = self.stack.pop()
         if not isinstance(fn, FunObj):
+            breakpoint()
             assert isinstance(fn, NativeFn)
         # Collect args from the stack and assign to locals
         args = [self.stack.pop() for _ in range(n)]
@@ -629,6 +644,9 @@ class VMIR:
         # new_code = CodeObj([OpCode.LOAD()
         # We need some way of getting an opcode object handler here properly.
         # for when dealinhg with FunctionObjects
+        breakpoint()
+        # THe issue is what if we have FunObj(CoObj(FhunObk))? 
+        # The first instr will be a FunObj, how do we set that up?
         new = Frame(fn.code, bind, self.frame)
         # Save the old frame on the call stack, paradoxically
         self.call_stack.append(self.frame)
