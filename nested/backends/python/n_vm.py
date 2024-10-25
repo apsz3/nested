@@ -298,6 +298,13 @@ class VMIR:
                 # on the stack that arne't just code.
                 # However we should REALLY not be injecting code 
                 # in the form of function objects
+
+                # ###########
+                # IT DEPENDS ON WHETHER WE ARE CALLING A FUNCTION OBJECT
+                # OR JUST PUTTING ONE ON THE STACK
+                # ###########
+                # WE DONT SEEM TO HAVE ENOUGH INFO TO KNOW WHICH IS WHICH
+                # AT THIS POINT?
                 if isinstance(self.frame.instr, FunObj):
                     # I think we get here when we do a self.do_op of a CALL 
                     # and the function object is on the stack.
@@ -644,6 +651,13 @@ class VMIR:
         # new_code = CodeObj([OpCode.LOAD()
         # We need some way of getting an opcode object handler here properly.
         # for when dealinhg with FunctionObjects
+
+        #  ALSO, IF WE HAVE A FUNCTION OBJECT CALLING A FUNCTION OBJECT
+        # WHEN WE APPEND THE CODE OBJECT TO THE OUTER FUNCTION OBJECT
+        # ITS JUST GOING TO BE A FUNCTION OBJECT ITSELF AND SO 
+        # WE ARE IN THE SAME AMBIGUOOUS SITUATION WHICH IS WHY 
+        # WE SEE THIS SITUATION POPPPING UP WHEN WE DO ((FOO)) 
+        # CALLS OR WHEN WE DO ((DOUBLE INC) 1)
         breakpoint()
         # THe issue is what if we have FunObj(CoObj(FhunObk))? 
         # The first instr will be a FunObj, how do we set that up?
