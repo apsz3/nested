@@ -11,12 +11,13 @@
 (defmacro bar (x y z) (+ x (+ y z)))
 (asseq (bar 1 2 3) 6)
 
-(defmacro defn (name args body)
-    (let name (lambda args body)))
+;(defmacro defn (name args body)
+;    (let name (lambda args body)))
 
-(defn fib (n) 
+(defmacro asseq (a b) (assert (= a b)))
+(let fib (lambda (n)
     (if (= n 0) 0
     (if (= n 1) 1
-        (+ (fib (- n 1)) (fib (- n 2))))))
+        (+ (fib (- n 1)) (fib (- n 2)))))))
 (asseq (fib 10) 55)
 

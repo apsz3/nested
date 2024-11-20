@@ -47,11 +47,11 @@
 (print (list 1 3))
 
 
-(let naive-insertion-sort (lambda (ls) (begin
-    (let _nis (lambda (ls acc)
-        (if (empty? ls) acc
-            (concat (filter (lambda (x) (< x (hd ls))) ls))))))))
-;; (print (simple-sort 'empty))
-;; ;; (asseq (quicksort (list 3 1 4 1 5 9 2 6 5 3 5)) (list 1 1 2 3 3 4 5 5 5 6 9))
-(let x (list 1 2 3))
-(let y (cons 1 x))
+;; (let naive-insertion-sort (lambda (ls) (begin
+;;     (let _nis (lambda (ls acc)
+;;         (if (empty? ls) acc
+;;             (concat (filter (lambda (x) (< x (hd ls))) ls))))))))
+;; ;; (print (simple-sort 'empty))
+;; ;; ;; (asseq (quicksort (list 3 1 4 1 5 9 2 6 5 3 5)) (list 1 1 2 3 3 4 5 5 5 6 9))
+;; (let x (list 1 2 3))
+;; (let y (cons 1 x))

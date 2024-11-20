@@ -70,7 +70,7 @@ class VMIR:
 
     @property
     def _builtins(self):
-        # TODO: This is how we can avoid a bunch of 
+        # TODO: This is how we can avoid a bunch of
         # defined builtins and map symbols here... ?
         return {"+": CodeObj([Op(OpCode.ADD, 0)])}
 
@@ -285,7 +285,7 @@ class VMIR:
              # We don't want this, we should alias the lambdas to
              # some name, and call out to those.
              # Or, we can execute them inline here.
- 
+
              # Check if we've set up a DEFINITION VIA A PUSH_REF;
              # THEN THIS IS A NESTED FUNCTION.
              # OTHERWISE, IT"S TRULY ANONYMOUS, AND WE EXECUTE IT HERE AND NOW
@@ -296,7 +296,7 @@ class VMIR:
                 self.print_debug(">", self.frame.instr)
                 # TODO: this is where we would figure out how to handle objects
                 # on the stack that arne't just code.
-                # However we should REALLY not be injecting code 
+                # However we should REALLY not be injecting code
                 # in the form of function objects
 
                 # ###########
@@ -306,23 +306,23 @@ class VMIR:
                 # WE DONT SEEM TO HAVE ENOUGH INFO TO KNOW WHICH IS WHICH
                 # AT THIS POINT?
                 if isinstance(self.frame.instr, FunObj):
-                    # I think we get here when we do a self.do_op of a CALL 
+                    # I think we get here when we do a self.do_op of a CALL
                     # and the function object is on the stack.
                     fn  = self.frame.instr
                     self.print_debug(f"{' ':4}{self.stack}")
                     self.print_debug(f"<FnObj>ip:{self.frame.ip:2} #nargs{fn.nargs:2} params({fn.params})")
-                    # We need to know if we have CALLED a function object vs just 
+                    # We need to know if we have CALLED a function object vs just
                     # put one on the stack...
                     # Also, we aren't actually calling or putting anything on the stack....
-                    ###### DO SOMETHING WITH FUNCTION OBJ CODE HERE 
+                    ###### DO SOMETHING WITH FUNCTION OBJ CODE HERE
                     breakpoint()
                     for co in fn.code.code:
                         self.do_op(co.opcode, co.args)
                     ##### END DOING SOMETHING
-                    next(self.frame) 
+                    next(self.frame)
 
                     # self.do_op(OpCode.CALL, [fn.nargs])
-                else: 
+                else:
                     op = self.frame.instr.opcode
                     args = self.frame.instr.args
 
@@ -422,7 +422,7 @@ class VMIR:
         val = pair
         if val == EMPTY:
             return 0
-        # By the time things show up here they have been stripped 
+        # By the time things show up here they have been stripped
         # of their outer AST class wrapping and are just values,
         # either Pair, Symbol, or int/str etc.
         if type(val) in [int, str]:
@@ -602,7 +602,7 @@ class VMIR:
             err("! Need more arguments")
 
     def call(self, n: int):
-        # Create a new entry on the call stack 
+        # Create a new entry on the call stack
         # and set the new frame so that next loop in exec
         # pulls down the new frame
 
@@ -634,16 +634,16 @@ class VMIR:
         # breakpoint()
         # WHY IS INSTR GOING TO A FUNOBJ?
         # FRAME.INSTR = FRAME.CODE[FRAME.IP]
-        
+
         # EXPLANATION
         # Our calling model is push function object -> OpCode.CALL
         #** This means that when we do a CALL of a CALL (like `((expr))` )**
         # the way we construct the frame matters.
-        # Normally `fn.code` we push as the code of the Frame 
+        # Normally `fn.code` we push as the code of the Frame
         # is an OPCODE because *nothing* is an object EXCEPT FUNCTIONOBJS
         # (CodeObj always resides inside FunObj.)
         # This means that when we go to put the frame on the stack,
-        # ONLY when calling, and then pull it off and execute it, 
+        # ONLY when calling, and then pull it off and execute it,
         # we get a FunObj instead of an OPCODE.
         # We should change this / wrap it so that FunObjs are properly
         # stored in some intermediate storage and then loaded like everything else.
@@ -654,12 +654,12 @@ class VMIR:
 
         #  ALSO, IF WE HAVE A FUNCTION OBJECT CALLING A FUNCTION OBJECT
         # WHEN WE APPEND THE CODE OBJECT TO THE OUTER FUNCTION OBJECT
-        # ITS JUST GOING TO BE A FUNCTION OBJECT ITSELF AND SO 
-        # WE ARE IN THE SAME AMBIGUOOUS SITUATION WHICH IS WHY 
-        # WE SEE THIS SITUATION POPPPING UP WHEN WE DO ((FOO)) 
+        # ITS JUST GOING TO BE A FUNCTION OBJECT ITSELF AND SO
+        # WE ARE IN THE SAME AMBIGUOOUS SITUATION WHICH IS WHY
+        # WE SEE THIS SITUATION POPPPING UP WHEN WE DO ((FOO))
         # CALLS OR WHEN WE DO ((DOUBLE INC) 1)
-        breakpoint()
-        # THe issue is what if we have FunObj(CoObj(FhunObk))? 
+        # breakpoint()
+        # THe issue is what if we have FunObj(CoObj(FhunObk))?
         # The first instr will be a FunObj, how do we set that up?
         new = Frame(fn.code, bind, self.frame)
         # Save the old frame on the call stack, paradoxically

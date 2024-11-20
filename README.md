@@ -1,6 +1,17 @@
-The goal of this project is learning.
+`tests/demeo_readme.md`
 
-The possible other goals are:
+```clojure
+(defmacro asseq (a b) (assert (= a b)))
+(let fib (lambda (n)
+    (if (= n 0) 0
+    (if (= n 1) 1
+        (+ (fib (- n 1)) (fib (- n 2)))))))
+(asseq (fib 10) 55)
+```
 
-* Hackability enabled by Python front- and-middle-end
-* Building a framework for language testing
+# Complete
+* Macros
+# Mostly done
+* Hygenic macros
+# To Do
+* REPL improvements
