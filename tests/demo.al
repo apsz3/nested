@@ -20,6 +20,8 @@
 
 (print (list 1 2 3))
 (print (concat (list 1 2 3) (list 4 5 6)))
+(print (concat '(1 2 3) '(4 5 6)))
+
 ;; (print (foo 3))  ; Should print 5
 (let min (lambda (ls) (begin
     (let _min (lambda

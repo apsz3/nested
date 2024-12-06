@@ -3,7 +3,7 @@ A simple Lisp-like language.
 ```clojure
 -- tests/demo_readme.al
 -- (cd tests && nst demo_readme.al)
-(include ./math.al) -- defines `len` and `empty?`
+(include ./math.al) ; defines "len" and "empty?"
 
 (let filter (lambda (fn ls)
     (if (empty? ls)
@@ -12,7 +12,7 @@ A simple Lisp-like language.
             (cons (fst ls) (filter fn (rst ls)))
             (filter fn (rst ls))))))
 
-(defmacro asseq (a b) (assert (= a b))) -- Macro expansion happens at compile time
+(defmacro asseq (a b) (assert (= a b))) ; Macro expansion happens at compile time
 
 (asseq (len (filter (lambda (x) (< x 3)) '(1 2 3))) 2)
 
