@@ -1,4 +1,4 @@
-(include ./math.al) -- defines `len` and `empty?`
+(include ./std/math.al) ; defines "len" and "empty?"
 
 (let filter (lambda (fn ls)
     (if (empty? ls)
@@ -7,7 +7,7 @@
             (cons (fst ls) (filter fn (rst ls)))
             (filter fn (rst ls))))))
 
-(defmacro asseq (a b) (assert (= a b))) -- Macro expansion happens at compile time
+(defmacro asseq (a b) (assert (= a b))) ; Macro expansion happens at compile time
 
 (asseq (len (filter (lambda (x) (< x 3)) '(1 2 3))) 2)
 
