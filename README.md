@@ -1,4 +1,6 @@
-A simple Lisp-like language.
+A simple Lisp-like language supporting first-class functions and hygenic macros.
+
+`pip3 install -e . && nst tests/demo_readme.al`
 
 ```clojure
 -- tests/demo_readme.al
